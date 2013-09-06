@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "登录";
+}
+
+<div id="win" class="easyui-window" data-options="modal:true,closable:false,minimizable:false,maximizable:false,collapsible:false,draggable:false,resizable:false" title="登录" style="width:350px;height:200px;">
+    <form style="padding:10px 20px 10px 40px;">
+        <p>用户名: <input type="text" id="name"></p>
+        <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd"></p>
+        <label id="showInfo" style=" color:Red"></label>
+        <div style="padding:5px;text-align:center;">
+            <a href="#" class="easyui-linkbutton" icon="icon-ok" onclick="Login();">确定</a>
+            <a href="#" class="easyui-linkbutton" icon="icon-cancel">取消</a>
+        </div>
+    </form>
+</div>
+<script>
+    function Login() {
+        var name = $('#name').val();
+        var pwd = $('#pwd').val();
+        //做一层验证
+        if (name == '' || pwd=='') {
+            alert('用户名和密码不能为空!');
+        }
+        else {
+            var postData = {
+                userName: $("#name").val(),
+                password: $("#pwd").val()
+            };
+            $.post("/Login/CheckUser", postData,
+               function (data) {
+                   if (data.Result == true) {
+                       $('#showInfo').html("登录成功!");
+                       window.location.href = "/Home/index"; 
+                   } 
+                   else {
+                       $('#showInfo').html(data.ResultInfo);
+                   }
+               });
+        }
+    }
+</script>

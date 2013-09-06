@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F51155B4-3B3C-4061-BC70-980045513CF2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Infrastructure.Crosscutting.Security</RootNamespace>
+    <AssemblyName>Infrastructure.Crosscutting.Security</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Output\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Common\Constant.cs" />
+    <Compile Include="Common\Enums.cs" />
+    <Compile Include="Model\SysButton.cs" />
+    <Compile Include="Model\SysConfig.cs" />
+    <Compile Include="Model\SysDataPrivilege.cs" />
+    <Compile Include="Model\SysMenu.cs" />
+    <Compile Include="Model\SysPrivilege.cs" />
+    <Compile Include="Model\SysRole.cs" />
+    <Compile Include="Model\SysUser.cs" />
+    <Compile Include="Model\SysUserInfo.cs" />
+    <Compile Include="Model\SysUserRole.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositorys\ConnectionFactory.cs" />
+    <Compile Include="Repositorys\IRepository.cs" />
+    <Compile Include="Repositorys\ISysUserRepository.cs" />
+    <Compile Include="Repositorys\Repository.cs" />
+    <Compile Include="Repositorys\SysButtonRepository.cs" />
+    <Compile Include="Repositorys\SysConfigRepository.cs" />
+    <Compile Include="Repositorys\SysDataPrivilegeRepository.cs" />
+    <Compile Include="Repositorys\SysMenuRepository.cs" />
+    <Compile Include="Repositorys\SysPrivilegeRepository.cs" />
+    <Compile Include="Repositorys\SysRoleRepository.cs" />
+    <Compile Include="Repositorys\SysUserInfoRepository.cs" />
+    <Compile Include="Repositorys\SysUserRepository.cs" />
+    <Compile Include="Repositorys\SysUserRoleRepository.cs" />
+    <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\ISysUserService.cs" />
+    <Compile Include="Services\SysButtonService.cs" />
+    <Compile Include="Services\SysConfigService.cs" />
+    <Compile Include="Services\SysUserService.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">
+      <Project>{db1a84dc-06fa-4396-9ca0-e7d7c9833eba}</Project>
+      <Name>Infrastructure.Data.Ado</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

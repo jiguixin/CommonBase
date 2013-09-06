@@ -1,0 +1,23 @@
+﻿@{
+    this.ViewBag.Title = "Index";
+}
+
+<h2>登录成功</h2>
+
+<fieldset>
+    <legend>用户状态</legend>
+    <form action="@this.Request.RawUrl" method="post">
+        @if (this.Request.IsAuthenticated)
+        {
+            string userName = this.Context.User.Identity.Name;
+            <label>当前用户已登录，登录名：@userName</label>
+            <br />
+            @Html.ActionLink("退出", "LogOff", "Login")
+        }
+        else
+        {
+            <b>当前用户还未登录。</b>
+        }
+                                  
+    </form>
+</fieldset>
