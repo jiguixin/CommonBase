@@ -12,7 +12,7 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// <summary>
     /// 权限拥有者 如：用户、角色、部门等 类型
     /// </summary>
-    public enum PrivilegeMaster:byte
+    public enum PrivilegeMaster
     { 
         User,
         Role,
@@ -22,7 +22,7 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// <summary>
     /// 能被访问的是:菜单、按钮 类型
     /// </summary>
-    public enum PrivilegeAccess:byte
+    public enum PrivilegeAccess
     {
         Menu, 
         Button, 
