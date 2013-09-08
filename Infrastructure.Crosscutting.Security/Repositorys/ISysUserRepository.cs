@@ -6,8 +6,11 @@ using Infrastructure.Crosscutting.Security.Model;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
-    public interface ISysUserRepository
+    public interface ISysUserRepository 
     {
+        SysUserInfoRepository UserInfoRepository { get; }
+
         bool Exists(string name, string pwd);
+          
     }
 }

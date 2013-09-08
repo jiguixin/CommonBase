@@ -39,18 +39,37 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         #region Public Method
 
+        internal virtual dynamic Mapping(TEntity item)
+        {
+            return item;
+        }
+
+        public virtual IDbConnection Connection
+        {
+            get { return ConnectionFactory.CreateMsSqlConnection(); }
+        }
+
         public virtual int Add(TEntity item)
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
-                return connection.Execute(AddProc, item,
+                var parameters = (object)Mapping(item);
+
+                return connection.Execute(AddProc, parameters,
                     commandType: CommandType.StoredProcedure); 
             }
         }
 
+        public virtual int Add(TEntity item, IDbTransaction trans)
+        {
+            var parameters = (object)Mapping(item);
+            return trans.Connection.Execute(AddProc, parameters,trans,
+                    commandType: CommandType.StoredProcedure); 
+        }
+
         public virtual int Delete(string sysId)
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             { 
                 var p = CreateSysIdDynamicParameters(sysId);
 
@@ -60,18 +79,167 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
+        public virtual int Delete(string sysId, IDbTransaction trans)
+        {
+            var p = CreateSysIdDynamicParameters(sysId);
+
+            return trans.Connection.Execute(DeleteProc, p, trans,
+                   commandType: CommandType.StoredProcedure); 
+        }
+
         public virtual int Update(TEntity item)
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
-                return connection.Execute(UpdateProc, item,
+                var parameters = (object)Mapping(item);
+
+                return connection.Execute(UpdateProc, parameters,
                     commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public virtual int Update(TEntity item, IDbTransaction trans)
+        {
+            var parameters = (object) Mapping(item);
+
+            return trans.Connection.Execute(UpdateProc, parameters, trans,
+                                            commandType: CommandType.StoredProcedure);
+        }
+
+        public virtual int AddOrModifyTrans<TP, TC>(TP item, TC childValue, Func<TP, IDbTransaction, int> parent, Func<TC, IDbTransaction, int> child)
+        {
+            using (var connection = Connection)
+            {
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    int result;
+                    if ((result = parent(item, tran)) > 0)
+                    {
+                        if ((result = child(childValue, tran)) > 0)
+                        {
+                            tran.Commit();
+                            return result;
+                        }
+                        tran.Rollback();
+                        return result;
+                    }
+                    tran.Rollback();
+                    return result;
+                }
+            }
+        }
+
+        public virtual int DeleteTrans(string sysId, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child)
+        {
+            using (var connection = Connection)
+            {
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+
+                    //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
+                    int result;
+                    if ((result = child(sysId, tran)) >= 0)
+                    {
+                        if ((result = parent(sysId, tran)) >= 0)
+                        {
+                            tran.Commit();
+                            return result;
+                        }
+                        tran.Rollback();
+                        return result;
+                    }
+                    tran.Rollback();
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 先删除孙子级，然后再删除儿子级，最后才删除父组数据
+        /// </summary>
+        /// <param name="sysId"></param>
+        /// <param name="parent"></param>
+        /// <param name="child"></param>
+        /// <param name="grandChild"></param>
+        /// <returns></returns>
+        public virtual int DeleteTrans(string sysId, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string, IDbTransaction,int> grandChild)
+        {
+            using (var connection = Connection)
+            {
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    int result;
+                    //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
+                    if ((result = grandChild(sysId, tran)) >= 0)
+                    {
+                        if ((result = child(sysId, tran)) >= 0)
+                        {
+                            if ((result = parent(sysId, tran)) >= 0)
+                            {
+                                tran.Commit();
+                                return result;
+                            }
+                            tran.Rollback();
+                            return result;
+                        }
+                        tran.Rollback();
+                        return result;
+                    }
+                    tran.Rollback();
+                    return result;
+                }
+            }
+        }
+
+        public virtual int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string,int,IDbTransaction, int> grandChild)
+        {
+            using (var connection = Connection)
+            {
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    int result;
+                    //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
+
+                    if ((result = grandChild(sysId,enumValue,tran)) >= 0)
+                    {
+                        if ((result = child(sysId, tran)) >= 0)
+                        {
+                            if ((result = parent(sysId, tran)) >= 0)
+                            {
+                                tran.Commit();
+                                return result;
+                            }
+                            tran.Rollback();
+                            return result;
+                        }
+                        tran.Rollback();
+                        return result;
+                    }
+                    tran.Rollback();
+                    return result;
+                }
             }
         }
 
         public virtual bool Exists(string sysId)
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
                 var p = CreateSysIdDynamicParameters(sysId);
                 return
@@ -82,7 +250,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public virtual TEntity GetModel(string sysId)
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
                 var p = CreateSysIdDynamicParameters(sysId);
 
@@ -103,7 +271,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             out int total)
         {
             total = 0;
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
                 var p = new DynamicParameters();
                 p.Add("@Table", table, DbType.String, ParameterDirection.Input, 1000);
@@ -121,7 +289,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public IEnumerable<TEntity> GetList()
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
                 return connection.Query<TEntity>(GetListProc, commandType: CommandType.StoredProcedure);
             }
@@ -129,7 +297,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public IEnumerable<TEntity> GetList(string table, string fields = "", string where = "")
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (var connection = Connection)
             {
                 var p = new DynamicParameters();
                 p.Add("@Table", table, DbType.String, ParameterDirection.Input, 1000);

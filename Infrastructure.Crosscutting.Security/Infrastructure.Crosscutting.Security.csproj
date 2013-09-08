@@ -55,6 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositorys\ConnectionFactory.cs" />
     <Compile Include="Repositorys\IRepository.cs" />
+    <Compile Include="Repositorys\ISysPrivilegeRepository.cs" />
     <Compile Include="Repositorys\ISysUserRepository.cs" />
     <Compile Include="Repositorys\Repository.cs" />
     <Compile Include="Repositorys\SysButtonRepository.cs" />
@@ -74,6 +75,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
+      <Project>{106C7F00-C03F-4E29-87AF-ACD1BA292078}</Project>
+      <Name>Infrastructure.Crosscutting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">
       <Project>{db1a84dc-06fa-4396-9ca0-e7d7c9833eba}</Project>
       <Name>Infrastructure.Data.Ado</Name>

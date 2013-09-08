@@ -560,6 +560,12 @@
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure.Crosscutting.Security\Infrastructure.Crosscutting.Security.csproj">
+      <Project>{F51155B4-3B3C-4061-BC70-980045513CF2}</Project>
+      <Name>Infrastructure.Crosscutting.Security</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

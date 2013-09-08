@@ -98,6 +98,10 @@ namespace Infrastructure.Crosscutting.Security.Common
 
         public static readonly string ProcSysPrivilegeUpdate = "Sys_Privilege_Update";
 
+        public static readonly string SysPrivilegeDeleteByPrivilegeMaster = "Sys_Privilege_Delete_By_PrivilegeMaster";
+
+        public static readonly string SysPrivilegeDeleteByPrivilegeAccess = "Sys_Privilege_Delete_By_PrivilegeAccess"; 
+
         #endregion
 
         #region Sys_Role

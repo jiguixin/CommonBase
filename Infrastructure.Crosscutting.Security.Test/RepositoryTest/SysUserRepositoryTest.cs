@@ -14,6 +14,8 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     public class SysUserRepositoryTest
     {
         private ISysUserRepository repository;
+
+        private ISysUserService service;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
@@ -21,6 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void TestFixtureSetUp()
         {
             repository = new SysUserRepository();
+            service = new SysUserService();
         }
 
         /// <summary>
@@ -55,50 +58,57 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
             Console.WriteLine(rValue);
         }
 
-        //[Test]
-        //public void AddTest()
-        //{
-        //    var model = new SysUser
-        //        {
-        //            SysId = "cf9d52cc-0500-4829-9611-fd0056961468",
-        //            UserName = "admin",
-        //            UserPwd = "123456",
-        //            CreateTime = DateTime.Now,
-        //            LastLogin = DateTime.Now,
-        //            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
-        //        };
-        //    Console.WriteLine(repository.Add(model));
-        //}
+        [Test]
+        public void AddTest()
+        {
+            var model = new SysUser
+                {
+                    SysId = "cf9d52cc-0500-4829-9611-fd0056961468",
+                    UserName = "admin",
+                    UserPwd = "123456",
+                    CreateTime = DateTime.Now,
+                    LastLogin = DateTime.Now,
+                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt"),
+                    UserInfo = new SysUserInfo(){ SysId= "cf9d52cc-0500-4829-9611-fd0056961468", Address="武科东4路", Email="zwt@qq.com", Fax="028-34332234", Phone="13550235489", QQ="241542368", RealName="张文涛", Sex=true, Title="开发工程师"}
+                };
+            Console.WriteLine(service.AddUser(model));
+        }
 
-        //[Test]
-        //public void GetTest()
-        //{
-        //    var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+        [Test]
+        public void GetTest()
+        {
+            var model = service.UserRepository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
 
-        //    if (model != null)
-        //    {
-        //        Console.WriteLine(model.LastLogin);
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("没有查到值");
-        //    }
-        //}
+            if (model != null)
+            {
+                Console.WriteLine(model.LastLogin);
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
+        }
 
-        //[Test]
-        //public void UpdateTest()
-        //{
-        //    var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
-        //    model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
-        //                                       "zwt");
-        //    Console.WriteLine(repository.Update(model));
-        //}
+        [Test]
+        public void UpdateTest()
+        {
+            var model = service.UserRepository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            if (model == null)
+                return;
 
-        //[Test]
-        //public void Delete()
-        //{
-        //    Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961468"));
-        //}
+            model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                                               "zwt");
+
+            model.UserInfo.RealName = "张问";
+
+            Console.WriteLine(service.UserRepository.Update(model));
+        }
+
+        [Test]
+        public void Delete()
+        {
+            Console.WriteLine(service.UserRepository.Delete("cf9d52cc-0500-4829-9611-fd0056961468"));
+        }
 
         //[Test]
         //public void GetPagedTest()

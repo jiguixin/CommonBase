@@ -51,9 +51,9 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         {
             var model = new SysUserRole
                 {
-                    SysId = "cf9d52cc-0500-4829-9611-fd0056961468",
+                    SysId = "cf9d52cc-0500-4829-9611-fd0056961477",
                     UserId = "cf9d52cc-0500-4829-9611-fd0056961468",
-                    RoleId = "cf9d52cc-0500-4829-9611-fd0056961468"
+                    RoleId = "cf9d52cc-0500-4829-9611-fd0056961488"
                 };
             Console.WriteLine(repository.Add(model));
         }
@@ -61,7 +61,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void GetTest()
         {
-            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961477");
 
             if (model != null)
             {
@@ -76,7 +76,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void UpdateTest()
         {
-            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961477");
 
             Console.WriteLine(repository.Update(model));
         }
@@ -84,14 +84,14 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void Delete()
         {
-            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961468"));
+            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961477"));
         }
 
         [Test]
         public void GetPagedTest()
         {
             int total = 0;
-            var s = repository.GetPaged("Sys_UserRole", "", "UserId='cf9d52cc-0500-4829-9611-fd0056961468'", "", 1, 20, 0, out total);
+            var s = repository.GetPaged("Sys_UserRole", "", "UserId='cf9d52cc-0500-4829-9611-fd0056961477'", "", 1, 20, 0, out total);
         }
     }
 }

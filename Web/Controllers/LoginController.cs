@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Infrastructure.Crosscutting.Security.Services;
 
 namespace Web.Controllers
 {
@@ -12,6 +13,12 @@ namespace Web.Controllers
 
     public class LoginController : Controller
     {
+        private ISysUserService userService ;
+
+        public LoginController()
+        {
+            userService = new SysUserService();
+        }
         //
         // GET: /Login/
 
@@ -23,12 +30,12 @@ namespace Web.Controllers
         [HttpPost]
         public JsonResult CheckUser(string userName, string password)
         {
-            if (userName == "jim" && password == "123")
+            if (userService.CheckUser(userName, password))
             {
-                FormsAuthentication.SetAuthCookie(userName,true);
-                return Json(new ResultModel() { Result = true, ResultInfo = "登录成功" });
+                FormsAuthentication.SetAuthCookie(userName, true);
+                return Json(new ResultModel() {Result = true, ResultInfo = "登录成功"});
             }
-            return Json(new ResultModel() { Result = false, ResultInfo = "登录失败" });
+            return Json(new ResultModel() {Result = false, ResultInfo = "用户名或密码错误请重新输入"});
         }
 
         public ActionResult LogOff()

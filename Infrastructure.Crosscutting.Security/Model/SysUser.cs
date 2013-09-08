@@ -48,6 +48,11 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// </summary>
 		public string RecordStatus { get; set; }
 
+        /// <summary>
+        /// 用户的详细信息
+        /// </summary>
+        public SysUserInfo UserInfo { get; set; }
+
 		#endregion Model
 
 	}

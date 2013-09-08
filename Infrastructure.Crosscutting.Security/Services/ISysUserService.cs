@@ -8,10 +8,12 @@ namespace Infrastructure.Crosscutting.Security.Services
 {
     using Infrastructure.Crosscutting.Security.Repositorys;
 
-    interface ISysUserService
+    public interface ISysUserService
     {
         IRepository<SysUser> UserRepository{get;}
 
-        bool CheckUser(string name, string pwd); 
+        bool CheckUser(string name, string pwd);
+
+        int AddUser(SysUser model);
     }
 }
