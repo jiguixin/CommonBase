@@ -32,6 +32,8 @@ namespace Infrastructure.Crosscutting.Security.Common
         public static readonly string ProcSysButtonGetModel = "Sys_Button_GetModel";
 
         public static readonly string ProcSysButtonUpdate = "Sys_Button_Update";
+
+        public static readonly string ProcSysButtonDeleteByMenuId = "Sys_Button_Delete_By_MenuId";
          
         #endregion
 
