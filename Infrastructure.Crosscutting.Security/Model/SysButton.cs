@@ -19,7 +19,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		{}
 		#region Model
 		/// <summary>
-		/// 按钮编号
+        /// 按钮编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
 		/// </summary>
 		public string SysId { get; set; }
 
@@ -27,22 +27,12 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// 菜单系统编号
 		/// </summary>
 		public string MenuId { get; set; }
-
-		/// <summary>
-		/// 菜单编号
-		/// </summary>
-		public string MenuNo { get; set; }
-
+          
 		/// <summary>
 		/// 按钮名
 		/// </summary>
 		public string BtnName { get; set; }
-
-		/// <summary>
-		/// 该编号会用在Sys_Privilege中PrivilegeAccessKey中
-		/// </summary>
-		public string BtnNo { get; set; }
-
+          
 		/// <summary>
 		/// 按钮图标
 		/// </summary>

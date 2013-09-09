@@ -9,6 +9,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysMenuRepository:Repository<SysMenu>
     {
+        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+
+        public SysButtonRepository ButtonRepository { get; private set; }
+
+        public SysMenuRepository()
+        {
+            PrivilegeRepository = new SysPrivilegeRepository();
+            ButtonRepository = new SysButtonRepository();
+        }
+
+        #region 存储过程名
+         
         public override string ExistsProc
         {
             get
@@ -55,6 +67,13 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             {
                 return Constant.ProcSysMenuDelete;
             }
+        }
+    
+        #endregion
+
+        public override int Delete(string sysId)
+        {
+            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeAccess.Menu, Delete, ButtonRepository.DeleteByMenuId, PrivilegeRepository.DeleteSysPrivilegeByAccess); 
         }
     }
 }

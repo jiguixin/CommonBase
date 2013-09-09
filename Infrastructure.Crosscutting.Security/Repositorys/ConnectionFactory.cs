@@ -16,8 +16,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     {
         public static IDbConnection CreateMsSqlConnection()
         {
-//            const string ConnString = "Data Source=192.168.1.30;Initial Catalog=BaseDB;User Id = sa;Password=123456;";
-            const string ConnString = @"Data Source=THINKPADHOME\SQLEXPRESS;Initial Catalog=BaseDB;Integrated Security=true;";
+            const string ConnString = "Data Source=192.168.1.30;Initial Catalog=BaseDB;User Id = sa;Password=123456;";
+           // const string ConnString = @"Data Source=THINKPADHOME\SQLEXPRESS;Initial Catalog=BaseDB;Integrated Security=true;";
             return new SqlConnection(ConnString);
         }
     }

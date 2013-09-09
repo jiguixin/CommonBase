@@ -61,6 +61,5 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     
         #endregion
 
-
     }
 }

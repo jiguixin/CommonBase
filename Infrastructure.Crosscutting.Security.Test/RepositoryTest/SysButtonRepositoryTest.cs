@@ -49,23 +49,25 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void AddTest()
         {
-            var model = new SysButton
+            for (int i = 1; i < 10; i++)
+            {
+                var model = new SysButton
                 {
-                    SysId = "cf9d52cc-0500-4829-9611-fd0056961468",
-                    MenuId = "cf9d52cc-0500-4829-9611-fd0056961468",
-                    MenuNo = "1",
-                    BtnName = "按钮1",
+                    SysId = "cf9d52cc-0500-4829-9611-fd005696192"+i.ToString(CultureInfo.InvariantCulture),
+                    MenuId = "cf9d52cc-0500-4829-9611-fd0056961234",
+                    BtnName = "按钮" + i.ToString(CultureInfo.InvariantCulture),
                     BtnIcon = "图标路径",
-                    BtnOrder = 1,
+                    BtnOrder = i,
                     RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
                 };
-            Console.WriteLine(repository.Add(model));
+                Console.WriteLine(repository.Add(model));
+            } 
         }
 
         [Test]
         public void GetTest()
         {
-            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961921");
 
             if (model != null)
             {
@@ -80,7 +82,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void UpdateTest()
         {
-            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961921");
             model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
                                                "zwt");
 
@@ -90,7 +92,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void Delete()
         {
-            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961468"));
+            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961921"));
         }
 
         [Test]

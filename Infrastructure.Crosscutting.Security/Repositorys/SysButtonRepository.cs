@@ -7,8 +7,14 @@ using Infrastructure.Crosscutting.Security.Model;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
+    using System.Data;
+
+    using Infrastructure.Data.Ado.Dapper;
+
     public class SysButtonRepository:Repository<SysButton>
     {
+        #region 存储过程名
+
         public override string ExistsProc
         {
             get
@@ -55,6 +61,17 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             {
                 return Constant.ProcSysButtonDelete;
             }
+        }
+
+        #endregion
+
+        public int DeleteByMenuId(string menuId, IDbTransaction trans)
+        {
+            var p = new { MenuId = menuId}; 
+
+           return
+              trans.Connection.Execute(Constant.ProcSysButtonDeleteByMenuId, p,trans,
+                                       commandType: CommandType.StoredProcedure);
         }
     }
 }

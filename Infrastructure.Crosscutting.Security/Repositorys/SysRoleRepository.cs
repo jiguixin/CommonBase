@@ -9,6 +9,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysRoleRepository:Repository<SysRole>
     {
+        #region 存储过程名 
+
         public override string ExistsProc
         {
             get
@@ -56,5 +58,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysRoleDelete;
             }
         }
+
+        #endregion
     }
 }

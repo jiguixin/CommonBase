@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
+﻿using System.Data;
+
 using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Data.Ado.Dapper;
@@ -70,10 +67,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -108,7 +102,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         /// <returns></returns>
         public override int Delete(string sysId)
         {
-            return DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.User, Delete, UserInfoRepository.Delete, PrivilegeRepository.DeleteSysPrivilegeByMaster);
+            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.User, Delete, UserInfoRepository.Delete, PrivilegeRepository.DeleteSysPrivilegeByMaster);
         }
 
 

@@ -202,41 +202,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 }
             }
         }
-
-        public virtual int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string,int,IDbTransaction, int> grandChild)
-        {
-            using (var connection = Connection)
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
-                {
-                    int result;
-                    //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
-
-                    if ((result = grandChild(sysId,enumValue,tran)) >= 0)
-                    {
-                        if ((result = child(sysId, tran)) >= 0)
-                        {
-                            if ((result = parent(sysId, tran)) >= 0)
-                            {
-                                tran.Commit();
-                                return result;
-                            }
-                            tran.Rollback();
-                            return result;
-                        }
-                        tran.Rollback();
-                        return result;
-                    }
-                    tran.Rollback();
-                    return result;
-                }
-            }
-        }
-
+         
         public virtual bool Exists(string sysId)
         {
             using (var connection = Connection)

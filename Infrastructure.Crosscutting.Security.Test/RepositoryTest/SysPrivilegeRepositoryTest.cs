@@ -52,11 +52,11 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         {
             var model = new SysPrivilege
                 {
-                    SysId = "cf9d52cc-0500-4829-9611-fd0056961468",
-                    PrivilegeMaster = "cf9d52cc-0500-4829-9611-fd0056961468",
-                    PrivilegeMasterKey = PrivilegeMaster.Role.ToString(),
-                    PrivilegeAccess = "cf9d52cc-0500-4829-9611-fd0056961468",
-                    PrivilegeAccessKey = PrivilegeAccess.Menu.ToString(),
+                    SysId = "cf9d52cc-0500-4829-9611-fd0056961123",
+                    PrivilegeMaster =  ((int)PrivilegeMaster.User).ToString(CultureInfo.InvariantCulture),
+                    PrivilegeMasterKey = "cf9d52cc-0500-4829-9611-fd0056961468",
+                    PrivilegeAccess = ((int)PrivilegeAccess.Menu).ToString(CultureInfo.InvariantCulture),
+                    PrivilegeAccessKey ="cf9d52cc-0500-4829-9611-fd0056961468",
                     PrivilegeOperation = (int)PrivilegeOperation.Enable,
                     RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
                 };
@@ -66,7 +66,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void GetTest()
         {
-            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961123");
 
             if (model != null)
             {
@@ -81,7 +81,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void UpdateTest()
         {
-            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961468");
+            var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961123");
             model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
                                                "zwt");
             Console.WriteLine(repository.Update(model));
@@ -90,7 +90,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void Delete()
         {
-            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961468"));
+            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961123"));
         }
 
         [Test]

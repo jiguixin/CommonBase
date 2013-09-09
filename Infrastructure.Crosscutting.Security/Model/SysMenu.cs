@@ -19,19 +19,14 @@ namespace Infrastructure.Crosscutting.Security.Model
 		{}
 		#region Model
 		/// <summary>
-		/// 菜单编号
+        /// 菜单编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
 		/// </summary>
 		public string SysId { get; set; }
-
-		/// <summary>
-		/// 该编号会用在Sys_Privilege中PrivilegeAccessKey中
-		/// </summary>
-		public string MenuNo { get; set; }
-
+         
 		/// <summary>
 		/// 对应的父菜单编号
 		/// </summary>
-		public string MenuParentNo { get; set; }
+        public string MenuParentId { get; set; }
 
 		/// <summary>
 		/// 显示顺序
