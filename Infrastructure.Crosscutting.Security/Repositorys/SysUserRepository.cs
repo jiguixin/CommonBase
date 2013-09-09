@@ -97,6 +97,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         /// <summary>
         /// 删除用户时，同时删除，权限表的用户数据，用户和角色表的数据，及用户表中的数据
+        /// todo:要增加删除用户角色表数据
         /// </summary>
         /// <param name="sysId"></param>
         /// <returns></returns>

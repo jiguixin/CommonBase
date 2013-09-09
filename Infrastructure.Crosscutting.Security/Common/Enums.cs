@@ -14,7 +14,7 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// </summary>
     public enum PrivilegeMaster
     { 
-        User,
+        User =10,
         Role,
         Department, 
     }
@@ -24,7 +24,7 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// </summary>
     public enum PrivilegeAccess
     {
-        Menu, 
+        Menu =100, 
         Button, 
         Data
     }
@@ -32,9 +32,9 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// <summary>
     /// 权限操作,如，可见，不可用
     /// </summary>
-    public enum PrivilegeOperation:byte
+    public enum PrivilegeOperation
     {
-        Disable,  //不可用
+        Disable=1,  //不可用
         Enable,   //可用  
     } 
 }

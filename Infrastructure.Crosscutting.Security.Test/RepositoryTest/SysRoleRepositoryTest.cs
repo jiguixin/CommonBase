@@ -86,6 +86,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [Test]
         public void Delete()
         {
+            //todo 删除角色时，要删除用户和角色表，同时要删除权限表
             Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961488"));
         }
 
