@@ -73,7 +73,6 @@
     <Compile Include="Services\SysConfigService.cs" />
     <Compile Include="Services\SysUserService.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
       <Project>{106C7F00-C03F-4E29-87AF-ACD1BA292078}</Project>
