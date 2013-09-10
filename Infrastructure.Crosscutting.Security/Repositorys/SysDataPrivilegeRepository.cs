@@ -10,7 +10,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysDataPrivilegeRepository:Repository<SysDataPrivilege>
     {
         #region 存储过程名
-
+          
         public override string ExistsProc
         {
             get

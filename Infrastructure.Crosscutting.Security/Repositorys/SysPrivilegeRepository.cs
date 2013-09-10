@@ -127,14 +127,15 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         //删除用户时要删除用户角色表同时要删除用户对应的权限数据
         //删除菜单时要删除按钮表同时要删除菜单对应的权限数据
+        /// <summary>
+        /// 删除3级关系表数据
+        /// </summary> 
+        /// <returns></returns>
         public int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string, int, IDbTransaction, int> grandChild)
         {
             using (var connection = Connection)
             {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
+               
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
                     int result;
@@ -147,6 +148,45 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                             if ((result = parent(sysId, tran)) >= 0)
                             {
                                 tran.Commit();
+                                return result;
+                            }
+                            tran.Rollback();
+                            return result;
+                        }
+                        tran.Rollback();
+                        return result;
+                    }
+                    tran.Rollback();
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 删除4级关系表数据
+        /// </summary> 
+        /// <returns></returns>
+        public int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string, int, IDbTransaction, int> grandChild, Func<string, int, IDbTransaction, int> reGrandChild)
+        {
+            using (var connection = Connection)
+            { 
+                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    int result;
+                    //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
+
+                    if ((result = reGrandChild(sysId, enumValue, tran)) >= 0)
+                    {
+                        if ((result = grandChild(sysId, enumValue, tran)) >= 0)
+                        {
+                            if ((result = child(sysId, tran)) >= 0)
+                            {
+                                if ((result = parent(sysId, tran)) >= 0)
+                                {
+                                    tran.Commit();
+                                    return result;
+                                }
+                                tran.Rollback();
                                 return result;
                             }
                             tran.Rollback();

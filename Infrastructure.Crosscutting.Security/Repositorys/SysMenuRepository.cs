@@ -13,7 +13,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public SysButtonRepository ButtonRepository { get; private set; }
 
-        public SysMenuRepository()
+        public SysMenuRepository() 
         {
             PrivilegeRepository = new SysPrivilegeRepository();
             ButtonRepository = new SysButtonRepository();

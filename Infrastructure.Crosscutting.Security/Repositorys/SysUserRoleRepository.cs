@@ -6,9 +6,9 @@ using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Model;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
-{
+{ 
     public class SysUserRoleRepository:Repository<SysUserRole>
-    {
+    { 
         #region 存储过程名
         
         public override string ExistsProc

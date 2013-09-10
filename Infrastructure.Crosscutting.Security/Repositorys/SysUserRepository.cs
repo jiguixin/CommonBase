@@ -8,10 +8,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysUserRepository : Repository<SysUser>, ISysUserRepository
     {
-        public SysUserRepository()
+        public SysUserRepository() 
         {
             UserInfoRepository = new SysUserInfoRepository();
             PrivilegeRepository = new SysPrivilegeRepository();
+            RoleRepository = new SysRoleRepository();
         }
 
         #region 存储过程名
@@ -51,6 +52,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         public SysUserInfoRepository UserInfoRepository { get; private set; }
 
         public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+
+        public SysRoleRepository RoleRepository { get; private set; }
+         
 
         public bool Exists(string name, string pwd)
         {

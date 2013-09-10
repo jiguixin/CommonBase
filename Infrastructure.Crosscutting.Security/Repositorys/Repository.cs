@@ -17,10 +17,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Data.Ado.Dapper;
-
+      
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     { 
-
         #region Abstract Property
 
         public abstract string ExistsProc { get; }
@@ -52,9 +51,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         public virtual int Add(TEntity item)
         {
             using (var connection = Connection)
-            {
+            { 
                 var parameters = (object)Mapping(item);
-
+                 
                 return connection.Execute(AddProc, parameters,
                     commandType: CommandType.StoredProcedure); 
             }
@@ -110,10 +109,6 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
                     int result;
@@ -137,10 +132,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
+                
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
 
@@ -174,10 +166,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
+                
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
                     int result;

@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysConfigRepository:Repository<SysConfig>
     {
         #region 存储过程名
-
+         
         public override string ExistsProc
         {
             get

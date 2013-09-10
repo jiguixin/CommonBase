@@ -14,7 +14,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysButtonRepository:Repository<SysButton>
     {
         #region 存储过程名
-
+ 
         public override string ExistsProc
         {
             get
