@@ -9,8 +9,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysDataPrivilegeRepository:Repository<SysDataPrivilege>
     {
-        #region 存储过程名
-          
+        #region 属性
+
         public override string ExistsProc
         {
             get
@@ -51,14 +51,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get
-            {
-                return Constant.ProcSysDataPrivilegeDelete;
-            }
+            get { return Constant.TableSysDataPrivilege; }
         }
-    
+
         #endregion
 
     }

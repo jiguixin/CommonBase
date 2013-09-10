@@ -26,14 +26,16 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
          
         public abstract string AddProc { get;}
 
-        public abstract string DeleteProc { get; }
+        //public abstract string DeleteProc { get; }
 
         public abstract string GetListProc { get; }
 
         public abstract string GetModelProc { get; }
          
         public abstract string UpdateProc { get; }
-         
+
+        public abstract string TableName { get; }
+
         #endregion
 
         #region Public Method
@@ -69,21 +71,48 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         public virtual int Delete(string sysId)
         {
             using (var connection = Connection)
-            { 
-                var p = CreateSysIdDynamicParameters(sysId);
-
+            {
+                var p = CreateDeleteParameter(string.Format("SysId='{0}'", sysId)); 
                 return
-                    connection.Execute(DeleteProc, p,
+                    connection.Execute(Constant.ProcDeleteByWhere, p,
+                        commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        /// <summary>
+        /// 根据条件删除表数据，不用加where
+        /// </summary>
+        /// <param name="condition">格式为[列]=‘a’</param> 
+        public int DeleteByWhere(string condition)
+        {
+            using (var connection = Connection)
+            {
+                var p = CreateDeleteParameter(condition);
+                  
+                return
+                    connection.Execute(Constant.ProcDeleteByWhere, p,
                         commandType: CommandType.StoredProcedure);
             }
         }
 
         public virtual int Delete(string sysId, IDbTransaction trans)
         {
-            var p = CreateSysIdDynamicParameters(sysId);
+            var p = CreateDeleteParameter(string.Format("SysId='{0}'", sysId));
 
-            return trans.Connection.Execute(DeleteProc, p, trans,
+            return trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
                    commandType: CommandType.StoredProcedure); 
+        }
+
+        /// <summary>
+        /// 根据条件删除表数据，不用加where
+        /// </summary>
+        /// <param name="condition">格式为[列]=‘a’</param> 
+        public virtual int DeleteByWhere(string condition, IDbTransaction trans)
+        {
+            var p = CreateDeleteParameter(condition);
+
+            return trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
+                   commandType: CommandType.StoredProcedure);
         }
 
         public virtual int Update(TEntity item)
@@ -274,6 +303,17 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             return p;
         }
 
+        //创建调用proc_Delete_By_Where的参数
+        private DynamicParameters CreateDeleteParameter(string whereParam)
+        {
+            var p = new DynamicParameters();
+            p.Add("Table", TableName, DbType.String, ParameterDirection.Input, 50);
+
+            p.Add("Where", whereParam, DbType.String, ParameterDirection.Input, 1000);
+            return p;
+        }
+
         #endregion
+         
     }
 }

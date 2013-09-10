@@ -11,8 +11,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysPrivilegeRepository:Repository<SysPrivilege>,ISysPrivilegeRepository
     {
-        #region 存储过程名
-          
+        #region 属性
+
         public override string ExistsProc
         {
             get
@@ -53,12 +53,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get
-            {
-                return Constant.ProcSysPrivilegeDelete;
-            }
+            get { return Constant.TableSysPrivilege; }
         }
 
         #endregion
@@ -166,7 +163,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         /// 删除4级关系表数据
         /// </summary> 
         /// <returns></returns>
-        public int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string, int, IDbTransaction, int> grandChild, Func<string, int, IDbTransaction, int> reGrandChild)
+        public int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string, IDbTransaction, int> child, Func<string, IDbTransaction, int> grandChild, Func<string, int, IDbTransaction, int> reGrandChild)
         {
             using (var connection = Connection)
             { 
@@ -177,7 +174,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
                     if ((result = reGrandChild(sysId, enumValue, tran)) >= 0)
                     {
-                        if ((result = grandChild(sysId, enumValue, tran)) >= 0)
+                        if ((result = grandChild(sysId, tran)) >= 0)
                         {
                             if ((result = child(sysId, tran)) >= 0)
                             {

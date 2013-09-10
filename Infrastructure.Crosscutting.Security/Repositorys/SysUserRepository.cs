@@ -12,10 +12,10 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             UserInfoRepository = new SysUserInfoRepository();
             PrivilegeRepository = new SysPrivilegeRepository();
-            RoleRepository = new SysRoleRepository();
+            UserRoleRepository = new SysUserRoleRepository();
         }
 
-        #region 存储过程名
+        #region 属性
 
         public override string ExistsProc
         {
@@ -42,9 +42,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             get { return Constant.ProcSysUserUpdate; }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get { return Constant.ProcSysUserDelete; }
+            get { return Constant.TableSysUser; }
         }
 
         #endregion
@@ -53,9 +53,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public SysPrivilegeRepository PrivilegeRepository { get; private set; }
 
-        public SysRoleRepository RoleRepository { get; private set; }
+        public SysUserRoleRepository UserRoleRepository { get; private set; }
          
-
         public bool Exists(string name, string pwd)
         {
             using (var connection = Connection)
@@ -93,7 +92,6 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             return AddOrModifyTrans(item, item.UserInfo, Add, UserInfoRepository.Add);
         }
          
-       
         public override int Update(SysUser item)
         {
             return AddOrModifyTrans(item, item.UserInfo, Update, UserInfoRepository.Update);
@@ -101,15 +99,13 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         /// <summary>
         /// 删除用户时，同时删除，权限表的用户数据，用户和角色表的数据，及用户表中的数据
-        /// todo:要增加删除用户角色表数据
         /// </summary>
         /// <param name="sysId"></param>
         /// <returns></returns>
         public override int Delete(string sysId)
         {
-            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.User, Delete, UserInfoRepository.Delete, PrivilegeRepository.DeleteSysPrivilegeByMaster);
+            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.User, Delete, UserInfoRepository.Delete, UserRoleRepository.DeleteByUserId, PrivilegeRepository.DeleteSysPrivilegeByMaster);
         }
-
 
         public override SysUser GetModel(string sysId)
         {

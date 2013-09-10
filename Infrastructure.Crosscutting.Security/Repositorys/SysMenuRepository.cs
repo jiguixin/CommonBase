@@ -19,8 +19,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             ButtonRepository = new SysButtonRepository();
         }
 
-        #region 存储过程名
-         
+        #region 属性
+
         public override string ExistsProc
         {
             get
@@ -61,14 +61,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get
-            {
-                return Constant.ProcSysMenuDelete;
-            }
+            get { return Constant.TableSysMenu; }
         }
-    
+
         #endregion
 
         public override int Delete(string sysId)

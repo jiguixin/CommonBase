@@ -27,7 +27,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         /// Delete item 
         /// </summary>
         /// <param name="sysId">Item to delete</param>
-        int Delete(string sysId);
+        int Delete(string sysId); 
           
         /// <summary>
         /// 修改实体

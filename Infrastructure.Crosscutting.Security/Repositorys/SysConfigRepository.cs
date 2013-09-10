@@ -14,8 +14,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
     public class SysConfigRepository:Repository<SysConfig>
     {
-        #region 存储过程名
-         
+        #region 属性
+
         public override string ExistsProc
         {
             get
@@ -56,12 +56,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get
-            {
-                return Constant.ProcSysConfigDelete;
-            }
+            get { return Constant.TableSysConfig; }
         }
 
         #endregion

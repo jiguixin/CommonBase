@@ -9,7 +9,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 { 
     public class SysUserRoleRepository:Repository<SysUserRole>
     { 
-        #region 存储过程名
+        #region 属性
         
         public override string ExistsProc
         {
@@ -51,14 +51,21 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get
-            {
-                return Constant.ProcSysUserRoleDelete;
-            }
+            get { return Constant.TableSysUserRole; }
         }
 
         #endregion
+
+        public  int DeleteByUserId(string sysId, System.Data.IDbTransaction trans)
+        { 
+            return base.DeleteByWhere(string.Format("UserId='{0}'",sysId), trans);
+        }
+
+        public int DeleteByRoleId(string sysId, System.Data.IDbTransaction trans)
+        {
+            return base.DeleteByWhere(string.Format("RoleId='{0}'", sysId), trans);
+        }
     }
 }

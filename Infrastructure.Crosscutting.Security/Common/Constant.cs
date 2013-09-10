@@ -18,6 +18,11 @@ namespace Infrastructure.Crosscutting.Security.Common
 
         public static readonly string ProcGetPaged = "proc_DataPagination";
         public static readonly string ProcGetList = "proc_GetList";
+
+        //根据条件删除指定表的数据
+        public static readonly string ProcDeleteByWhere = "proc_Delete_By_Where";
+
+
          
         #region Sys_Button
 

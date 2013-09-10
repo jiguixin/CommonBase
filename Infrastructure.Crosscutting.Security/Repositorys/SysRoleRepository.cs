@@ -9,8 +9,15 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysRoleRepository:Repository<SysRole>
     {
-        #region 存储过程名 
-          
+        public SysRoleRepository()
+        {
+            PrivilegeRepository = new SysPrivilegeRepository();
+        }
+
+        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+
+        #region 属性
+
         public override string ExistsProc
         {
             get
@@ -51,16 +58,17 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string DeleteProc
+        public override string TableName
         {
-            get
-            {
-                return Constant.ProcSysRoleDelete;
-            }
+            get { return Constant.TableSysRole; }
         }
 
         #endregion
 
-
+        public override int Delete(string sysId)
+        {
+            //todo:实现对删除角色删除相应表数据
+           // return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.User, Delete, UserInfoRepository.Delete, UserRoleRepository.DeleteByUserId, PrivilegeRepository.DeleteSysPrivilegeByMaster);
+        }
     }
 }
