@@ -10,10 +10,15 @@ namespace Infrastructure.Crosscutting.Security.Services
 
     public interface ISysUserService
     {
-        IRepository<SysUser> UserRepository{get;}
+        SysUserRepository UserRepository { get; }
 
         bool CheckUser(string name, string pwd);
 
         int AddUser(SysUser model);
+
+        IEnumerable<SysRole> GetRoles(string userId);
+
+        IEnumerable<SysPrivilege> GetPrivilege(string sysId);
+
     }
 }

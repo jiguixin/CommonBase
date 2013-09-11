@@ -73,6 +73,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                 RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
             };
             Console.WriteLine(repository.Add(model));
+
+            model = new SysPrivilege
+            {
+                SysId = "cf9d52cc-0500-4829-9611-fd0056961125",
+                PrivilegeMaster = ((int)PrivilegeMaster.Role).ToString(CultureInfo.InvariantCulture),
+                PrivilegeMasterKey = "cf9d52cc-0500-4829-9611-fd0056961488",
+                PrivilegeAccess = ((int)PrivilegeAccess.Button).ToString(CultureInfo.InvariantCulture),
+                PrivilegeAccessKey = "cf9d52cc-0500-4829-9611-fd0056961921",
+                PrivilegeOperation = (int)PrivilegeOperation.Enable,
+                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+            };
+            Console.WriteLine(repository.Add(model));
         }
 
         [Test]

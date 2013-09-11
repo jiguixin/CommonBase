@@ -20,15 +20,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         #region 属性
-
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysMenuExists;
-            }
-        }
-
+         
         public override string AddProc
         {
             get
@@ -36,23 +28,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysMenuAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysMenuGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysMenuGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get

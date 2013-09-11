@@ -13,22 +13,32 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Data.Ado.Dapper;
 
     public class SysUserService:ISysUserService
-    { 
+    {  
         public SysUserService()
         {
             UserRepository = new SysUserRepository();
+            UserRoleRepository = new SysUserRoleRepository();
+            RoleRepository = new SysRoleRepository();
         }
 
-        public IRepository<SysUser> UserRepository { get; private set; }
+        public SysUserRepository UserRepository { get; private set; }
+
+        public SysUserRoleRepository UserRoleRepository { get; private set; }
+
+        public SysRoleRepository RoleRepository { get; private set; }
 
         public bool CheckUser(string name, string pwd)
         { 
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(pwd)) return false;
-             
-            IEnumerable<SysUser> lstResult = UserRepository.GetList(
-                Constant.TableSysUser,
-                "SysId",
-                string.Format("UserName='{0}' and UserPwd='{1}'", name.Trim(), Crypto.Encrypt(pwd.Trim())));
+
+            IEnumerable<int> lstResult = UserRepository.GetList<int>(
+                Constant.SqlCount,
+                string.Format(
+                    "{0}='{1}' and {2}='{3}'",
+                    Constant.ColumnSysUserUserName,
+                    name.Trim(),
+                    Constant.ColumnSysUserUserPwd,
+                    Crypto.Encrypt(pwd.Trim())));
 
             if (lstResult != null && lstResult.Any())
             {
@@ -43,6 +53,16 @@ namespace Infrastructure.Crosscutting.Security.Services
 
             return UserRepository.Add(model);
              
+        }
+
+        public IEnumerable<SysRole> GetRoles(string userId)
+        {
+            return UserRoleRepository.GetList<SysRole>("Sys_User u inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId", "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("u.SysId='{0}'", userId)); 
+        }
+
+        public IEnumerable<SysPrivilege> GetPrivilege(string sysId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

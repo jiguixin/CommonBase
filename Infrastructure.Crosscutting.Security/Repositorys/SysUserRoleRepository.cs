@@ -10,15 +10,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysUserRoleRepository:Repository<SysUserRole>
     { 
         #region 属性
-        
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysUserRoleExists;
-            }
-        }
-
+         
         public override string AddProc
         {
             get
@@ -26,23 +18,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysUserRoleAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysUserRoleGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysUserRoleGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get

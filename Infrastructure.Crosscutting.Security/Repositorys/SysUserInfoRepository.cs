@@ -10,15 +10,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysUserInfoRepository:Repository<SysUserInfo>
     {
         #region 属性
-
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysUserInfoExists;
-            }
-        }
-
+         
         public override string AddProc
         {
             get
@@ -26,23 +18,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysUserInfoAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysUserInfoGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysUserInfoGetModel;
-            }
-        }
-
+          
         public override string UpdateProc
         {
             get

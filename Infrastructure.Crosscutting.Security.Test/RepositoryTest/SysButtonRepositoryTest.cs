@@ -9,6 +9,8 @@ using Infrastructure.Crosscutting.Security.Repositorys;
 
 namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
 {
+    using System.Collections;
+
     [TestFixture]
     public class SysButtonRepositoryTest
     {
@@ -93,6 +95,21 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void Delete()
         {
             Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961921"));
+        }
+
+        [Test]
+        public void GetAll()
+        {
+            IEnumerable<SysButton> lstResult = repository.GetList();
+
+            if (lstResult != null && lstResult.Any())
+            {
+                Console.WriteLine(lstResult.Count());
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
         }
 
         [Test]

@@ -54,6 +54,7 @@
     <Compile Include="RepositoryTest\SysUserInfoRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysUserRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysUserRoleRepositoryTest.cs" />
+    <Compile Include="ServiceTest\UserServiceTest.cs" />
     <Compile Include="TestClass1.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,10 @@ using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
-    public class SysUserRepository : Repository<SysUser>, ISysUserRepository
+    using System.Collections.Generic;
+    using System.Linq;
+
+    public class SysUserRepository : Repository<SysUser>
     {
         public SysUserRepository() 
         {
@@ -16,27 +19,12 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         #region 属性
-
-        public override string ExistsProc
-        {
-            get { return Constant.ProcSysUserExists; }
-        }
-
+         
         public override string AddProc
         {
             get { return Constant.ProcSysUserAdd; }
         }
-
-        public override string GetListProc
-        {
-            get { return Constant.ProcSysUserGetList; }
-        }
-
-        public override string GetModelProc
-        {
-            get { return Constant.ProcSysUserGetModel; }
-        }
-
+         
         public override string UpdateProc
         {
             get { return Constant.ProcSysUserUpdate; }
@@ -54,26 +42,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         public SysPrivilegeRepository PrivilegeRepository { get; private set; }
 
         public SysUserRoleRepository UserRoleRepository { get; private set; }
-         
-        public bool Exists(string name, string pwd)
-        {
-            using (var connection = Connection)
-            {
-                var p = new DynamicParameters();
-                p.Add("@UserName", name, DbType.String, ParameterDirection.Input, 50);
-                p.Add("@UserPwd", pwd, DbType.String, ParameterDirection.Input, 150);
-                p.Add("@TempID", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
-
-                connection.Execute(ExistsProc, p, commandType: CommandType.StoredProcedure);
-                int rValue = p.Get<int>("@TempID");
-                if (rValue == 1)
-                {
-                    return true;
-                }
-                return false;
-            }
-        }
-
+          
         internal override dynamic Mapping(SysUser item)
         {
             return new

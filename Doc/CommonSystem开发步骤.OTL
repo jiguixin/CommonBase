@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<bonsai-outline version="4.1">
+	<head outline-id="3135587" category="" item-count="8">
+		<categories>
+			<category name="Unfiled" id="0" modified="1"/>
+			<category name="Business" id="1" modified="1"/>
+			<category name="Personal" id="2" modified="1"/>
+		</categories>
+		<item-defaults type="todo" category="parent" priority="1" start-date="none" due-date="none" keywords="none" auto-todo-link="0"/>
+		<display show-completion-status="1" show-priority="0" show-selection-gutter="1" show-numbers="1" note-pane-percent="17" numbering="1.1.1.1.1.1.1.1." full-number-to="1" current-item="495876775" cursor="0">
+			<views current="Default">
+				<view name="Default">
+					<columns>
+						<column name="text" width="1035"/>
+					</columns>
+				</view>
+			</views>
+			<custom-labels>
+				<custom-label name="Cost" modified="1"/>
+			</custom-labels>
+			<item-text-color current-color-set="none" color-completed="0" completed="#8C8C8C">
+			</item-text-color>
+		</display>
+		<rollup dates="1" status="1">
+			<rollup-custom enable="1" operation="sum" include="all" modified="0"/>
+		</rollup>
+		<sync-info generation="1" modified="1">
+		</sync-info>
+	</head>
+	<items xml:space="preserve">
+		<item id="495859300" type="todo" priority="1" create-date="11 Sep 2013 10:41" last-modified="11 Sep 2013 15:31" percent-complete="60" pos-hint="2147483649" modified="#101DA2">
+			<text>后台代码开发测试</text>
+			<items>
+				<item id="495859499" type="todo" priority="1" create-date="11 Sep 2013 10:44" last-modified="11 Sep 2013 11:21" percent-complete="100" completed-date="11 Sep 2013 00:00" pos-hint="2147483649" modified="#80111FE2">
+					<text>清空数据库关于Deleter的存储过程代码</text>
+				</item>
+				<item id="495859504" type="todo" priority="1" create-date="11 Sep 2013 10:45" last-modified="11 Sep 2013 15:31" percent-complete="100" completed-date="11 Sep 2013 00:00" pos-hint="2147483649" modified="#80111FE2">
+					<text>清空数据库关于Exists,GetModel,GetList的存储过程和代码</text>
+				</item>
+				<item id="495863693" type="todo" priority="1" create-date="11 Sep 2013 11:54" last-modified="11 Sep 2013 15:31" percent-complete="100" completed-date="11 Sep 2013 00:00" pos-hint="2147483649" modified="#80111FE2">
+					<text>清除DynamicParameter中的@符号</text>
+				</item>
+				<item id="495876670" type="todo" priority="1" create-date="11 Sep 2013 15:31" last-modified="11 Sep 2013 15:31" percent-complete="0" pos-hint="2147483649" modified="#80115FC2">
+					<text>增加Service的相关业务方法</text>
+					<items>
+						<item id="495876694" type="todo" priority="1" create-date="11 Sep 2013 15:31" last-modified="11 Sep 2013 15:32" percent-complete="0" pos-hint="2147483649" modified="#80111FC2">
+							<text>用户</text>
+							<items>
+								<item id="495876775" type="todo" priority="1" create-date="11 Sep 2013 15:32" last-modified="11 Sep 2013 15:32" percent-complete="0" pos-hint="2147483649" modified="#80111FC2">
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+			</items>
+		</item>
+		<item id="495859468" type="todo" priority="1" create-date="11 Sep 2013 10:44" last-modified="11 Sep 2013 15:32" percent-complete="0" pos-hint="2147483649" modified="#100342">
+		</item>
+	</items>
+</bonsai-outline>

@@ -10,15 +10,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysDataPrivilegeRepository:Repository<SysDataPrivilege>
     {
         #region 属性
-
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysDataPrivilegeExists;
-            }
-        }
-
+         
         public override string AddProc
         {
             get
@@ -26,23 +18,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysDataPrivilegeAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysDataPrivilegeGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysDataPrivilegeGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get

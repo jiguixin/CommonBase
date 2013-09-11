@@ -55,6 +55,14 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     UserId = "cf9d52cc-0500-4829-9611-fd0056961468",
                     RoleId = "cf9d52cc-0500-4829-9611-fd0056961488"
                 };
+           // Console.WriteLine(repository.Add(model));
+
+            model = new SysUserRole
+            {
+                SysId = "cf9d52cc-0500-4829-9611-fd0056961478",
+                UserId = "cf9d52cc-0500-4829-9611-fd0056961468",
+                RoleId = "cf9d52cc-0500-4829-9611-fd0056961489"
+            };
             Console.WriteLine(repository.Add(model));
         }
 

@@ -15,15 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysConfigRepository:Repository<SysConfig>
     {
         #region 属性
-
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysConfigExists;
-            }
-        }
-
+         
         public override string AddProc
         {
             get
@@ -31,23 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysConfigAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysConfigGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysConfigGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get

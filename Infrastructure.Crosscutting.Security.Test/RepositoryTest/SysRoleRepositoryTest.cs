@@ -56,6 +56,15 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     RoleDesc = "管理系统的用户",
                     RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
                 };
+           // Console.WriteLine(repository.Add(model));
+
+            model = new SysRole
+            {
+                SysId = "cf9d52cc-0500-4829-9611-fd0056961489",
+                RoleName = "管理员1",
+                RoleDesc = "管理系统的用户1",
+                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+            };
             Console.WriteLine(repository.Add(model));
         }
 
@@ -85,8 +94,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
 
         [Test]
         public void Delete()
-        {
-            //todo 删除角色时，要删除用户和角色表，同时要删除权限表
+        { 
             Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961488"));
         }
 

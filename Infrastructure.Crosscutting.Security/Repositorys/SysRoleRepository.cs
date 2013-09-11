@@ -12,20 +12,16 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         public SysRoleRepository()
         {
             PrivilegeRepository = new SysPrivilegeRepository();
+            UserRoleRepository = new SysUserRoleRepository();
         }
 
         public SysPrivilegeRepository PrivilegeRepository { get; private set; }
 
+        public SysUserRoleRepository UserRoleRepository { get; private set; }
+
         #region 属性
 
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysRoleExists;
-            }
-        }
-
+        
         public override string AddProc
         {
             get
@@ -33,23 +29,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysRoleAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysRoleGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysRoleGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get
@@ -62,13 +42,24 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             get { return Constant.TableSysRole; }
         }
-
+         
         #endregion
 
-        public override int Delete(string sysId)
+        internal override dynamic Mapping(SysRole item)
         {
-            //todo:实现对删除角色删除相应表数据
-           // return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.User, Delete, UserInfoRepository.Delete, UserRoleRepository.DeleteByUserId, PrivilegeRepository.DeleteSysPrivilegeByMaster);
+            return new
+                       {
+                           SysId = item.SysId,
+                           RoleName = item.RoleName,
+                           RoleDesc = item.RoleDesc
+                       };
         }
+
+        public override int Delete(string sysId)
+        {  
+            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.Role, Delete, UserRoleRepository.DeleteByRoleId, PrivilegeRepository.DeleteSysPrivilegeByMaster);
+        }
+
+
     }
 }

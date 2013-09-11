@@ -13,16 +13,12 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
     public class SysButtonRepository:Repository<SysButton>
     {
-        #region 属性
-
-        public override string ExistsProc
+        public SysButtonRepository()
         {
-            get
-            {
-                return Constant.ProcSysButtonExists;
-            }
+            PrivilegeRepository = new SysPrivilegeRepository();
         }
-
+        #region 属性
+ 
         public override string AddProc
         {
             get
@@ -30,23 +26,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysButtonAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysButtonGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysButtonGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get
@@ -60,15 +40,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             get { return Constant.TableSysButton; }
         }
 
+        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+
         #endregion
 
         public int DeleteByMenuId(string menuId, IDbTransaction trans)
         {
-            var p = new { MenuId = menuId}; 
+            return base.DeleteByWhere(string.Format("{0}='{1}'",Constant.ColumnSysButtonMenuId, menuId), trans);
+        }
 
-           return
-              trans.Connection.Execute(Constant.ProcSysButtonDeleteByMenuId, p,trans,
-                                       commandType: CommandType.StoredProcedure);
+        public override int Delete(string sysId)
+        {
+            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeAccess.Button, Delete, PrivilegeRepository.DeleteSysPrivilegeByAccess);
         }
     }
 }

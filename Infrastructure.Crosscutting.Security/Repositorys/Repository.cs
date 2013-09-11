@@ -21,17 +21,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     { 
         #region Abstract Property
-
-        public abstract string ExistsProc { get; }
-         
+          
         public abstract string AddProc { get;}
-
-        //public abstract string DeleteProc { get; }
-
-        public abstract string GetListProc { get; }
-
-        public abstract string GetModelProc { get; }
-         
+           
         public abstract string UpdateProc { get; }
 
         public abstract string TableName { get; }
@@ -72,7 +64,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                var p = CreateDeleteParameter(string.Format("SysId='{0}'", sysId)); 
+                var p = CreateDeleteParameter(string.Format("{0}='{1}'",Constant.ColumnSysId, sysId)); 
                 return
                     connection.Execute(Constant.ProcDeleteByWhere, p,
                         commandType: CommandType.StoredProcedure);
@@ -97,7 +89,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public virtual int Delete(string sysId, IDbTransaction trans)
         {
-            var p = CreateDeleteParameter(string.Format("SysId='{0}'", sysId));
+            var p = CreateDeleteParameter(string.Format("{0}='{1}'", Constant.ColumnSysId, sysId));
 
             return trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
                    commandType: CommandType.StoredProcedure); 
@@ -223,27 +215,20 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
          
         public virtual bool Exists(string sysId)
         {
-            using (var connection = Connection)
-            {
-                var p = CreateSysIdDynamicParameters(sysId);
-                return
-                    connection.Query<TEntity>(ExistsProc, p, commandType: CommandType.StoredProcedure).FirstOrDefault()
-                    != null;
-            }
+            IEnumerable<int> lstResult = GetList<int>(Constant.SqlCount, CreateSysIdCondition(sysId));
+
+           if (lstResult != null && lstResult.Any())
+           {
+               return true;
+           }
+           return false;
         }
 
         public virtual TEntity GetModel(string sysId)
         {
-            using (var connection = Connection)
-            {
-                var p = CreateSysIdDynamicParameters(sysId);
-
-                return
-                    connection.Query<TEntity>(GetModelProc, p, commandType: CommandType.StoredProcedure)
-                        .FirstOrDefault();
-            }
-        } 
-
+            return GetList(string.Empty, CreateSysIdCondition(sysId)).FirstOrDefault();
+        }
+         
         public virtual IEnumerable<TEntity> GetPaged(
             string table,
             string fields,
@@ -273,13 +258,39 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public IEnumerable<TEntity> GetList()
         {
+            return GetList(string.Empty, string.Empty);
+        }
+
+        /// <summary>
+        /// 注：必须要配置子类TableName
+        /// </summary> 
+        public IEnumerable<TEntity> GetList(string fields = "", string where = "")
+        {
             using (var connection = Connection)
             {
-                return connection.Query<TEntity>(GetListProc, commandType: CommandType.StoredProcedure);
+                var p = new DynamicParameters();
+                p.Add("@Table", TableName, DbType.String, ParameterDirection.Input, 1000);
+                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
+                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
+
+                return connection.Query<TEntity>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
             }
         }
 
-        public IEnumerable<TEntity> GetList(string table, string fields = "", string where = "")
+        public IEnumerable<T> GetList<T>(string fields = "", string @where = "")
+        {
+            using (var connection = Connection)
+            {
+                var p = new DynamicParameters();
+                p.Add("@Table", TableName, DbType.String, ParameterDirection.Input, 1000);
+                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
+                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
+
+                return connection.Query<T>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public IEnumerable<T> GetList<T>(string table, string fields = "", string @where = "")
         {
             using (var connection = Connection)
             {
@@ -288,23 +299,33 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
                 p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
 
-                return connection.Query<TEntity>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
+                return connection.Query<T>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
             }
         }
 
         #endregion
 
         #region Helper
-        
+
+        /// <summary>
+        /// 结果为：SysId='sysId'
+        /// </summary>
+        /// <param name="sysId"></param>
+        /// <returns></returns>
+        public string CreateSysIdCondition(string sysId)
+        {
+            return string.Format("{0}='{1}'", Constant.ColumnSysId, sysId);
+        }
+
         private static DynamicParameters CreateSysIdDynamicParameters(string sysId)
         {
             var p = new DynamicParameters();
-            p.Add("@SysId", sysId, DbType.String, ParameterDirection.Input, 50);
+            p.Add(Constant.ColumnSysId, sysId, DbType.String, ParameterDirection.Input, 50);
             return p;
         }
 
         //创建调用proc_Delete_By_Where的参数
-        private DynamicParameters CreateDeleteParameter(string whereParam)
+        public DynamicParameters CreateDeleteParameter(string whereParam)
         {
             var p = new DynamicParameters();
             p.Add("Table", TableName, DbType.String, ParameterDirection.Input, 50);

@@ -9,18 +9,10 @@ using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
-    public class SysPrivilegeRepository:Repository<SysPrivilege>,ISysPrivilegeRepository
+    public class SysPrivilegeRepository:Repository<SysPrivilege>
     {
         #region 属性
-
-        public override string ExistsProc
-        {
-            get
-            {
-                return Constant.ProcSysPrivilegeExists;
-            }
-        }
-
+         
         public override string AddProc
         {
             get
@@ -28,23 +20,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysPrivilegeAdd;
             }
         }
-
-        public override string GetListProc
-        {
-            get
-            {
-                return Constant.ProcSysPrivilegeGetList;
-            }
-        }
-
-        public override string GetModelProc
-        {
-            get
-            {
-                return Constant.ProcSysPrivilegeGetModel;
-            }
-        }
-
+         
         public override string UpdateProc
         {
             get
@@ -64,63 +40,111 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                var p = new {PrivilegeMaster = master, PrivilegeMasterKey = sysId};
-
+                var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'",Constant.ColumnSysPrivilegePrivilegeMaster,(int)master,Constant.ColumnSysPrivilegePrivilegeMasterKey,sysId));
+                 
                 return
-                    connection.Execute(Constant.SysPrivilegeDeleteByPrivilegeMaster, p,
+                    connection.Execute(Constant.ProcDeleteByWhere, p,
                         commandType: CommandType.StoredProcedure);
             }
         }
 
         public int DeleteSysPrivilegeByMaster(string sysId,PrivilegeMaster master,IDbTransaction trans)
-        { 
-            var p = new {PrivilegeMaster = (int)master, PrivilegeMasterKey = sysId};
-
+        {
+            var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'", Constant.ColumnSysPrivilegePrivilegeMaster, (int)master, Constant.ColumnSysPrivilegePrivilegeMasterKey, sysId));
+              
             return
-                trans.Connection.Execute(Constant.SysPrivilegeDeleteByPrivilegeMaster, p,trans,
+                trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
                                          commandType: CommandType.StoredProcedure);
         }
 
         public int DeleteSysPrivilegeByMaster(string sysId, int masterValue, IDbTransaction trans)
         {
-            var p = new { PrivilegeMaster = masterValue, PrivilegeMasterKey = sysId };
+            var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'", Constant.ColumnSysPrivilegePrivilegeMaster, masterValue, Constant.ColumnSysPrivilegePrivilegeMasterKey, sysId));
 
             return
-                trans.Connection.Execute(Constant.SysPrivilegeDeleteByPrivilegeMaster, p,trans,
+                trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
                                          commandType: CommandType.StoredProcedure);
         }
 
         public int DeleteSysPrivilegeByAccess(PrivilegeAccess access, string sysId)
         {
             using (var connection = Connection)
-            {
-                var p = new { PrivilegeAccess = access, PrivilegeAccessKey = sysId };
+            {   
+                var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'", Constant.ColumnSysPrivilegePrivilegeAccess, (int)access, Constant.ColumnSysPrivilegePrivilegeAccessKey, sysId));
 
                 return
-                    connection.Execute(Constant.SysPrivilegeDeleteByPrivilegeAccess, p,
+                    connection.Execute(Constant.ProcDeleteByWhere, p,
                         commandType: CommandType.StoredProcedure);
             }
         }
 
         public int DeleteSysPrivilegeByAccess(string sysId, PrivilegeAccess access, IDbTransaction trans)
         {
-            var p = new { PrivilegeAccess = (int)access, PrivilegeAccessKey = sysId };
+            var p =
+                CreateDeleteParameter(
+                    string.Format(
+                        "{0}='{1}' AND {2}='{3}'",
+                        Constant.ColumnSysPrivilegePrivilegeAccess,
+                        (int)access,
+                        Constant.ColumnSysPrivilegePrivilegeAccessKey,
+                        sysId));
 
-            return
-                trans.Connection.Execute(Constant.SysPrivilegeDeleteByPrivilegeAccess, p, trans,
-                                         commandType: CommandType.StoredProcedure);
+            return trans.Connection.Execute(
+                Constant.ProcDeleteByWhere,
+                p,
+                trans,
+                commandType: CommandType.StoredProcedure);
         }
 
         public int DeleteSysPrivilegeByAccess(string sysId, int accessValue, IDbTransaction trans)
         {
-            var p = new { PrivilegeAccess = accessValue, PrivilegeAccessKey = sysId };
+            var p =
+                CreateDeleteParameter(
+                    string.Format(
+                        "{0}='{1}' AND {2}='{3}'",
+                        Constant.ColumnSysPrivilegePrivilegeAccess,
+                        accessValue,
+                        Constant.ColumnSysPrivilegePrivilegeAccessKey,
+                        sysId));
 
-            return
-                trans.Connection.Execute(Constant.SysPrivilegeDeleteByPrivilegeAccess, p, trans,
-                                         commandType: CommandType.StoredProcedure);
+            return trans.Connection.Execute(
+                Constant.ProcDeleteByWhere,
+                p,
+                trans,
+                commandType: CommandType.StoredProcedure);
         }
 
         #region Helper
+
+        //删除用户时要删除用户角色表同时要删除用户对应的权限数据
+        //删除菜单时要删除按钮表同时要删除菜单对应的权限数据
+        /// <summary>
+        /// 删除2级关系表数据
+        /// </summary> 
+        /// <returns></returns>
+        public int DeletePrivilegeTrans(string sysId, int enumValue, Func<string, IDbTransaction, int> parent, Func<string,int,IDbTransaction, int> child)
+        {
+            using (var connection = Connection)
+            {
+                using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    int result;
+                    //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
+                    if ((result = child(sysId,enumValue, tran)) >= 0)
+                    {
+                        if ((result = parent(sysId, tran)) >= 0)
+                        {
+                            tran.Commit();
+                            return result;
+                        }
+                        tran.Rollback();
+                        return result;
+                    }
+                    tran.Rollback();
+                    return result; 
+                }
+            }
+        }
 
         //删除用户时要删除用户角色表同时要删除用户对应的权限数据
         //删除菜单时要删除按钮表同时要删除菜单对应的权限数据
