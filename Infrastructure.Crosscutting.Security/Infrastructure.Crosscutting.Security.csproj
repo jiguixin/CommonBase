@@ -65,9 +65,11 @@
     <Compile Include="Repositorys\SysUserInfoRepository.cs" />
     <Compile Include="Repositorys\SysUserRepository.cs" />
     <Compile Include="Repositorys\SysUserRoleRepository.cs" />
+    <Compile Include="Services\ISysRoleService.cs" />
     <Compile Include="Services\ISysUserService.cs" />
     <Compile Include="Services\SysButtonService.cs" />
     <Compile Include="Services\SysConfigService.cs" />
+    <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
   </ItemGroup>
   <ItemGroup>

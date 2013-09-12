@@ -56,13 +56,18 @@ namespace Infrastructure.Crosscutting.Security.Services
         }
 
         public IEnumerable<SysRole> GetRoles(string userId)
-        {
-            return UserRoleRepository.GetList<SysRole>("Sys_User u inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId", "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("u.SysId='{0}'", userId)); 
+        { 
+            return UserRoleRepository.GetList<SysRole>(Constant.SqlTableUserAndRoleJoin, "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("u.SysId='{0}'", userId)); 
         }
 
-        public IEnumerable<SysPrivilege> GetPrivilege(string sysId)
+        public IEnumerable<SysPrivilege> GetPrivilege(string userId)
         {
-            throw new NotImplementedException();
+            
+            return
+                UserRoleRepository.GetList<SysPrivilege>(
+                    "Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey ",Constant.SqlFieldsPrivilegeJoin
+                    ,
+                    string.Format("p.PrivilegeMaster = {0} and u.SysId='{1}'", (int)PrivilegeMaster.User, userId)); 
         }
     }
 }

@@ -88,5 +88,25 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             return sysUser;
         }
 
+        public IEnumerable<SysUser> GetUserIncludeUserInfo(string table,string fields = "", string @where = "")
+        {
+            using (var connection = Connection)
+            {
+                var p = new DynamicParameters();
+                p.Add("@Table", table, DbType.String, ParameterDirection.Input, 1000);
+                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
+                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
+
+                return connection.Query<SysUser, SysUserInfo, SysUser>(
+                    Constant.ProcGetList,
+                    (u, ui) =>
+                        {
+                            u.UserInfo = ui;
+                            return u;
+                        },
+                        p,splitOn:"SysId",
+                    commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }

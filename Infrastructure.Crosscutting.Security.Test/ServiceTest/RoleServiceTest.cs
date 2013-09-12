@@ -1,8 +1,8 @@
 ﻿/*
- *名称：UserServiceTest
+ *名称：RoleServiceTest
  *功能：
  *创建人：吉桂昕
- *创建时间：2013-09-11 05:55:34
+ *创建时间：2013-09-12 04:49:56
  *修改时间：
  *备注：
  */
@@ -18,16 +18,17 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
     using Infrastructure.Crosscutting.Security.Services;
 
     [TestFixture]
-    public class UserServiceTest
+    public class RoleServiceTest
     {
-        private ISysUserService UserService;
+        private ISysRoleService RoleService;
+
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            UserService = new SysUserService();
+            RoleService = new SysRoleService();
         }
 
         /// <summary>
@@ -55,9 +56,9 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
         }
 
         [Test]
-        public void GetRolesTest()
+        public void GetUsersTest()
         {
-            var lstResult = UserService.GetRoles("cf9d52cc-0500-4829-9611-fd0056961468");
+            var lstResult = RoleService.GetUsers("cf9d52cc-0500-4829-9611-fd0056961488");
 
             if (lstResult != null && lstResult.Any())
             {
@@ -67,12 +68,13 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
             {
                 Console.WriteLine("没有查到值");
             }
+           
         }
 
         [Test]
         public void GetPrivilegeTest()
         {
-            var lstResult = UserService.GetPrivilege("cf9d52cc-0500-4829-9611-fd0056961468");
+            var lstResult = RoleService.GetPrivilege("cf9d52cc-0500-4829-9611-fd0056961488");
 
             if (lstResult != null && lstResult.Any())
             {

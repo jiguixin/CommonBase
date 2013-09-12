@@ -141,7 +141,34 @@ namespace Infrastructure.Crosscutting.Security.Common
 
         #region Sql 语句常量
 
+        /// <summary>
+        /// COUNT(1)
+        /// </summary>
         public static readonly string SqlCount = "COUNT(1)";
+
+        /// <summary>
+        /// 将用户角色，用户名色表进行关系查询
+        /// Sql语句：
+        /// Sys_User u inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId
+        /// </summary>
+        public static readonly string  SqlTableUserAndRoleJoin =
+                "Sys_User u inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId";
+
+        /// <summary>
+        /// 将用户角色，用户名色表进行关系查询,包括UserInfo表
+        /// Sql语句：
+        /// Sys_User u inner join Sys_UserInfo ui on u.SysId=ui.SysId inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId
+        /// </summary>
+        public static readonly string SqlTableUserAndRoleIncludeUserInfoJoin =
+                "Sys_User u inner join Sys_UserInfo ui on u.SysId=ui.SysId inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId";
+
+        /// <summary>
+        /// 用于，角色关联权限，用户关联权限，查询具体的权限数据列
+        /// Sql语句:
+        /// p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey, p.PrivilegeOperation,p.RecordStatus
+        /// </summary>
+        public static readonly string SqlFieldsPrivilegeJoin ="p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,p.PrivilegeOperation,p.RecordStatus";
+
 
         #endregion
     }

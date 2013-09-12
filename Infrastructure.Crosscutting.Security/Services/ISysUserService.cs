@@ -18,7 +18,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         IEnumerable<SysRole> GetRoles(string userId);
 
-        IEnumerable<SysPrivilege> GetPrivilege(string sysId);
+        IEnumerable<SysPrivilege> GetPrivilege(string userId);
 
     }
 }

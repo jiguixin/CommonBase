@@ -9,7 +9,9 @@
 using System;
 namespace Infrastructure.Crosscutting.Security.Model
 {
-	/// <summary>
+    using System.Collections.Generic;
+
+    /// <summary>
 	/// 角色
 	/// </summary>
 	[Serializable]
@@ -40,6 +42,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 
 		#endregion Model
 
+        public IEnumerable<SysUser> Users { get; set; }
 
 
 	}
