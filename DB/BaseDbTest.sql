@@ -34,14 +34,16 @@ select p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.Privil
 
 
 --得到指定角色有那些用户
-select u.CreateTime,u.LastLogin,u.RecordStatus,u.SysId,u.UserName,u.UserPwd from Sys_User u inner join Sys_UserRole ur on 
-u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId where r.SysId = 'cf9d52cc-0500-4829-9611-fd0056961489'
+select u.CreateTime,u.LastLogin,u.RecordStatus,u.SysId,u.UserName,u.UserPwd,ui.SysId,
+	   ui.Address,ui.Email,ui.Fax,ui.Phone,ui.QQ,ui.RealName,ui.Sex,ui.Title
+from Sys_User u inner join Sys_UserInfo ui on u.SysId=ui.SysId inner join Sys_UserRole ur on 
+u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId where r.SysId = 'cf9d52cc-0500-4829-9611-fd0056961488'
 
 
 --得到指定角色有那些权限
 select p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,p.PrivilegeOperation,p.RecordStatus
- from Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey 
- where p.PrivilegeMaster = 10 and u.SysId='cf9d52cc-0500-4829-9611-fd0056961468'
+ from Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey 
+ where p.PrivilegeMaster = 11 and r.SysId='cf9d52cc-0500-4829-9611-fd0056961488'
 
 
 
