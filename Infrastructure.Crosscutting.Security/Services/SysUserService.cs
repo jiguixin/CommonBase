@@ -65,7 +65,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             
             return
                 UserRoleRepository.GetList<SysPrivilege>(
-                    "Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey ",Constant.SqlFieldsPrivilegeJoin
+                    Constant.SqlTableUserPrivilegeJoin,Constant.SqlFieldsPrivilegeJoin
                     ,
                     string.Format("p.PrivilegeMaster = {0} and u.SysId='{1}'", (int)PrivilegeMaster.User, userId)); 
         }

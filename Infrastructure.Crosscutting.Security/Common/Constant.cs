@@ -163,11 +163,35 @@ namespace Infrastructure.Crosscutting.Security.Common
                 "Sys_User u inner join Sys_UserInfo ui on u.SysId=ui.SysId inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId";
 
         /// <summary>
+        /// 用于获取用户包括到UserInfo的级联查询要显示的列
+        /// Sql语句：
+        /// u.CreateTime,u.LastLogin,u.RecordStatus,u.SysId,u.UserName,u.UserPwd,ui.SysId,ui.Address,ui.Email,ui.Fax,ui.Phone,ui.QQ,ui.RealName,ui.Sex,ui.Title
+        /// </summary>
+        public static readonly string SqlFieldsUserAndRoleIncludeUserInfoJoin = "u.CreateTime,u.LastLogin,u.RecordStatus,u.SysId,u.UserName,u.UserPwd,ui.SysId,ui.Address,ui.Email,ui.Fax,ui.Phone,ui.QQ,ui.RealName,ui.Sex,ui.Title";
+
+
+        /// <summary>
+        /// 用于，角色关联权限 的join查询
+        /// Sql语句:
+        /// Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey
+        /// </summary>
+       public static readonly string SqlTableRolePrivilegeJoin = "Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey";
+
+       /// <summary>
+       /// 用于，用户关联权限 的join查询
+       /// Sql语句:
+       /// Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey
+       /// </summary>
+       public static readonly string SqlTableUserPrivilegeJoin = "Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey";
+
+        /// <summary>
         /// 用于，角色关联权限，用户关联权限，查询具体的权限数据列
         /// Sql语句:
         /// p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey, p.PrivilegeOperation,p.RecordStatus
         /// </summary>
         public static readonly string SqlFieldsPrivilegeJoin ="p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,p.PrivilegeOperation,p.RecordStatus";
+
+        
 
 
         #endregion

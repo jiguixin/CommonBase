@@ -28,16 +28,16 @@ namespace Infrastructure.Crosscutting.Security.Services
             UserRepository = new SysUserRepository();
         }
         public IEnumerable<SysUser> GetUsers(string roleId)
-        {
+        { 
             return UserRepository.GetUserIncludeUserInfo(
-                Constant.SqlTableUserAndRoleIncludeUserInfoJoin, "u.CreateTime,u.LastLogin,u.RecordStatus,u.SysId,u.UserName,u.UserPwd,ui.SysId,ui.Address,ui.Email,ui.Fax,ui.Phone,ui.QQ,ui.RealName,ui.Sex,ui.Title",
+                Constant.SqlTableUserAndRoleIncludeUserInfoJoin, Constant.SqlFieldsUserAndRoleIncludeUserInfoJoin,
                 string.Format("r.SysId ='{0}'",roleId)); 
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string roleId)
         {
             return RoleRepository.GetList<SysPrivilege>(
-                "Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey",
+                Constant.SqlTableRolePrivilegeJoin,
                 Constant.SqlFieldsPrivilegeJoin,
                 string.Format("p.PrivilegeMaster = {0} and r.SysId='{1}'", (int)PrivilegeMaster.Role, roleId)); 
         }
