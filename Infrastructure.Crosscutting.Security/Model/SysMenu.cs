@@ -9,7 +9,9 @@
 using System;
 namespace Infrastructure.Crosscutting.Security.Model
 {
-	/// <summary>
+    using System.Collections.Generic;
+
+    /// <summary>
 	/// 菜单
 	/// </summary>
 	[Serializable]
@@ -65,6 +67,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 
 		#endregion Model
 
+        IEnumerable<SysButton> Buttons { get; set; }
 	}
 }
 

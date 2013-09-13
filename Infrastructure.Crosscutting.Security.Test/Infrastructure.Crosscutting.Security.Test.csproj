@@ -49,12 +49,16 @@
     <Compile Include="RepositoryTest\SysConfigRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysDataPrivilegeRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysMenuRepositoryTest.cs" />
-    <Compile Include="RepositoryTest\SysPrivilegeRepositoryTest.cs" />
+    <Compile Include="RepositoryTest\SysPrivilegeRepositoryTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RepositoryTest\SysRoleRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysUserInfoRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysUserRepositoryTest.cs" />
     <Compile Include="RepositoryTest\SysUserRoleRepositoryTest.cs" />
+    <Compile Include="ServiceTest\MenuServiceTest.cs" />
     <Compile Include="ServiceTest\RoleServiceTest.cs" />
+    <Compile Include="ServiceTest\SysButtonServiceTest.cs" />
     <Compile Include="ServiceTest\UserServiceTest.cs" />
     <Compile Include="TestClass1.cs" />
   </ItemGroup>

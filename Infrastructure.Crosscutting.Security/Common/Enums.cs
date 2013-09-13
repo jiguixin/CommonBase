@@ -14,7 +14,13 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// </summary>
     public enum PrivilegeMaster
     { 
+        /// <summary>
+        /// 10
+        /// </summary>
         User =10,
+        /// <summary>
+        /// 11
+        /// </summary>
         Role,
         Department, 
     }
@@ -24,7 +30,13 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// </summary>
     public enum PrivilegeAccess
     {
+        /// <summary>
+        /// 100
+        /// </summary>
         Menu =100, 
+        /// <summary>
+        /// 101
+        /// </summary>
         Button, 
         Data
     }

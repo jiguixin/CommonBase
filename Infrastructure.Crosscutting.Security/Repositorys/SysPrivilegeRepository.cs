@@ -35,7 +35,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         #endregion
-
+         
         public int DeleteSysPrivilegeByMaster(PrivilegeMaster master, string sysId)
         {
             using (var connection = Connection)
@@ -128,11 +128,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             {
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-                    int result;
+                    int result = 0;
                     //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
-                    if ((result = child(sysId,enumValue, tran)) >= 0)
+                    if ((result += child(sysId,enumValue, tran)) >= 0)
                     {
-                        if ((result = parent(sysId, tran)) >= 0)
+                        if ((result += parent(sysId, tran)) >= 0)
                         {
                             tran.Commit();
                             return result;
@@ -159,14 +159,14 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-                    int result;
+                    int result = 0;
                     //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
 
-                    if ((result = grandChild(sysId, enumValue, tran)) >= 0)
+                    if ((result += grandChild(sysId, enumValue, tran)) >= 0)
                     {
-                        if ((result = child(sysId, tran)) >= 0)
+                        if ((result += child(sysId, tran)) >= 0)
                         {
-                            if ((result = parent(sysId, tran)) >= 0)
+                            if ((result += parent(sysId, tran)) >= 0)
                             {
                                 tran.Commit();
                                 return result;
@@ -193,16 +193,16 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             { 
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-                    int result;
+                    int result = 0;
                     //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
 
-                    if ((result = reGrandChild(sysId, enumValue, tran)) >= 0)
+                    if ((result += reGrandChild(sysId, enumValue, tran)) >= 0)
                     {
-                        if ((result = grandChild(sysId, tran)) >= 0)
+                        if ((result += grandChild(sysId, tran)) >= 0)
                         {
-                            if ((result = child(sysId, tran)) >= 0)
+                            if ((result += child(sysId, tran)) >= 0)
                             {
-                                if ((result = parent(sysId, tran)) >= 0)
+                                if ((result += parent(sysId, tran)) >= 0)
                                 {
                                     tran.Commit();
                                     return result;

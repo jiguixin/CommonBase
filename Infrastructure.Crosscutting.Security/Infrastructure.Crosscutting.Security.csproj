@@ -56,6 +56,7 @@
     <Compile Include="Repositorys\ConnectionFactory.cs" />
     <Compile Include="Repositorys\IRepository.cs" />
     <Compile Include="Repositorys\Repository.cs" />
+    <Compile Include="Repositorys\RepositoryFactory.cs" />
     <Compile Include="Repositorys\SysButtonRepository.cs" />
     <Compile Include="Repositorys\SysConfigRepository.cs" />
     <Compile Include="Repositorys\SysDataPrivilegeRepository.cs" />
@@ -65,10 +66,13 @@
     <Compile Include="Repositorys\SysUserInfoRepository.cs" />
     <Compile Include="Repositorys\SysUserRepository.cs" />
     <Compile Include="Repositorys\SysUserRoleRepository.cs" />
+    <Compile Include="Services\ISysButtonService.cs" />
+    <Compile Include="Services\ISysMenuService.cs" />
     <Compile Include="Services\ISysRoleService.cs" />
     <Compile Include="Services\ISysUserService.cs" />
     <Compile Include="Services\SysButtonService.cs" />
     <Compile Include="Services\SysConfigService.cs" />
+    <Compile Include="Services\SysMenuService.cs" />
     <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
   </ItemGroup>

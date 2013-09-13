@@ -137,6 +137,7 @@ namespace Infrastructure.Crosscutting.Security.Common
          
         #endregion
 
+
         #endregion
 
         #region Sql 语句常量
@@ -191,8 +192,21 @@ namespace Infrastructure.Crosscutting.Security.Common
         /// </summary>
         public static readonly string SqlFieldsPrivilegeJoin ="p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,p.PrivilegeOperation,p.RecordStatus";
 
-        
+        /// <summary>
+        /// 用于，菜单关联权限 的join查询
+        /// Sql语句:
+        /// Sys_Menu m inner join Sys_Privilege p on m.SysId = p.PrivilegeAccessKey
+        /// </summary>
+        public static readonly string SqlTableMenuPrivilegeJoin =
+            "Sys_Menu m inner join Sys_Privilege p on m.SysId = p.PrivilegeAccessKey";
 
+        /// <summary>
+        /// 用于，按钮关联权限 的join查询
+        /// Sql语句:
+        /// Sys_Button b inner join Sys_Privilege p on b.SysId = p.PrivilegeAccessKey
+        /// </summary>
+        public static readonly string SqlTableButtonPrivilegeJoin =
+            "Sys_Button b inner join Sys_Privilege p on b.SysId = p.PrivilegeAccessKey";
 
         #endregion
     }

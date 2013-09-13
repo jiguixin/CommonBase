@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     {
         public SysButtonRepository()
         {
-            PrivilegeRepository = new SysPrivilegeRepository();
+            PrivilegeRepository = new SysPrivilegeRepository(); 
         }
         #region 属性
  
@@ -41,9 +41,23 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         public SysPrivilegeRepository PrivilegeRepository { get; private set; }
-
+         
+          
         #endregion
 
+        internal override dynamic Mapping(SysButton item)
+        {
+            return new
+                       {
+                           SysId = item.SysId,
+                           MenuId = item.MenuId,
+                           BtnName = item.BtnName,
+                           BtnIcon = item.BtnIcon,
+                           BtnOrder = item.BtnOrder,
+                           RecordStatus = item.RecordStatus
+                       };
+        }
+         
         public int DeleteByMenuId(string menuId, IDbTransaction trans)
         {
             return base.DeleteByWhere(string.Format("{0}='{1}'",Constant.ColumnSysButtonMenuId, menuId), trans);

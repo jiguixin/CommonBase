@@ -17,6 +17,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	{
 		public SysButton()
 		{}
+
 		#region Model
 		/// <summary>
         /// 按钮编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
@@ -49,6 +50,8 @@ namespace Infrastructure.Crosscutting.Security.Model
 		public string RecordStatus { get; set; }
 
 		#endregion Model
+
+        public SysMenu Menu { get; set; }
 
 	}
 }

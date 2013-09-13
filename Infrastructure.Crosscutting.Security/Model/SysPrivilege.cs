@@ -9,7 +9,9 @@
 using System;
 namespace Infrastructure.Crosscutting.Security.Model
 {
-	/// <summary>
+    using Infrastructure.Crosscutting.Security.Common;
+
+    /// <summary>
 	/// 功能 权限
 	/// </summary>
 	[Serializable]
@@ -26,7 +28,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 权限拥有者，如：用户、角色、部门等 类型
 		/// </summary>
-		public string PrivilegeMaster { get; set; }
+        public PrivilegeMaster PrivilegeMaster { get; set; }
 
 		/// <summary>
 		/// 对应权限拥有者的标识编号。如：UserId、RoleId、DepId
@@ -36,7 +38,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 能被访问的是:菜单、按钮 类型
 		/// </summary>
-		public string PrivilegeAccess { get; set; }
+        public PrivilegeAccess PrivilegeAccess { get; set; }
 
 		/// <summary>
 		/// 对应 菜单、按钮Id
@@ -46,7 +48,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 该权限的操作如：禁用、启用、分配、授权等权限
 		/// </summary>
-		public int PrivilegeOperation { get; set; }
+        public PrivilegeOperation PrivilegeOperation { get; set; }
 
 		/// <summary>
 		/// 该条记录的操作情况，用于记录最后一次谁在什么时候创建、修改了该记录

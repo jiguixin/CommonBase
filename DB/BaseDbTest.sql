@@ -47,5 +47,19 @@ select p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.Privil
 
 
 
---------------------------------
-delete from Sys_Role
+--得到指定菜单有那些权限
+
+select 
+p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,
+p.PrivilegeOperation,p.RecordStatus 
+from Sys_Menu m inner join Sys_Privilege p on m.SysId = p.PrivilegeAccessKey where p.PrivilegeAccess = 100 and m.SysId = 
+
+
+--得到指定按钮有那些权限
+
+select 
+p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,
+p.PrivilegeOperation,p.RecordStatus 
+from Sys_Menu m inner join Sys_Privilege p on m.SysId = p.PrivilegeAccessKey where p.PrivilegeAccess = 100 
+
+-------------------------------- 
