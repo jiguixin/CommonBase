@@ -60,6 +60,11 @@ from Sys_Menu m inner join Sys_Privilege p on m.SysId = p.PrivilegeAccessKey whe
 select 
 p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,
 p.PrivilegeOperation,p.RecordStatus 
-from Sys_Menu m inner join Sys_Privilege p on m.SysId = p.PrivilegeAccessKey where p.PrivilegeAccess = 100 
+from Sys_Button b inner join Sys_Privilege p on b.SysId = p.PrivilegeAccessKey where p.PrivilegeAccess = 101 
 
 -------------------------------- 
+
+--得到该菜单下的打按钮,在获取该按钮下的第一个权限
+
+select * from Sys_Privilege where PrivilegeAccessKey in (
+select SysId from Sys_Button where MenuId = 'cf9d52cc-0500-4829-9611-fd0056961234') and PrivilegeAccess = '101'
