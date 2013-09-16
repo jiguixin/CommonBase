@@ -67,7 +67,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 
 		#endregion Model
 
-        IEnumerable<SysButton> Buttons { get; set; }
+        public IEnumerable<SysButton> Buttons { get; set; }
 	}
 }
 

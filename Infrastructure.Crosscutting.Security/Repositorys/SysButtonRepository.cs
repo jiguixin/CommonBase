@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     {
         public SysButtonRepository()
         {
-            PrivilegeRepository = new SysPrivilegeRepository(); 
+            PrivilegeRepository = RepositoryFactory.PrivilegeRepository; 
         }
         #region 属性
  

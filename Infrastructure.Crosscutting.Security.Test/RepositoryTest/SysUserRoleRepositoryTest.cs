@@ -19,7 +19,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            repository = new SysUserRoleRepository();
+            repository = RepositoryFactory.UserRoleRepository;
         }
 
         /// <summary>

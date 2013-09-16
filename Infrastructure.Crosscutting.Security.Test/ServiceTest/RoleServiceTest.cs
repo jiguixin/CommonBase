@@ -28,7 +28,7 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            RoleService = new SysRoleService();
+            RoleService = ServiceFactory.RoleService;
         }
 
         /// <summary>

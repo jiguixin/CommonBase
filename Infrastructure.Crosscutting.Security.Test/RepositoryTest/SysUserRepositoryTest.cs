@@ -22,8 +22,8 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            repository = new SysUserRepository();
-            service = new SysUserService();
+            repository =RepositoryFactory.UserRepository;
+            service = ServiceFactory.UserService;
         }
 
         /// <summary>

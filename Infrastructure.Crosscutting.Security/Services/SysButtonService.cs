@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public SysButtonService()
         {
-            ButtonRepository = new SysButtonRepository();
+            ButtonRepository = RepositoryFactory.ButtonRepository;
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string buttonId)

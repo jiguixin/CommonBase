@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Common\Constant.cs" />
+    <Compile Include="Common\DataRecordStatus.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Model\SysButton.cs" />
     <Compile Include="Model\SysConfig.cs" />
@@ -68,11 +69,14 @@
     <Compile Include="Repositorys\SysUserRoleRepository.cs" />
     <Compile Include="Services\ISysButtonService.cs" />
     <Compile Include="Services\ISysMenuService.cs" />
+    <Compile Include="Services\ISysPrivilegeService.cs" />
     <Compile Include="Services\ISysRoleService.cs" />
     <Compile Include="Services\ISysUserService.cs" />
+    <Compile Include="Services\ServiceFactory.cs" />
     <Compile Include="Services\SysButtonService.cs" />
     <Compile Include="Services\SysConfigService.cs" />
     <Compile Include="Services\SysMenuService.cs" />
+    <Compile Include="Services\SysPrivilegeService.cs" />
     <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
   </ItemGroup>

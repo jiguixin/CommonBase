@@ -27,7 +27,7 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            UserService = new SysUserService();
+            UserService = ServiceFactory.UserService;
         }
 
         /// <summary>

@@ -208,6 +208,13 @@ namespace Infrastructure.Crosscutting.Security.Common
         public static readonly string SqlTableButtonPrivilegeJoin =
             "Sys_Button b inner join Sys_Privilege p on b.SysId = p.PrivilegeAccessKey";
 
+        /// <summary>
+        /// 用于检查该条权限记录是否存在
+        /// Sql语句:
+        /// PrivilegeMaster='{0}' and PrivilegeMasterKey='{1}' and PrivilegeAccess = '{2}' and PrivilegeAccessKey='{3}'
+        /// </summary>
+        public static readonly string SqlExistsSysPrivilegeWhere = "PrivilegeMaster='{0}' and PrivilegeMasterKey='{1}' and PrivilegeAccess = '{2}' and PrivilegeAccessKey='{3}'";
+
         #endregion
     }
 }

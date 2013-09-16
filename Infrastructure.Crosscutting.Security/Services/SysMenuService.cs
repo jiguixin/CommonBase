@@ -21,7 +21,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         public SysMenuService()
         {
-            MenuRepository = new SysMenuRepository();
+            MenuRepository = RepositoryFactory.MenuRepository;
         }
 
         public SysMenuRepository MenuRepository { get; private set; }

@@ -59,6 +59,7 @@
     <Compile Include="ServiceTest\MenuServiceTest.cs" />
     <Compile Include="ServiceTest\RoleServiceTest.cs" />
     <Compile Include="ServiceTest\SysButtonServiceTest.cs" />
+    <Compile Include="ServiceTest\SysPrivilegeServiceTest.cs" />
     <Compile Include="ServiceTest\UserServiceTest.cs" />
     <Compile Include="TestClass1.cs" />
   </ItemGroup>
@@ -66,6 +67,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
+      <Project>{106C7F00-C03F-4E29-87AF-ACD1BA292078}</Project>
+      <Name>Infrastructure.Crosscutting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure.Crosscutting.Security\Infrastructure.Crosscutting.Security.csproj">
       <Project>{f51155b4-3b3c-4061-bc70-980045513cf2}</Project>
       <Name>Infrastructure.Crosscutting.Security</Name>

@@ -24,8 +24,8 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public SysRoleService()
         {
-            RoleRepository = new SysRoleRepository();
-            UserRepository = new SysUserRepository();
+            RoleRepository = RepositoryFactory.RoleRepository;
+            UserRepository = RepositoryFactory.UserRepository;
         }
         public IEnumerable<SysUser> GetUsers(string roleId)
         { 

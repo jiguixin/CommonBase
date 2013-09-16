@@ -10,17 +10,26 @@ using Infrastructure.Crosscutting.Security.Repositorys;
 
 namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
 {
+    using Infrastructure.Crosscutting.Utility;
+
     [TestFixture]
     public class SysPrivilegeRepositoryTest
     {
         private IRepository<SysPrivilege> repository;
+
+        private SysMenuRepository menuRepository;
+
+        private SysRoleRepository roleRepository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            repository = new SysPrivilegeRepository();
+            repository = RepositoryFactory.PrivilegeRepository;
+
+            this.menuRepository = RepositoryFactory.MenuRepository;
+            this.roleRepository = RepositoryFactory.RoleRepository;
         }
 
         /// <summary>
@@ -122,6 +131,12 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         {
             int total = 0;
             var s = repository.GetPaged("Sys_Privilege", "", "PrivilegeMaster='cf9d52cc-0500-4829-9611-fd0056961468'", "", 1, 20, 0, out total);
+        }
+
+        [Test]
+        public void AddByRole()
+        {
+           
         }
     }
 }

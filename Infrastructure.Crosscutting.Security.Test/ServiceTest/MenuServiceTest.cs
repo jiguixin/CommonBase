@@ -27,7 +27,7 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            MenuService = new SysMenuService();
+            MenuService = ServiceFactory.MenuService;
         }
 
         /// <summary>

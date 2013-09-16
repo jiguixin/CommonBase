@@ -16,9 +16,9 @@ namespace Infrastructure.Crosscutting.Security.Services
     {  
         public SysUserService()
         {
-            UserRepository = new SysUserRepository();
-            UserRoleRepository = new SysUserRoleRepository();
-            RoleRepository = new SysRoleRepository();
+            UserRepository = RepositoryFactory.UserRepository;
+            UserRoleRepository = RepositoryFactory.UserRoleRepository;
+            RoleRepository = RepositoryFactory.RoleRepository;
         }
 
         public SysUserRepository UserRepository { get; private set; }
@@ -40,7 +40,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                     Constant.ColumnSysUserUserPwd,
                     Crypto.Encrypt(pwd.Trim())));
 
-            if (lstResult != null && lstResult.Any())
+            if (lstResult.FirstOrDefault() > 0)
             {
                 return true;
             } 

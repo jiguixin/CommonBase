@@ -212,16 +212,16 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 }
             }
         }
-         
+
         public virtual bool Exists(string sysId)
         {
             IEnumerable<int> lstResult = GetList<int>(Constant.SqlCount, CreateSysIdCondition(sysId));
 
-           if (lstResult != null && lstResult.Any())
-           {
-               return true;
-           }
-           return false;
+            if (lstResult.FirstOrDefault() > 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public virtual TEntity GetModel(string sysId)

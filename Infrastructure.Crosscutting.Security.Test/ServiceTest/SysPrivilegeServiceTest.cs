@@ -1,8 +1,8 @@
 ﻿/*
- *名称：SysButtonServiceTest
+ *名称：SysPrivilegeServiceTest
  *功能：
  *创建人：吉桂昕
- *创建时间：2013-09-13 02:17:39
+ *创建时间：2013-09-16 05:47:32
  *修改时间：
  *备注：
  */
@@ -13,21 +13,19 @@ using NUnit.Framework;
 
 namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
 {
-    using System.Linq;
-
     using Infrastructure.Crosscutting.Security.Services;
 
     [TestFixture]
-    public class SysButtonServiceTest
+    public class SysPrivilegeServiceTest
     {
-        private ISysButtonService ButtonService;
+        private ISysPrivilegeService privilegeService;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            ButtonService = ServiceFactory.ButtonService;
+            this.privilegeService = ServiceFactory.PrivilegeService;
         }
 
         /// <summary>
@@ -55,18 +53,9 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
         }
 
         [Test]
-        public void GetPrivilegeTest()
+        public void InitDataByRoleTest()
         {
-            var lstResult = ButtonService.GetPrivilege("cf9d52cc-0500-4829-9611-fd0056961921");
-
-            if (lstResult != null && lstResult.Any())
-            {
-                Console.WriteLine(lstResult.Count());
-            }
-            else
-            {
-                Console.WriteLine("没有查到值");
-            }
+            privilegeService.InitDataByRole();
         }
 
     }

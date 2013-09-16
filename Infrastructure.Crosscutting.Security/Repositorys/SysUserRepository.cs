@@ -13,9 +13,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     {
         public SysUserRepository() 
         {
-            UserInfoRepository = new SysUserInfoRepository();
-            PrivilegeRepository = new SysPrivilegeRepository();
-            UserRoleRepository = new SysUserRoleRepository();
+            UserInfoRepository = RepositoryFactory.UserInfoRepository;
+            PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
+            UserRoleRepository = RepositoryFactory.UserRoleRepository;
         }
 
         #region 属性

@@ -19,7 +19,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            repository = new SysDataPrivilegeRepository();
+            repository = RepositoryFactory.DataPrivilegeRepository;
         }
 
         /// <summary>

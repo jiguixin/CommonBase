@@ -14,24 +14,16 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     using System.Collections.Generic;
 
     public static class RepositoryFactory
-    {
-        public static readonly IDictionary<string, object> Factories;
-
-        //todo:将其它对象用于工厂
-        static RepositoryFactory()
-        {
-            Factories = new Dictionary<string,object>();
-            Factories.Add("SysUserRepository", new SysUserRepository());
-            Factories.Add("SysUserInfoRepository", new SysUserInfoRepository());
-            Factories.Add("SysUserRoleRepository", new SysUserRoleRepository());
-            Factories.Add("SysRoleRepository", new SysRoleRepository());
-            Factories.Add("SysDataPrivilegeRepository", new SysDataPrivilegeRepository());
-            Factories.Add("SysButtonRepository", new SysButtonRepository());
-            Factories.Add("SysMenuRepository", new SysMenuRepository());
-            Factories.Add("SysPrivilegeRepository", new SysPrivilegeRepository());
-            Factories.Add("SysConfigRepository", new SysConfigRepository());
-
-        }
-
+    { 
+        public static readonly SysUserRepository UserRepository = new SysUserRepository();
+        public static readonly SysUserInfoRepository UserInfoRepository = new SysUserInfoRepository();
+        public static readonly SysUserRoleRepository UserRoleRepository = new SysUserRoleRepository();
+        public static readonly SysRoleRepository RoleRepository = new SysRoleRepository();
+        public static readonly SysDataPrivilegeRepository DataPrivilegeRepository = new SysDataPrivilegeRepository();
+        public static readonly SysButtonRepository ButtonRepository = new SysButtonRepository();
+        public static readonly SysMenuRepository MenuRepository = new SysMenuRepository();
+        public static readonly SysPrivilegeRepository PrivilegeRepository = new SysPrivilegeRepository();
+        public static readonly SysConfigRepository ConfigRepository = new SysConfigRepository(); 
+         
     }
 }

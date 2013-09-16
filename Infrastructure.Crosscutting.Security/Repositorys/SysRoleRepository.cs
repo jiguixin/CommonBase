@@ -11,8 +11,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     {
         public SysRoleRepository()
         {
-            PrivilegeRepository = new SysPrivilegeRepository();
-            UserRoleRepository = new SysUserRoleRepository();
+            PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
+            UserRoleRepository = RepositoryFactory.UserRoleRepository;
         }
 
         public SysPrivilegeRepository PrivilegeRepository { get; private set; }
