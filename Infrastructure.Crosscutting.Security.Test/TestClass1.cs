@@ -128,12 +128,13 @@ namespace Infrastructure.Crosscutting.Security.Test
         [Test]
         public void Test()
         {
-         //   Console.WriteLine(DateTime.Now.ToString("yyyyMMddHHmmss") );
+         
             Random ran = new Random();
             ;
             for (int i = 0; i < 100; i++)
             {
-                Console.WriteLine(ran.Next(10000, 99999) + "--");
+                Console.WriteLine(DateTime.Now.ToString("yyyyMMddHHmmssfffff"));
+               // Console.WriteLine(ran.Next(10000, 99999) + "--");
             }
 
         }
