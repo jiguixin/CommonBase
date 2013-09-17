@@ -81,8 +81,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                             sysMenu.SysId));
 
                     if (chkResult.FirstOrDefault() == 0)
-                    {
-                        Thread.Sleep(500);
+                    { 
                         model.SysId = Util.NewId();
 
                         Console.WriteLine(repository.Add(model));
