@@ -15,6 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
+    using System.Threading;
 
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
@@ -42,6 +43,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// </summary>
         public void InitDataByRole()
         {
+            int num = 1;
             //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
             var lstMenu = this.menuRepository.GetList();
               
@@ -58,14 +60,13 @@ namespace Infrastructure.Crosscutting.Security.Services
                 foreach (var sysMenu in lstMenu)
                 {
                     var model = new SysPrivilege
-                    {
-                        SysId = Util.NewSequentialGuid().ToString(),
+                    { 
                         PrivilegeMaster = PrivilegeMaster.Role,
                         PrivilegeMasterKey = sysRole.SysId,
                         PrivilegeAccess = PrivilegeAccess.Menu,
                         PrivilegeAccessKey = sysMenu.SysId,
                         PrivilegeOperation = PrivilegeOperation.Disable,
-                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
                     };
                      
                     #region 检查该条数据是否存在
@@ -81,6 +82,9 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     if (chkResult.FirstOrDefault() == 0)
                     {
+                        Thread.Sleep(500);
+                        model.SysId = Util.NewId();
+
                         Console.WriteLine(repository.Add(model));
                     }
 
@@ -89,14 +93,13 @@ namespace Infrastructure.Crosscutting.Security.Services
                     foreach (var sysButton in sysMenu.Buttons)
                     {
                         model = new SysPrivilege
-                        {
-                            SysId = Util.NewSequentialGuid().ToString(),
+                        { 
                             PrivilegeMaster = PrivilegeMaster.Role,
                             PrivilegeMasterKey = sysRole.SysId,
                             PrivilegeAccess = PrivilegeAccess.Button,
                             PrivilegeAccessKey = sysButton.SysId,
                             PrivilegeOperation = PrivilegeOperation.Disable,
-                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
                         }; 
 
                         #region 检查该条数据是否存在
@@ -111,7 +114,8 @@ namespace Infrastructure.Crosscutting.Security.Services
                                   sysButton.SysId));
 
                         if (chkResult.FirstOrDefault() == 0)
-                        {
+                        { 
+                            model.SysId = Util.NewId();
                             Console.WriteLine(repository.Add(model));
                         }
 

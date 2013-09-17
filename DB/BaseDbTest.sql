@@ -68,3 +68,5 @@ from Sys_Button b inner join Sys_Privilege p on b.SysId = p.PrivilegeAccessKey w
 
 select * from Sys_Privilege where PrivilegeAccessKey in (
 select SysId from Sys_Button where MenuId = 'cf9d52cc-0500-4829-9611-fd0056961234') and PrivilegeAccess = '101'
+
+

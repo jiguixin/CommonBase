@@ -124,5 +124,27 @@ namespace Infrastructure.Crosscutting.Security.Test
                 connection.Execute("Sys_Button_Exists", p, commandType: CommandType.StoredProcedure);
             }
         }
+
+        [Test]
+        public void Test()
+        {
+         //   Console.WriteLine(DateTime.Now.ToString("yyyyMMddHHmmss") );
+            Random ran = new Random();
+            ;
+            for (int i = 0; i < 100; i++)
+            {
+                Console.WriteLine(ran.Next(10000, 99999) + "--");
+            }
+
+        }
+        static int GetRandomSeed()
+        {
+            int iSeed = 10;
+            Random ro = new Random(10);
+            long tick = DateTime.Now.Ticks;
+            Random ran = new Random((int)(tick & 0xffffffffL) | (int)(tick >> 32));
+
+            return ro.Next(0, 10); 
+        }
     }
 }
