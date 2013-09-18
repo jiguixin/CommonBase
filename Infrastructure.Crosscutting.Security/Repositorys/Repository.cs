@@ -16,9 +16,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     using System.Linq;
 
     using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Model;
+    using Infrastructure.Crosscutting.Utility;
     using Infrastructure.Data.Ado.Dapper;
-      
-    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+
+    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
     { 
         #region Abstract Property
           
@@ -42,19 +44,33 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             get { return ConnectionFactory.CreateMsSqlConnection(); }
         }
 
+        /// <summary>
+        /// 添加时可以不给实体的SysId赋值
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public virtual int Add(TEntity item)
         {
             using (var connection = Connection)
-            { 
+            {
+                ChkSysId(item);
+
                 var parameters = (object)Mapping(item);
                  
                 return connection.Execute(AddProc, parameters,
                     commandType: CommandType.StoredProcedure); 
             }
         }
-
+         
+        /// <summary>
+        /// 添加时可以不给实体的SysId赋值
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="trans"></param>
+        /// <returns></returns>
         public virtual int Add(TEntity item, IDbTransaction trans)
         {
+            ChkSysId(item);
             var parameters = (object)Mapping(item);
             return trans.Connection.Execute(AddProc, parameters,trans,
                     commandType: CommandType.StoredProcedure); 
@@ -306,6 +322,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         #endregion
 
         #region Helper
+
+        /// <summary>
+        /// 在添加时检查SysId是否有值，如果没有值就默认赋值
+        /// </summary>
+        /// <param name="item"></param>
+        private static void ChkSysId(TEntity item)
+        {
+            if (string.IsNullOrEmpty(item.SysId))
+            {
+                item.SysId = Util.NewId();
+            }
+        }
 
         /// <summary>
         /// 结果为：SysId='sysId'

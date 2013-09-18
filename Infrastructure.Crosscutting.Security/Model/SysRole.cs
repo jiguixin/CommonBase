@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 角色
 	/// </summary>
 	[Serializable]
-	public partial class SysRole
+    public partial class SysRole : EntityBase
 	{
 		public SysRole()
 		{}
@@ -23,7 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 角色编号
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 角色名

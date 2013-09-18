@@ -44,6 +44,7 @@
     <Compile Include="Common\Constant.cs" />
     <Compile Include="Common\DataRecordStatus.cs" />
     <Compile Include="Common\Enums.cs" />
+    <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\SysButton.cs" />
     <Compile Include="Model\SysConfig.cs" />
     <Compile Include="Model\SysDataPrivilege.cs" />

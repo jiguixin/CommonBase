@@ -13,7 +13,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 数据 权限
 	/// </summary>
 	[Serializable]
-	public partial class SysDataPrivilege
+    public partial class SysDataPrivilege : EntityBase
 	{
 		public SysDataPrivilege()
 		{}
@@ -21,7 +21,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 数据 权限表 编号
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 数据 权限表 数据源，如:单个表，级联表

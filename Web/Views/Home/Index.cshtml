@@ -1,23 +1,31 @@
 ﻿@{
     this.ViewBag.Title = "Index";
 }
-
-<h2>登录成功</h2>
-
-<fieldset>
-    <legend>用户状态</legend>
-    <form action="@this.Request.RawUrl" method="post">
-        @if (this.Request.IsAuthenticated)
-        {
-            string userName = this.Context.User.Identity.Name;
-            <label>当前用户已登录，登录名：@userName</label>
-            <br />
-            @Html.ActionLink("退出", "LogOff", "Login")
-        }
-        else
-        {
-            <b>当前用户还未登录。</b>
-        }
-                                  
-    </form>
-</fieldset>
+<style>
+    li {
+        list-style-type: none; 
+    }
+</style>
+<body class="easyui-layout">
+	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">系统标题</div>
+    <div data-options="region:'west',split:true,title:'导航菜单'" style="width:200px;">
+        <div class="easyui-accordion">
+            <div title="系统管理">
+                <ul>
+                    <li> 
+                        <a href="#" data-options="iconCls:'icon-search'">用户管理</a>
+                    </li>
+                    <li><a href="#">角色管理</a></li>
+                    <li><a href="#">角色用户管理</a></li>
+                    <li><a href="#">菜单模块管理</a></li>
+                    <li><a href="#">角色模块权限</a></li>
+                    <li><a href="#">角色菜单管理</a></li>
+                    <li><a href="#">系统配置</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+	<div data-options="region:'east',split:true,collapsed:true,title:'详情'" style="width:100px;padding:10px;">详情区域</div>
+    <div data-options="region:'south',border:false" style="height:25px;background:#A9FACD;text-align:center">版本信息</div>
+	<div data-options="region:'center',title:'首页'"></div>
+</body>

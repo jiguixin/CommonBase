@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 菜单
 	/// </summary>
 	[Serializable]
-	public partial class SysMenu
+	public partial class SysMenu:EntityBase
 	{
 		public SysMenu()
 		{}
@@ -23,7 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
         /// 菜单编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
          
 		/// <summary>
 		/// 对应的父菜单编号

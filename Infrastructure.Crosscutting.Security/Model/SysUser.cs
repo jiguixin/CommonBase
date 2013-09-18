@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 用户
 	/// </summary>
 	[Serializable]
-	public partial class SysUser
+    public partial class SysUser : EntityBase
 	{
 		public SysUser()
 		{}
@@ -23,7 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 用户编号
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 用户名

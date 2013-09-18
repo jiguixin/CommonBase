@@ -13,7 +13,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 按钮
 	/// </summary>
 	[Serializable]
-	public partial class SysButton
+	public partial class SysButton:EntityBase
 	{
 		public SysButton()
 		{}
@@ -22,7 +22,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
         /// 按钮编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 菜单系统编号

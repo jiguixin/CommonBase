@@ -28,21 +28,33 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         private readonly SysMenuRepository menuRepository;
 
+        private readonly SysButtonRepository buttonRepository;
+
         private readonly SysRoleRepository roleRepository;
+
+        private readonly SysUserRepository userRepository;
+
+
 
         public SysPrivilegeService()
         {
             repository = RepositoryFactory.PrivilegeRepository; 
             this.menuRepository = RepositoryFactory.MenuRepository;
             this.roleRepository = RepositoryFactory.RoleRepository;
+            buttonRepository = RepositoryFactory.ButtonRepository;
+            userRepository = RepositoryFactory.UserRepository;
         }
 
         /// <summary> 
         /// 遍历角色数据，分别创建，菜单和按钮权限记录，默认权限不可用。
-        /// 注：在添加时要优先检查该权限记录是否存在。存在者不添加，不存在者添加。
+        /// 注：在添加时要优先检查该权限记录是否存在。存在则不添加，不存在则添加。
         /// </summary>
         public void InitDataByRole()
         {
+
+            InitData<SysRole>(lstSource:roleRepository.GetList(),master:PrivilegeMaster.Role);
+
+            /*
             int num = 1;
             //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
             var lstMenu = this.menuRepository.GetList();
@@ -122,17 +134,96 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     }
                 }
-            }
-             
+            }*/
         }
 
+        /// <summary> 
+        /// 遍历用户数据，分别创建，菜单和按钮权限记录，默认权限不可用。
+        /// 注：在添加时要优先检查该权限记录是否存在。存在则不添加，不存在则添加。
+        /// </summary>
         public void InitDataByUser()
         {
-            throw new NotImplementedException();
+            InitData<SysUser>(userRepository.GetList(), PrivilegeMaster.User);
         }
 
         #region helper
 
+        public void InitData<T>(IEnumerable<T> lstSource, PrivilegeMaster master) where T : EntityBase
+        {
+            int num = 1;
+            //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
+            var lstMenu = this.menuRepository.GetList();
+
+            foreach (var sysMenu in lstMenu)
+            {
+                sysMenu.Buttons = this.menuRepository.GetButtons(sysMenu.SysId);
+            }
+
+            foreach (var source in lstSource)
+            {
+                foreach (var sysMenu in lstMenu)
+                {
+                    var model = new SysPrivilege
+                    {
+                        PrivilegeMaster = master,
+                        PrivilegeMasterKey = source.SysId,
+                        PrivilegeAccess = PrivilegeAccess.Menu,
+                        PrivilegeAccessKey = sysMenu.SysId,
+                        PrivilegeOperation = PrivilegeOperation.Disable,
+                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
+                    };
+
+                    #region 检查该条数据是否存在
+
+                    var chkResult = repository.GetList<int>(
+                        Constant.SqlCount,
+                        string.Format(
+                            Constant.SqlExistsSysPrivilegeWhere,
+                            (int)master,
+                            source.SysId,
+                            (int)PrivilegeAccess.Menu,
+                            sysMenu.SysId));
+
+                    if (chkResult.FirstOrDefault() == 0)
+                    { 
+                        Console.WriteLine(repository.Add(model));
+                    }
+
+                    #endregion
+
+                    foreach (var sysButton in sysMenu.Buttons)
+                    {
+                        model = new SysPrivilege
+                        {
+                            PrivilegeMaster = master,
+                            PrivilegeMasterKey = source.SysId,
+                            PrivilegeAccess = PrivilegeAccess.Button,
+                            PrivilegeAccessKey = sysButton.SysId,
+                            PrivilegeOperation = PrivilegeOperation.Disable,
+                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
+                        };
+
+                        #region 检查该条数据是否存在
+
+                        chkResult = repository.GetList<int>(
+                              Constant.SqlCount,
+                              string.Format(
+                                  Constant.SqlExistsSysPrivilegeWhere,
+                                  (int)master,
+                                  source.SysId,
+                                  (int)PrivilegeAccess.Button,
+                                  sysButton.SysId));
+
+                        if (chkResult.FirstOrDefault() == 0)
+                        { 
+                            Console.WriteLine(repository.Add(model));
+                        }
+
+                        #endregion 
+                    }
+                }
+            }
+        }
         
 
         #endregion

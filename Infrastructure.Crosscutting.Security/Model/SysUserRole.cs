@@ -13,7 +13,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 用户角色
 	/// </summary>
 	[Serializable]
-	public partial class SysUserRole
+    public partial class SysUserRole : EntityBase
 	{
 		public SysUserRole()
 		{}
@@ -21,7 +21,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 用户角色编号
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 用户编号

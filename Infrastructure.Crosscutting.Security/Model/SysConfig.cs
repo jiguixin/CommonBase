@@ -13,7 +13,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 系统配置
 	/// </summary>
 	[Serializable]
-	public partial class SysConfig
+	public partial class SysConfig:EntityBase
 	{
 		public SysConfig()
 		{}
@@ -21,7 +21,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 编号
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 系统配置Key

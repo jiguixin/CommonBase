@@ -15,7 +15,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 	/// 功能 权限
 	/// </summary>
 	[Serializable]
-	public partial class SysPrivilege
+    public partial class SysPrivilege : EntityBase
 	{
 		public SysPrivilege()
 		{}
@@ -23,7 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
 		/// 权限编号
 		/// </summary>
-		public string SysId { get; set; }
+		//public string SysId { get; set; }
 
 		/// <summary>
 		/// 权限拥有者，如：用户、角色、部门等 类型

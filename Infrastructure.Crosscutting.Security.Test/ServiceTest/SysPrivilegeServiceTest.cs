@@ -58,5 +58,11 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
             privilegeService.InitDataByRole();
         }
 
+        [Test]
+        public void InitDataByUserTest()
+        {
+            privilegeService.InitDataByUser();
+        }
+
     }
 }
