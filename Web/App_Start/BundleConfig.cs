@@ -12,24 +12,22 @@ namespace Web
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/easyui").Include(
-                        "~/Content/easyui/locale/easyui-lang-zh_CN.js",
-                        "~/Content/easyui/jquery.easyui.min.js",
+                        "~/Content/easyui/jquery-easyui-min.js",
+                        "~/Content/easyui/locale/easyui-lang-zh_CN.js", 
                         "~/Content/easyui/easyloader.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));
-
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                       "~/Scripts/jquery-{version}.js"));
-
+              
             // 使用要用于开发和学习的 Modernizr 的开发版本。然后，当你做好
             // 生产准备时，请使用 http://modernizr.com 上的生成工具来仅选择所需的测试。
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
+
             bundles.Add(
                 new StyleBundle("~/Content/easyui/css").Include(
                     "~/Content/easyui/themes/default/easyui.css",
@@ -61,7 +59,7 @@ namespace Web
                     "~/Content/easyui/themes/default/validatebox.css",
                     "~/Content/easyui/themes/default/window.css"*/
 
-            bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
+             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",
                         "~/Content/themes/base/jquery.ui.resizable.css",
                         "~/Content/themes/base/jquery.ui.selectable.css",

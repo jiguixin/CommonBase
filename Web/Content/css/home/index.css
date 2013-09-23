@@ -1,0 +1,45 @@
+﻿
+#noscript {
+    background: white;
+    height: 2046px;
+    left: 0px;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    width: 100%;
+    z-index: 100000;
+}
+
+.easyui-layout {
+    overflow-y: hidden;
+}
+
+#header {
+    background: url(../../Images/layout-browser-hd-bg.gif) #7f99be repeat-x center 50%;
+    color: #fff;
+    font-family: Verdana, 微软雅黑, 黑体;
+    height: 30px;
+    line-height: 20px;
+    overflow: hidden;
+} 
+
+#header #welcome {
+    float: right; padding-right: 20px;
+}
+
+#header #appName {
+    font-size: 16px; padding-left: 10px;
+} 
+
+#west {
+    width: 180px;
+}
+
+#mainPanel {
+    background: #eee;overflow-y: hidden;
+}
+
+
+#footerPanel {
+    background: #D2E0F2; height: 30px;
+}

@@ -137,8 +137,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\home\index.css" />
     <Content Include="Content\easyui\easyloader.js" />
-    <Content Include="Content\easyui\jquery.easyui.min.js" />
+    <Content Include="Content\easyui\jquery-easyui-min.js" />
     <Content Include="Content\easyui\locale\easyui-lang-af.js" />
     <Content Include="Content\easyui\locale\easyui-lang-ar.js" />
     <Content Include="Content\easyui\locale\easyui-lang-bg.js" />
@@ -2186,6 +2187,17 @@
     <Content Include="Content\easyui\themes\metro\tree.css" />
     <Content Include="Content\easyui\themes\metro\validatebox.css" />
     <Content Include="Content\easyui\themes\metro\window.css" />
+    <Content Include="Content\Images\blocks.gif" />
+    <Content Include="Content\Images\CategorizeMenu.png" />
+    <Content Include="Content\Images\directory.png" />
+    <Content Include="Content\Images\layout-browser-hd-bg.gif" />
+    <Content Include="Content\Images\nav_link.png" />
+    <Content Include="Content\Images\noscript.gif" />
+    <Content Include="Content\Images\plugin_big.gif" />
+    <Content Include="Content\Images\ShowCustomPropertiesPage.png" />
+    <Content Include="Content\Images\tabicons.png" />
+    <Content Include="Content\Images\TableDrawTable.png" />
+    <Content Include="Content\Images\tools-sprites-trans.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -2244,6 +2256,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Error.html" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Scripts\Home\index.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
