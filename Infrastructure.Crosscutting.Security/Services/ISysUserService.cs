@@ -12,7 +12,13 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         SysUserRepository UserRepository { get; }
 
-        bool CheckUser(string name, string pwd);
+        /// <summary>
+        /// 根据用户名、密码查询该用户是否存在，如果不存在者会返回null
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
+        SysUser CheckUser(string name, string pwd);
 
         int AddUser(SysUser model);
 

@@ -13,6 +13,10 @@ namespace Web.Controllers
 {
     using System.Web.Mvc;
 
+    using Infrastructure.Crosscutting.Security.Model;
+
+    using Web.Utility;
+
     [Authorize]
     public class BaseController : Controller
     {
@@ -33,6 +37,16 @@ namespace Web.Controllers
         public void EndRequest()
         {
             Response.Redirect("/Error.html");
+        }
+
+        public SysUser UserData
+        {
+            get
+            {
+                var us = HttpContext.User as MyFormsPrincipal<SysUser>;
+
+                return us != null ? us.UserData : null;
+            }
         }
     }
 }

@@ -42,18 +42,14 @@ $(function() {
     tabCloseEven();
 
 
-    $('#tabs').tabs('add', {
-        title: '疯狂秀才',
-        content: createFrame('http://hxling.cnblogs.com')
-    }).tabs({
+    $('#tabs').tabs({
         onSelect: function(title) {
             var currTab = $('#tabs').tabs('getTab', title);
             var iframe = $(currTab.panel('options').content);
 
             var src = iframe.attr('src');
             if (src)
-                $('#tabs').tabs('update', { tab: currTab, options: { content: createFrame(src) } });
-
+                $('#tabs').tabs('update', { tab: currTab, options: { content: createFrame(src) } }); 
         }
     });
 
@@ -63,6 +59,13 @@ $(function() {
 //初始化左侧
 function InitLeftMenu() {
     $("#nav").accordion({ animate: false });
+      
+    $.getJSON("/Home/GetMenusByUser?"+new Date().getTime(), function (data) {
+        $.each(data, function (i, field) {
+            alert("JSON Data: " + field.SysId);
+        });
+    });
+    
 
     $.each(_menus.menus, function (i, n) {
         var menulist = '';

@@ -28,25 +28,23 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public SysRoleRepository RoleRepository { get; private set; }
 
-        public bool CheckUser(string name, string pwd)
+        public SysUser CheckUser(string name, string pwd)
         { 
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(pwd)) return false;
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(pwd)) return null;
 
-            IEnumerable<int> lstResult = UserRepository.GetList<int>(
-                Constant.SqlCount,
-                string.Format(
-                    "{0}='{1}' and {2}='{3}'",
-                    Constant.ColumnSysUserUserName,
-                    name.Trim(),
-                    Constant.ColumnSysUserUserPwd,
-                    Crypto.Encrypt(pwd.Trim())));
+            var lstResult = UserRepository.GetList("",
+              string.Format(
+                  "{0}='{1}' and {2}='{3}'",
+                  Constant.ColumnSysUserUserName,
+                  name.Trim(),
+                  Constant.ColumnSysUserUserPwd,
+                  Crypto.Encrypt(pwd.Trim())));
 
-            if (lstResult.FirstOrDefault() > 0)
-            {
-                return true;
-            } 
-            return false;
+            return lstResult.FirstOrDefault();
+              
         }
+
+
 
         public int AddUser(SysUser model)
         {

@@ -8,11 +8,14 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Model;
-using NUnit.Framework;
+using Infrastructure.Crosscutting.Security.Services;
 using Infrastructure.Data.Ado.Dapper;
+using NUnit.Framework;
 
 namespace Infrastructure.Crosscutting.Security.Test
 {
@@ -20,23 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Test
     public class TestClass1
     {
         /// <summary>
-        /// 为整个TestFixture初始化资源
-        /// </summary>
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
-        {
-        }
-
-        /// <summary>
-        /// 为整个TestFixture释放资源
-        /// </summary>
-        [TestFixtureTearDown]
-        public void TestFixtureTearDown()
-        {
-        }
-
-        /// <summary>
-        /// 为每个Test方法创建资源
+        ///     为每个Test方法创建资源
         /// </summary>
         [SetUp]
         public void Initialize()
@@ -44,39 +31,101 @@ namespace Infrastructure.Crosscutting.Security.Test
         }
 
         /// <summary>
-        /// 为每个Test方法释放资源
+        ///     为每个Test方法释放资源
         /// </summary>
         [TearDown]
         public void TearDown()
         {
         }
 
-        [Test]
-        public void CreateUserTest()
+        /// <summary>
+        ///     为整个TestFixture初始化资源
+        /// </summary>
+        [TestFixtureSetUp]
+        public void TestFixtureSetUp()
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
-            {
-                var value = connection.Query("select * from [Sys_User]");
+        }
 
-            }
+        /// <summary>
+        ///     为整个TestFixture释放资源
+        /// </summary>
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+        }
 
+        private static int GetRandomSeed()
+        {
+            int iSeed = 10;
+            var ro = new Random(10);
+            long tick = DateTime.Now.Ticks;
+            var ran = new Random((int) (tick & 0xffffffffL) | (int) (tick >> 32));
+
+            return ro.Next(0, 10);
         }
 
         [Test]
-        public void TestProcedureGetList()
+        public void CreateUserTest()
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
             {
-                var p = new DynamicParameters();
+                IEnumerable<dynamic> value = connection.Query("select * from [Sys_User]");
+            }
+        }
 
-                connection.Query("Sys_Button_GetList", commandType: CommandType.StoredProcedure);
+        [Test]
+        public void GetUserMenu()
+        {
+            string userId = "cf9d52cc-0500-4829-9611-fd0056961468";
+            ISysUserService sysUserService = new SysUserService();
+
+            //通过用户id获取权限菜单数据
+            IEnumerable<SysPrivilege> sysUserPrivileges = sysUserService.GetPrivilege(userId);
+            sysUserPrivileges = sysUserPrivileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Menu).ToList();
+
+            //通过用户id获取角色，通过角色获取权限菜单数据
+
+            IEnumerable<SysRole> sysRoles = sysUserService.GetRoles(userId);
+            ISysRoleService sysRoleService = new SysRoleService();
+            SysRole[] sysRoles1 = sysRoles.ToArray();
+            //一个用户是否会有多个角色？
+            for (int i = 0; i < sysRoles1.Count(); i++)
+            {
+                string roleId = sysRoles1[0].SysId;
+                IEnumerable<SysPrivilege> sysRolePrivileges = sysRoleService.GetPrivilege(roleId);
+
+                //排除同用户权限相同菜单数据
+                SysPrivilege[] sysUserPrivileges1 = sysUserPrivileges.ToArray();
+                for (int j = 0; j < sysUserPrivileges1.Length; j++)
+                {
+                    sysRolePrivileges =
+                        sysRolePrivileges.Where(
+                            x =>
+                            x.PrivilegeAccessKey != sysUserPrivileges1[j].PrivilegeAccessKey &&
+                            x.PrivilegeAccess == PrivilegeAccess.Menu).ToList();
+                }
+
+                sysUserPrivileges = sysUserPrivileges.Union(sysRolePrivileges);
+            }
+            //sysUserPrivileges结果为最终菜单权限
+        }
+
+        [Test]
+        public void Test()
+        {
+            var ran = new Random();
+            ;
+            for (int i = 0; i < 100; i++)
+            {
+                Console.WriteLine(DateTime.Now.ToString("yyyyMMddHHmmssfffff"));
+                // Console.WriteLine(ran.Next(10000, 99999) + "--");
             }
         }
 
         [Test]
         public void TestProcedureAdd()
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
             {
                 var p = new DynamicParameters();
                 p.Add("@SysId", new Guid());
@@ -92,21 +141,9 @@ namespace Infrastructure.Crosscutting.Security.Test
         }
 
         [Test]
-        public void TestProcedureGetModel()
-        {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
-            {
-                var p = new DynamicParameters();
-                p.Add("@BtnId", "00000000-0000-0000-0000-000000000000");
-                var SysButton = connection.Query<SysButton>("Sys_Button_GetModel", p, commandType: CommandType.StoredProcedure).First();
-                Console.WriteLine(SysButton.BtnIcon);
-            }
-        }
-
-        [Test]
         public void TestProcedureDelete()
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
             {
                 var p = new DynamicParameters();
                 p.Add("@BtnId", "00000000-0000-0000-0000-000000000000");
@@ -117,7 +154,7 @@ namespace Infrastructure.Crosscutting.Security.Test
         [Test]
         public void TestProcedureExists()
         {
-            using (var connection = ConnectionFactory.CreateMsSqlConnection())
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
             {
                 var p = new DynamicParameters();
                 p.Add("@BtnId", "00000000-0000-0000-0000-000000000000");
@@ -126,26 +163,28 @@ namespace Infrastructure.Crosscutting.Security.Test
         }
 
         [Test]
-        public void Test()
+        public void TestProcedureGetList()
         {
-         
-            Random ran = new Random();
-            ;
-            for (int i = 0; i < 100; i++)
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyyMMddHHmmssfffff"));
-               // Console.WriteLine(ran.Next(10000, 99999) + "--");
+                var p = new DynamicParameters();
+
+                connection.Query("Sys_Button_GetList", commandType: CommandType.StoredProcedure);
             }
-
         }
-        static int GetRandomSeed()
-        {
-            int iSeed = 10;
-            Random ro = new Random(10);
-            long tick = DateTime.Now.Ticks;
-            Random ran = new Random((int)(tick & 0xffffffffL) | (int)(tick >> 32));
 
-            return ro.Next(0, 10); 
+        [Test]
+        public void TestProcedureGetModel()
+        {
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            {
+                var p = new DynamicParameters();
+                p.Add("@BtnId", "00000000-0000-0000-0000-000000000000");
+                SysButton SysButton =
+                    connection.Query<SysButton>("Sys_Button_GetModel", p, commandType: CommandType.StoredProcedure)
+                              .First();
+                Console.WriteLine(SysButton.BtnIcon);
+            }
         }
     }
 }

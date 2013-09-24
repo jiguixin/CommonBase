@@ -54,8 +54,8 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void LoginTest()
         {
             SysUserService userService = new SysUserService();
-            bool rValue = userService.CheckUser("admin", "123456");
-            Console.WriteLine(rValue);
+            var rValue = userService.CheckUser("admin", "123456");
+            Console.WriteLine(rValue !=null);
         }
 
         [Test]
