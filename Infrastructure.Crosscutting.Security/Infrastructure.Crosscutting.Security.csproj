@@ -44,6 +44,13 @@
     <Compile Include="Common\Constant.cs" />
     <Compile Include="Common\DataRecordStatus.cs" />
     <Compile Include="Common\Enums.cs" />
+    <Compile Include="Common\Util.cs" />
+    <Compile Include="Cryptography\Crypto.cs" />
+    <Compile Include="Cryptography\CryptoConfig.cs" />
+    <Compile Include="Cryptography\CryptogSym.cs" />
+    <Compile Include="Cryptography\CryptoHash.cs" />
+    <Compile Include="Cryptography\CryptoHelper.cs" />
+    <Compile Include="Cryptography\ICrypto.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\SysButton.cs" />
     <Compile Include="Model\SysConfig.cs" />
@@ -82,10 +89,6 @@
     <Compile Include="Services\SysUserService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
-      <Project>{106C7F00-C03F-4E29-87AF-ACD1BA292078}</Project>
-      <Name>Infrastructure.Crosscutting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">
       <Project>{db1a84dc-06fa-4396-9ca0-e7d7c9833eba}</Project>
       <Name>Infrastructure.Data.Ado</Name>

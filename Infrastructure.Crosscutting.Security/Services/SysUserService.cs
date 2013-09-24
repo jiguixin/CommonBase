@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Infrastructure.CrossCutting.Cryptography;
+
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.Repositorys;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
     using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Cryptography;
     using Infrastructure.Data.Ado.Dapper;
 
     public class SysUserService:ISysUserService

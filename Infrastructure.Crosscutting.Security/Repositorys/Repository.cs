@@ -17,7 +17,6 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
-    using Infrastructure.Crosscutting.Utility;
     using Infrastructure.Data.Ado.Dapper;
 
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase

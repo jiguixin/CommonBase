@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Infrastructure.Crosscutting.Security.Common;
 using NUnit.Framework;
 using System.Globalization;
@@ -10,8 +8,6 @@ using Infrastructure.Crosscutting.Security.Repositorys;
 
 namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
 {
-    using Infrastructure.Crosscutting.Utility;
-
     [TestFixture]
     public class SysPrivilegeRepositoryTest
     {

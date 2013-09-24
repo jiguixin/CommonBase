@@ -4,7 +4,7 @@ var _menus = {
               {
                   "menuid": "1", "icon": "icon-sys", "menuname": "控件使用",
                   "menus": [
-                          { "menuid": "12", "menuname": "疯狂秀才", "icon": "icon-add", "url": "http://hxling.cnblogs.com" },
+                          { "menuid": "12", "menuname": "cnblogs", "icon": "icon-add", "url": "http://www.cnblogs.com" },
                           { "menuid": "13", "menuname": "用户管理", "icon": "icon-users", "url": "demo2.html" },
                           { "menuid": "14", "menuname": "角色管理", "icon": "icon-role", "url": "demo2.html" },
                           { "menuid": "15", "menuname": "权限设置", "icon": "icon-set", "url": "demo.html" },

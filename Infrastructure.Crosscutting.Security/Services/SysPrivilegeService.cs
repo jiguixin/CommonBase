@@ -20,7 +20,6 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
     using Infrastructure.Crosscutting.Security.Repositorys;
-    using Infrastructure.Crosscutting.Utility;
 
     public class SysPrivilegeService:ISysPrivilegeService
     {
