@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "用户菜单限设置";
+}
+
+<body>
+    <div class="easyui-layout" style="width: 100%; height: 500px;">
+        <div data-options="region:'center',iconCls:'icon-ok'" title="用户菜单权限设置">
+            <a href="#" class="easyui-linkbutton" onclick="getChecked()" style="float: right; margin: 10px">保存配置</a>
+            <div class="easyui-layout" data-options="fit:true">
+                <div data-options="region:'west',split:true,border:false" style="width: 250px">
+                    <ul id="userTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
+                </div>
+                <div data-options="region:'center',split:true,border:false">
+                    <ul id="menuTree" class="easyui-tree" data-options="checkbox:true,method:'get',animate:true"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    function getChecked() {
+        var nodeChild = $('#menuTree').tree('getChecked');
+        var nodes = [];
+        $('#menuTree').find('.tree-checkbox2').each(function () {
+            var node = $(this).parent();
+            nodes.push($.extend({}, $.data(node[0], 'tree-node'), {
+                target: node[0],
+                checked: node.find('.tree-checkbox').hasClass('tree-checkbox2')
+            }));
+        });
+        var menuIds = '';
+        for (var i = 0; i < nodeChild.length; i++) {
+            if (menuIds != '') menuIds += ',';
+            menuIds += nodeChild[i].id;
+        }
+        for (var i = 0; i < nodes.length; i++) {
+            if (menuIds != '') menuIds += ',';
+            menuIds += nodes[i].id;
+        }
+        var postData = {
+            'sysId': sltUser.id,
+            'privilegeMaster': 10,
+            'menus': menuIds
+        };
+        $.post('@Url.Action("UpdatePrivilege","RestApi")', postData,
+            function (data) {
+                if (data) {
+                    alert("配置成功");
+                } else {
+                    alert("配置失败");
+                }
+            });
+    }
+
+    var sltUser;
+
+    $('#userTree').tree({
+        url: '@Url.Action("GetUsersList","RestApi")' + "?" + new Date().getTime(),
+        onClick: function (node) {
+            sltUser = node;
+            $('#menuTree').tree({
+                url: '@Url.Action("GetMenusPrivilegeForUser","RestApi")'+"?id=" + sltUser.id + "?" + new Date().getTime(),
+            });
+        }
+    });
+
+</script>

@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Data;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
@@ -21,7 +22,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Crosscutting.Security.Model;
     using Infrastructure.Crosscutting.Security.Repositorys;
 
-    public class SysPrivilegeService:ISysPrivilegeService
+    public class SysPrivilegeService : ISysPrivilegeService
     {
         private readonly IRepository<SysPrivilege> repository;
 
@@ -33,11 +34,13 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         private readonly SysUserRepository userRepository;
 
+        private SysPrivilegeRepository privilegeRepository;
+
 
 
         public SysPrivilegeService()
         {
-            repository = RepositoryFactory.PrivilegeRepository; 
+            repository = RepositoryFactory.PrivilegeRepository;
             this.menuRepository = RepositoryFactory.MenuRepository;
             this.roleRepository = RepositoryFactory.RoleRepository;
             buttonRepository = RepositoryFactory.ButtonRepository;
@@ -51,7 +54,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         public void InitDataByRole()
         {
 
-            InitData<SysRole>(lstSource:roleRepository.GetList(),master:PrivilegeMaster.Role);
+            InitData<SysRole>(lstSource: roleRepository.GetList(), master: PrivilegeMaster.Role);
 
             /*
             int num = 1;
@@ -145,6 +148,40 @@ namespace Infrastructure.Crosscutting.Security.Services
             InitData<SysUser>(userRepository.GetList(), PrivilegeMaster.User);
         }
 
+        /// <summary>
+        /// 根据权限拥有者ID重新设定权限
+        /// </summary>
+        /// <param name="sysId"></param>
+        /// <param name="privilegeMaster"></param>
+        /// <param name="menuIds"></param>
+        /// <returns></returns>
+        public bool SetMenuPrivilege(string sysId, PrivilegeMaster privilegeMaster, string[] menuIds)
+        {
+            privilegeRepository = new SysPrivilegeRepository();
+            using (IDbTransaction tran = ConnectionFactory.CreateMsSqlConnection().BeginTransaction())
+            {
+                int deleteResult = privilegeRepository.DeleteSysPrivilegeByMaster(sysId, privilegeMaster, tran);
+
+                for (int i = 0; i < menuIds.Count(); i++)
+                {
+                    SysPrivilege sysPrivilege = new SysPrivilege();
+                    sysPrivilege.PrivilegeAccess = PrivilegeAccess.Menu;
+                    sysPrivilege.PrivilegeAccessKey = menuIds[i];
+                    sysPrivilege.PrivilegeMaster = privilegeMaster;
+                    sysPrivilege.PrivilegeMasterKey = sysId;
+
+                    int addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, tran);
+
+                    if (addResult==0)
+                    {
+                        return false;
+                    }
+                }
+
+                tran.Commit();
+                return true;
+            }
+        }
         #region helper
 
         public void InitData<T>(IEnumerable<T> lstSource, PrivilegeMaster master) where T : EntityBase
@@ -184,7 +221,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                             sysMenu.SysId));
 
                     if (chkResult.FirstOrDefault() == 0)
-                    { 
+                    {
                         Console.WriteLine(repository.Add(model));
                     }
 
@@ -214,16 +251,16 @@ namespace Infrastructure.Crosscutting.Security.Services
                                   sysButton.SysId));
 
                         if (chkResult.FirstOrDefault() == 0)
-                        { 
+                        {
                             Console.WriteLine(repository.Add(model));
                         }
 
-                        #endregion 
+                        #endregion
                     }
                 }
             }
         }
-        
+
 
         #endregion
     }

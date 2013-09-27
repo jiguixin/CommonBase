@@ -59,7 +59,7 @@ namespace Infrastructure.Crosscutting.Security.Test
             int iSeed = 10;
             var ro = new Random(10);
             long tick = DateTime.Now.Ticks;
-            var ran = new Random((int) (tick & 0xffffffffL) | (int) (tick >> 32));
+            var ran = new Random((int)(tick & 0xffffffffL) | (int)(tick >> 32));
 
             return ro.Next(0, 10);
         }
@@ -76,7 +76,7 @@ namespace Infrastructure.Crosscutting.Security.Test
         [Test]
         public void GetUserMenu()
         {
-            string userId = "cf9d52cc-0500-4829-9611-fd0056961468";
+            string userId = "cf9d52cc-0500-4829-9611-fd0056961469";
             ISysUserService sysUserService = new SysUserService();
 
             //通过用户id获取权限菜单数据
@@ -108,6 +108,82 @@ namespace Infrastructure.Crosscutting.Security.Test
                 sysUserPrivileges = sysUserPrivileges.Union(sysRolePrivileges);
             }
             //sysUserPrivileges结果为最终菜单权限
+            List<SysMenu> sysMenus = new List<SysMenu>();
+            ISysMenuService sysMenuService = new SysMenuService();
+            foreach (SysPrivilege sysUserPrivilege in sysUserPrivileges)
+            {
+                string menuId = sysUserPrivilege.PrivilegeAccessKey;
+                SysMenu sysMenu=sysMenuService.GetSysMenuById(menuId).ToArray()[0];
+                sysMenus.Add(sysMenu);
+            }
+            sysMenus = sysMenus.Where(x => x.IsVisible==1).OrderBy(x => x.MenuOrder).ToList();
+        }
+
+        [Test]
+        public void AddMenu()
+        {
+            string sysId = Guid.NewGuid().ToString();
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            {
+                var p = new DynamicParameters();
+                p.Add("@SysId", sysId);
+                p.Add("@MenuParentId", "4300916d-b838-4126-9bf3-abcc6615d908");
+                p.Add("@MenuOrder", 502);
+                p.Add("@MenuName", "角色菜单权限配置");
+                p.Add("@MenuLink", "/MenuSetting/Index1");
+                p.Add("@MenuIcon", "icon-nav");
+                p.Add("@@IsLeaf", false);
+                p.Add("@IsVisible", true);
+                p.Add("@RecordStatus", "修改时间" + DateTime.Now + ",修改人：JF");
+
+                connection.Execute("Sys_Menu_ADD", p, commandType: CommandType.StoredProcedure);
+
+            }
+            //using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            //{
+            //    var p = new DynamicParameters();
+            //    p.Add("@SysId", Guid.NewGuid().ToString());
+            //    p.Add("@PrivilegeMaster", PrivilegeMaster.Role);
+            //    p.Add("@PrivilegeMasterKey", "cf9d52cc-0500-4829-9611-fd0056961488");
+            //    p.Add("@PrivilegeAccess", PrivilegeAccess.Menu);
+            //    p.Add("@PrivilegeAccessKey", sysId);
+            //    p.Add("@PrivilegeOperation", true);
+            //    p.Add("@RecordStatus", "创建时间：" + DateTime.Now + ",创建人：JF");
+
+            //    connection.Execute("Sys_Privilege_ADD", p, commandType: CommandType.StoredProcedure);
+            //}
+        }
+
+        [Test]
+        public void AddMenuToPrivilege()
+        {
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            {
+                var p = new DynamicParameters();
+                p.Add("@SysId", Guid.NewGuid().ToString());
+                p.Add("@PrivilegeMaster", PrivilegeMaster.Role);
+                p.Add("@PrivilegeMasterKey", "cf9d52cc-0500-4829-9611-fd0056961488");
+                p.Add("@PrivilegeAccess", PrivilegeAccess.Menu);
+                p.Add("@PrivilegeAccessKey", "f9199270-abd9-4b83-9020-e0c88e5c8b52");
+                p.Add("@PrivilegeOperation", true);
+                p.Add("@RecordStatus", "创建时间："+DateTime.Now+",创建人：JF");
+
+                connection.Execute("Sys_Privilege_ADD", p, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        [Test]
+        public void AddUserToRole()
+        {
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            {
+                var p = new DynamicParameters();
+                p.Add("@SysId", Guid.NewGuid().ToString());
+                p.Add("@UserId", "cf9d52cc-0500-4829-9611-fd0056961468");
+                p.Add("@RoleId", "cf9d52cc-0500-4829-9611-fd0056961488");
+
+                connection.Execute("Sys_UserRole_ADD", p, commandType: CommandType.StoredProcedure);
+            }
         }
 
         [Test]

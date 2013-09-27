@@ -23,7 +23,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// <summary>
         /// 菜单编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
 		/// </summary>
-		//public string SysId { get; set; }
+		public string SysId { get; set; }
          
 		/// <summary>
 		/// 对应的父菜单编号
@@ -65,7 +65,12 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// </summary>
 		public string RecordStatus { get; set; }
 
-		#endregion Model
+        /// <summary>
+        /// 改条菜单时候有可用权限
+        /// </summary>
+        public bool HasPrivilege { get; set; }
+
+        #endregion Model
 
         public IEnumerable<SysButton> Buttons { get; set; }
 	}

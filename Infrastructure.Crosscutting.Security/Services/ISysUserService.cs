@@ -26,5 +26,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         IEnumerable<SysPrivilege> GetPrivilege(string userId);
 
+        SysUserInfo GetUserInfo(string userId);
+
     }
 }

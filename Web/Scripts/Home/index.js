@@ -1,4 +1,4 @@
-﻿ 
+﻿
 var _menus = {
     "menus": [
               {
@@ -36,20 +36,20 @@ var _menus = {
     ]
 };
 
-$(function() {
+$(function () {
     InitLeftMenu();
     tabClose();
     tabCloseEven();
 
 
     $('#tabs').tabs({
-        onSelect: function(title) {
+        onSelect: function (title) {
             var currTab = $('#tabs').tabs('getTab', title);
             var iframe = $(currTab.panel('options').content);
 
             var src = iframe.attr('src');
             if (src)
-                $('#tabs').tabs('update', { tab: currTab, options: { content: createFrame(src) } }); 
+                $('#tabs').tabs('update', { tab: currTab, options: { content: createFrame(src) } });
         }
     });
 
@@ -59,56 +59,97 @@ $(function() {
 //初始化左侧
 function InitLeftMenu() {
     $("#nav").accordion({ animate: false });
-      
-    $.getJSON("/Home/GetMenusByUser?"+new Date().getTime(), function (data) {
-        $.each(data, function (i, field) {
-            alert("JSON Data: " + field.SysId);
-        });
-    });
-    
 
-    $.each(_menus.menus, function (i, n) {
+    //$.getJSON("/Home/GetMenusByUser?"+new Date().getTime(), function (data) {
+    //    $.each(data, function (i, field) {
+    //        alert("JSON Data: " + field.SysId);
+    //    });
+    //});
+
+    $.getJSON("/RestApi/GetMenusByLoginUser?" + new Date().getTime(), function (data) {
         var menulist = '';
-        menulist += '<ul>';
-        $.each(n.menus, function(j, o) {
-            menulist += '<li><div><a ref="' + o.menuid + '" href="#" rel="' + o.url + '" ><span class="icon ' + o.icon + '" >&nbsp;</span><span class="nav">' + o.menuname + '</span></a></div></li> ';
-        });
-        menulist += '</ul>';
+        var menuListName = null;
 
-        $('#nav').accordion('add', {
-            title: n.menuname,
-            content: menulist,
-            iconCls: 'icon ' + n.icon
+        $.each(data, function (i, n) {
+            //如果是父节点,则添加<ul>标示
+            if (n.MenuParentId == null) {
+                //如果上一次的父节点名称不为空，表示已经menulist已经有一组菜单需要添加
+                //如果上一次的父节点名称为空，表示是第一次获取到父节点要素，menulist还未生成
+                if (menuListName != null) {
+                    $('#nav').accordion('add', {
+                        title: menuListName += '</ul>',
+                        content: menulist,
+                        iconCls: 'icon ' + n.MenuIcon
+                    });
+                    
+                }
+                menulist = '<ul>';
+                menuListName = n.MenuName;
+
+            } else {
+                menulist += '<li><div><a ref="' + n.MenuOrder + '" href="#" rel="' + n.MenuLink + '" ><span class="icon ' + n.MenuIcon + '" >&nbsp;</span><span class="nav">' + n.MenuName + '</span></a></div></li> ';
+            }
+
+            //循环结束时候再添加一次menulist，否则最后一组的menulist不会显示
+            if (i == data.length - 1) {
+                menulist += '</ul>';
+                $('#nav').accordion('add', {
+                    title: menuListName,
+                    content: menulist,
+                    iconCls: 'icon ' + n.MenuIcon
+                });
+            }
+        });
+        //实现子菜单点击链接
+        $('.easyui-accordion li a').click(function () {
+            var tabTitle = $(this).children('.nav').text();
+
+            var url = $(this).attr("rel");
+            var menuid = $(this).attr("ref");
+            var icon = getIcon(menuid, icon);
+
+            addTab(tabTitle, url, icon);
+            $('.easyui-accordion li div').removeClass("selected");
+            $(this).parent().addClass("selected");
+        }).hover(function () {
+            $(this).parent().addClass("hover");
+        }, function () {
+            $(this).parent().removeClass("hover");
         });
 
+        //选中第一个
+        var panels = $('#nav').accordion('panels');
+        var t = panels[0].panel('options').title;
+        $('#nav').accordion('select', t);
     });
 
-    $('.easyui-accordion li a').click(function () {
-        var tabTitle = $(this).children('.nav').text();
-
-        var url = $(this).attr("rel");
-        var menuid = $(this).attr("ref");
-        var icon = getIcon(menuid, icon);
-
-        addTab(tabTitle, url, icon);
-        $('.easyui-accordion li div').removeClass("selected");
-        $(this).parent().addClass("selected");
-    }).hover(function () {
-        $(this).parent().addClass("hover");
-    }, function () {
-        $(this).parent().removeClass("hover");
+    $.getJSON("/RestApi/GetUserInfo?" + new Date().getTime(), function (data) {
+        //alert(data.SysId);
+        $("#userName")[0].innerText = data.RealName;
     });
+    //$.each(_menus.menus, function (i, n) {
+    //    var menulist = '';
+    //    menulist += '<ul>';
+    //    $.each(n.menus, function(j, o) {
+    //        menulist += '<li><div><a ref="' + o.menuid + '" href="#" rel="' + o.url + '" ><span class="icon ' + o.icon + '" >&nbsp;</span><span class="nav">' + o.menuname + '</span></a></div></li> ';
+    //    });
+    //    menulist += '</ul>';
 
-    //选中第一个
-    var panels = $('#nav').accordion('panels');
-    var t = panels[0].panel('options').title;
-    $('#nav').accordion('select', t);
+    //    $('#nav').accordion('add', {
+    //        title: n.menuname,
+    //        content: menulist,
+    //        iconCls: 'icon ' + n.icon
+    //    });
+
+    //});
+
+
 }
 //获取左侧导航的图标
 function getIcon(menuid) {
     var icon = 'icon ';
-    $.each(_menus.menus, function(i, n) {
-        $.each(n.menus, function(j, o) {
+    $.each(_menus.menus, function (i, n) {
+        $.each(n.menus, function (j, o) {
             if (o.menuid == menuid) {
                 icon += o.icon;
             }
@@ -140,7 +181,7 @@ function createFrame(url) {
 
 function tabClose() {
     /*双击关闭TAB选项卡*/
-    $(".tabs-inner").dblclick(function() {
+    $(".tabs-inner").dblclick(function () {
         var subtitle = $(this).children(".tabs-closable").text();
         $('#tabs').tabs('close', subtitle);
     });
@@ -161,7 +202,7 @@ function tabClose() {
 //绑定右键菜单事件
 function tabCloseEven() {
     //刷新
-    $('#mm-tabupdate').click(function() {
+    $('#mm-tabupdate').click(function () {
         var currTab = $('#tabs').tabs('getSelected');
         var url = $(currTab.panel('options').content).attr('src');
         $('#tabs').tabs('update', {
@@ -172,7 +213,7 @@ function tabCloseEven() {
         });
     });
     //关闭当前
-    $('#mm-tabclose').click(function() {
+    $('#mm-tabclose').click(function () {
         var currtab_title = $('#mm').data("currtab");
         $('#tabs').tabs('close', currtab_title);
     });

@@ -18,7 +18,7 @@ namespace Web.Controllers
     using Web.Utility;
 
     [Authorize]
-    public class BaseController : Controller
+    public class BaseController : AppController
     {
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -37,16 +37,7 @@ namespace Web.Controllers
         public void EndRequest()
         {
             Response.Redirect("/Error.html");
-        }
-
-        public SysUser UserData
-        {
-            get
-            {
-                var us = HttpContext.User as MyFormsPrincipal<SysUser>;
-
-                return us != null ? us.UserData : null;
-            }
-        }
+        } 
+       
     }
 }

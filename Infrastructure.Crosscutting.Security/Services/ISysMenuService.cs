@@ -20,6 +20,11 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         SysMenuRepository MenuRepository { get; }
         IEnumerable<SysPrivilege> GetPrivilege(string menuId);
+        IEnumerable<SysMenu> GetSysMenuById(string menuId);
+        IEnumerable<SysMenu> GetPrivilegedSysMenuByUserId(string userId);
+        IEnumerable<SysMenu> GetAllMenu();
+        //List<EasyUiTreeResult> GetMenusPrivilegeForRole(string roleId);
+        //List<EasyUiTreeResult> GetMenusPrivilegeForUser(string userId);
 
     }
 }

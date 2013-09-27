@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Model;
 
 namespace Web.Controllers
 {
@@ -10,26 +13,15 @@ namespace Web.Controllers
 
     public class HomeController : BaseController
     {
-
+        private ISysUserService userService = ServiceFactory.UserService;
         private ISysMenuService menuService = ServiceFactory.MenuService;
 
+        private RestApiController restApiController = new RestApiController();
         //
         // GET: /Home/ 
         public ActionResult Index()
-        { 
+        {
             return View();
-        }
-         
-        public JsonResult GetMenusByUser()
-        { 
-            var us = UserData.SysId;
-             
-            var lstMenus = menuService.MenuRepository.GetList().ToArray() ;
-
-            //todo 实现该功能
-            lstMenus[0].SysId = us;
-
-            return Json(lstMenus, JsonRequestBehavior.AllowGet);
-        }
+        } 
     }
 }

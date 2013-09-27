@@ -13,6 +13,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     {
         public SysUserRepository() 
         {
+            //todo UserInfoRepository实例化一直为空
             UserInfoRepository = RepositoryFactory.UserInfoRepository;
             PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
             UserRoleRepository = RepositoryFactory.UserRoleRepository;

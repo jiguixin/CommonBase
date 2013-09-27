@@ -8,6 +8,7 @@
  */
 
 using System;
+using Infrastructure.Crosscutting.Security.Common;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
@@ -15,6 +16,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         void InitDataByRole();
         void InitDataByUser();
+        bool SetMenuPrivilege(string id, PrivilegeMaster privilegeMaster, string[] menuIds);
 
     }
 }
