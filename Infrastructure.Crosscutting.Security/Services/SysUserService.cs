@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.Repositorys;
@@ -11,25 +8,40 @@ namespace Infrastructure.Crosscutting.Security.Services
 {
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Cryptography;
-    using Infrastructure.Data.Ado.Dapper;
 
     public class SysUserService : ISysUserService
-    {
-        public SysUserService()
+    {  
+        public SysUserRepository UserRepository
         {
-            UserRepository = RepositoryFactory.UserRepository;
-            UserRoleRepository = RepositoryFactory.UserRoleRepository;
-            RoleRepository = RepositoryFactory.RoleRepository;
-            UserInfoRepository = RepositoryFactory.UserInfoRepository;
+            get
+            {
+                return RepositoryFactory.UserRepository;
+            }
         }
 
-        public SysUserRepository UserRepository { get; private set; }
+        public SysUserRoleRepository UserRoleRepository
+        {
+            get
+            {
+                return RepositoryFactory.UserRoleRepository;
+            }
+        }
 
-        public SysUserRoleRepository UserRoleRepository { get; private set; }
+        public SysRoleRepository RoleRepository
+        {
+            get
+            {
+                return RepositoryFactory.RoleRepository;
+            }
+        }
 
-        public SysRoleRepository RoleRepository { get; private set; }
-
-        public SysUserInfoRepository UserInfoRepository { get; private set; }
+        public SysUserInfoRepository UserInfoRepository
+        {
+            get
+            {
+                return RepositoryFactory.UserInfoRepository;
+            }
+        }
 
         public SysUser CheckUser(string name, string pwd)
         {

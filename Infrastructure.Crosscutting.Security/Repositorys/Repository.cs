@@ -15,11 +15,12 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     using System.Data;
     using System.Linq;
 
+    using Dapper;
+
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
-    using Infrastructure.Data.Ado.Dapper;
 
-    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
+    public abstract class  Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
     { 
         #region Abstract Property
           

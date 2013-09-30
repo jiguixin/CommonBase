@@ -13,10 +13,8 @@ using System.Data;
 namespace Infrastructure.Crosscutting.Security.Services
 {
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
-    using System.Threading;
 
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
@@ -24,28 +22,47 @@ namespace Infrastructure.Crosscutting.Security.Services
 
     public class SysPrivilegeService : ISysPrivilegeService
     {
-        private readonly IRepository<SysPrivilege> repository;
 
-        private readonly SysMenuRepository menuRepository;
-
-        private readonly SysButtonRepository buttonRepository;
-
-        private readonly SysRoleRepository roleRepository;
-
-        private readonly SysUserRepository userRepository;
-
-        private SysPrivilegeRepository privilegeRepository;
-
-
-
-        public SysPrivilegeService()
+        private static SysMenuRepository MenuRepository
         {
-            repository = RepositoryFactory.PrivilegeRepository;
-            this.menuRepository = RepositoryFactory.MenuRepository;
-            this.roleRepository = RepositoryFactory.RoleRepository;
-            buttonRepository = RepositoryFactory.ButtonRepository;
-            userRepository = RepositoryFactory.UserRepository;
+            get
+            {
+                return RepositoryFactory.MenuRepository;
+            }
+        } 
+
+        private SysButtonRepository ButtonRepository
+        {
+            get
+            {
+                return RepositoryFactory.ButtonRepository;
+            }
         }
+
+        private static SysRoleRepository RoleRepository
+        {
+            get
+            {
+               return  RepositoryFactory.RoleRepository;
+            }
+        } 
+
+
+        private static SysUserRepository UserRepository
+        {
+            get
+            {
+                return RepositoryFactory.UserRepository;
+            }
+        }
+
+        private static SysPrivilegeRepository PrivilegeRepository
+        {
+            get
+            {
+                return RepositoryFactory.PrivilegeRepository;
+            }
+        } 
 
         /// <summary> 
         /// 遍历角色数据，分别创建，菜单和按钮权限记录，默认权限不可用。
@@ -54,20 +71,20 @@ namespace Infrastructure.Crosscutting.Security.Services
         public void InitDataByRole()
         {
 
-            InitData<SysRole>(lstSource: roleRepository.GetList(), master: PrivilegeMaster.Role);
+            InitData<SysRole>(lstSource: RoleRepository.GetList(), master: PrivilegeMaster.Role);
 
             /*
             int num = 1;
             //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
-            var lstMenu = this.menuRepository.GetList();
+            var lstMenu = this.MenuRepository.GetList();
               
             foreach (var sysMenu in lstMenu)
             {
-                sysMenu.Buttons = this.menuRepository.GetButtons(sysMenu.SysId);
+                sysMenu.Buttons = this.MenuRepository.GetButtons(sysMenu.SysId);
             }
 
             //获取在该系统中的角色数据
-            var lstRole = roleRepository.GetList();
+            var lstRole = RoleRepository.GetList();
 
             foreach (var sysRole in lstRole)
             {
@@ -85,7 +102,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                      
                     #region 检查该条数据是否存在
                     
-                    var chkResult =  repository.GetList<int>(
+                    var chkResult =  PrivilegeRepository.GetList<int>(
                         Constant.SqlCount,
                         string.Format(
                             Constant.SqlExistsSysPrivilegeWhere,
@@ -98,7 +115,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                     { 
                         model.SysId = Util.NewId();
 
-                        Console.WriteLine(repository.Add(model));
+                        Console.WriteLine(PrivilegeRepository.Add(model));
                     }
 
                     #endregion
@@ -117,7 +134,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                         #region 检查该条数据是否存在
                         
-                        chkResult = repository.GetList<int>(
+                        chkResult = PrivilegeRepository.GetList<int>(
                               Constant.SqlCount,
                               string.Format(
                                   Constant.SqlExistsSysPrivilegeWhere,
@@ -129,7 +146,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                         if (chkResult.FirstOrDefault() == 0)
                         { 
                             model.SysId = Util.NewId();
-                            Console.WriteLine(repository.Add(model));
+                            Console.WriteLine(PrivilegeRepository.Add(model));
                         }
 
                         #endregion
@@ -145,7 +162,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// </summary>
         public void InitDataByUser()
         {
-            InitData<SysUser>(userRepository.GetList(), PrivilegeMaster.User);
+            InitData(UserRepository.GetList(), PrivilegeMaster.User);
         }
 
         /// <summary>
@@ -157,20 +174,21 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns></returns>
         public bool SetMenuPrivilege(string sysId, PrivilegeMaster privilegeMaster, string[] menuIds)
         {
-            privilegeRepository = new SysPrivilegeRepository();
-            using (IDbTransaction tran = ConnectionFactory.CreateMsSqlConnection().BeginTransaction())
+            using (IDbTransaction tran = PrivilegeRepository.Connection.BeginTransaction())
             {
-                int deleteResult = privilegeRepository.DeleteSysPrivilegeByMaster(sysId, privilegeMaster, tran);
+                 PrivilegeRepository.DeleteSysPrivilegeByMaster(sysId, (int)privilegeMaster, tran);
 
                 for (int i = 0; i < menuIds.Count(); i++)
                 {
-                    SysPrivilege sysPrivilege = new SysPrivilege();
-                    sysPrivilege.PrivilegeAccess = PrivilegeAccess.Menu;
-                    sysPrivilege.PrivilegeAccessKey = menuIds[i];
-                    sysPrivilege.PrivilegeMaster = privilegeMaster;
-                    sysPrivilege.PrivilegeMasterKey = sysId;
+                    SysPrivilege sysPrivilege = new SysPrivilege
+                                                    {
+                                                        PrivilegeAccess = PrivilegeAccess.Menu,
+                                                        PrivilegeAccessKey = menuIds[i],
+                                                        PrivilegeMaster = privilegeMaster,
+                                                        PrivilegeMasterKey = sysId
+                                                    };
 
-                    int addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, tran);
+                    var addResult = PrivilegeRepository.Add(sysPrivilege, tran);
 
                     if (addResult==0)
                     {
@@ -188,11 +206,11 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
             int num = 1;
             //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
-            var lstMenu = this.menuRepository.GetList();
+            var lstMenu = MenuRepository.GetList();
 
             foreach (var sysMenu in lstMenu)
             {
-                sysMenu.Buttons = this.menuRepository.GetButtons(sysMenu.SysId);
+                sysMenu.Buttons = MenuRepository.GetButtons(sysMenu.SysId);
             }
 
             foreach (var source in lstSource)
@@ -211,7 +229,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     #region 检查该条数据是否存在
 
-                    var chkResult = repository.GetList<int>(
+                    var chkResult = PrivilegeRepository.GetList<int>(
                         Constant.SqlCount,
                         string.Format(
                             Constant.SqlExistsSysPrivilegeWhere,
@@ -222,7 +240,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     if (chkResult.FirstOrDefault() == 0)
                     {
-                        Console.WriteLine(repository.Add(model));
+                        Console.WriteLine(PrivilegeRepository.Add(model));
                     }
 
                     #endregion
@@ -241,7 +259,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                         #region 检查该条数据是否存在
 
-                        chkResult = repository.GetList<int>(
+                        chkResult = PrivilegeRepository.GetList<int>(
                               Constant.SqlCount,
                               string.Format(
                                   Constant.SqlExistsSysPrivilegeWhere,
@@ -252,7 +270,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                         if (chkResult.FirstOrDefault() == 0)
                         {
-                            Console.WriteLine(repository.Add(model));
+                            Console.WriteLine(PrivilegeRepository.Add(model));
                         }
 
                         #endregion

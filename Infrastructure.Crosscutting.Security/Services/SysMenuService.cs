@@ -20,13 +20,14 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Crosscutting.Security.Repositorys;
 
     public class SysMenuService : ISysMenuService
-    {
-        public SysMenuService()
+    {  
+        public SysMenuRepository MenuRepository
         {
-            MenuRepository = RepositoryFactory.MenuRepository;
+            get
+            {
+                return RepositoryFactory.MenuRepository;
+            }
         }
-
-        public SysMenuRepository MenuRepository { get; private set; }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string menuId)
         {

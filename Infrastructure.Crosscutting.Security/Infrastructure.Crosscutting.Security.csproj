@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper, Version=1.12.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dapper.1.13\lib\net40\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -63,6 +67,7 @@
     <Compile Include="Model\SysUserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositorys\ConnectionFactory.cs" />
+    <Compile Include="Repositorys\DapperExtenRepository.cs" />
     <Compile Include="Repositorys\IRepository.cs" />
     <Compile Include="Repositorys\Repository.cs" />
     <Compile Include="Repositorys\RepositoryFactory.cs" />
@@ -89,10 +94,13 @@
     <Compile Include="Services\SysUserService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">
-      <Project>{db1a84dc-06fa-4396-9ca0-e7d7c9833eba}</Project>
-      <Name>Infrastructure.Data.Ado</Name>
+    <ProjectReference Include="..\DapperExtensions\DapperExtensions.csproj">
+      <Project>{4c1a2c6c-a469-4c87-98d1-f1d517fa1acf}</Project>
+      <Name>DapperExtensions</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

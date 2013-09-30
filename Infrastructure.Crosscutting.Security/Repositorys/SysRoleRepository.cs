@@ -1,27 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Infrastructure.Crosscutting.Security.Common;
-using Infrastructure.Crosscutting.Security.Model;
-
-namespace Infrastructure.Crosscutting.Security.Repositorys
+﻿namespace Infrastructure.Crosscutting.Security.Repositorys
 {
-    public class SysRoleRepository:Repository<SysRole>
+    using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Model;
+
+    public class SysRoleRepository : Repository<SysRole>
     {
-        public SysRoleRepository()
-        {
-            PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
-            UserRoleRepository = RepositoryFactory.UserRoleRepository;
-        }
+        #region Public Properties
 
-        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
-
-        public SysUserRoleRepository UserRoleRepository { get; private set; }
-
-        #region 属性
-
-        
         public override string AddProc
         {
             get
@@ -29,7 +14,23 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 return Constant.ProcSysRoleAdd;
             }
         }
-         
+
+        public SysPrivilegeRepository PrivilegeRepository
+        {
+            get
+            {
+                return RepositoryFactory.PrivilegeRepository;
+            }
+        }
+
+        public override string TableName
+        {
+            get
+            {
+                return Constant.TableSysRole;
+            }
+        }
+
         public override string UpdateProc
         {
             get
@@ -38,28 +39,37 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
-        public override string TableName
+        public SysUserRoleRepository UserRoleRepository
         {
-            get { return Constant.TableSysRole; }
+            get
+            {
+                return RepositoryFactory.UserRoleRepository;
+            }
         }
-         
+
         #endregion
+
+        #region Public Methods and Operators
+
+        public override int Delete(string sysId)
+        {
+            return this.PrivilegeRepository.DeletePrivilegeTrans(
+                sysId,
+                (int)PrivilegeMaster.Role,
+                this.Delete,
+                this.UserRoleRepository.DeleteByRoleId,
+                this.PrivilegeRepository.DeleteSysPrivilegeByMaster);
+        }
+
+        #endregion
+
+        #region Methods
 
         internal override dynamic Mapping(SysRole item)
         {
-            return new
-                       {
-                           SysId = item.SysId,
-                           RoleName = item.RoleName,
-                           RoleDesc = item.RoleDesc
-                       };
+            return new { item.SysId, item.RoleName, item.RoleDesc };
         }
 
-        public override int Delete(string sysId)
-        {  
-            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.Role, Delete, UserRoleRepository.DeleteByRoleId, PrivilegeRepository.DeleteSysPrivilegeByMaster);
-        }
-
-
+        #endregion
     }
 }

@@ -1,71 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Infrastructure.Crosscutting.Security.Common;
-using Infrastructure.Crosscutting.Security.Model;
-
-namespace Infrastructure.Crosscutting.Security.Repositorys
+﻿namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using System.Data;
 
-    using Infrastructure.Data.Ado.Dapper;
+    using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Model;
 
-    public class SysButtonRepository:Repository<SysButton>
+    public class SysButtonRepository : DapperExtenRepository<SysButton>
     {
-        public SysButtonRepository()
-        {
-            PrivilegeRepository = RepositoryFactory.PrivilegeRepository; 
-        }
-        #region 属性
- 
-        public override string AddProc
+        #region Public Properties
+         
+
+        public SysPrivilegeRepository PrivilegeRepository
         {
             get
             {
-                return Constant.ProcSysButtonAdd;
+                return RepositoryFactory.PrivilegeRepository;
             }
         }
          
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysButtonUpdate;
-            }
-        }
 
-        public override string TableName
-        {
-            get { return Constant.TableSysButton; }
-        }
-
-        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
-         
-          
         #endregion
 
-        internal override dynamic Mapping(SysButton item)
-        {
-            return new
-                       {
-                           SysId = item.SysId,
-                           MenuId = item.MenuId,
-                           BtnName = item.BtnName,
-                           BtnIcon = item.BtnIcon,
-                           BtnOrder = item.BtnOrder,
-                           RecordStatus = item.RecordStatus
-                       };
-        }
-         
-        public int DeleteByMenuId(string menuId, IDbTransaction trans)
-        {
-            return base.DeleteByWhere(string.Format("{0}='{1}'",Constant.ColumnSysButtonMenuId, menuId), trans);
-        }
+        #region Public Methods and Operators
+//
+//        public override int Delete(string sysId)
+//        {
+//            return this.PrivilegeRepository.DeletePrivilegeTrans(
+//                sysId,
+//                (int)PrivilegeAccess.Button,
+//                this.Delete,
+//                this.PrivilegeRepository.DeleteSysPrivilegeByAccess);
+//        }
+//
+//        public int DeleteByMenuId(string menuId, IDbTransaction trans)
+//        {
+//            return base.DeleteByWhere(string.Format("{0}='{1}'", Constant.ColumnSysButtonMenuId, menuId), trans);
+//        }
 
-        public override int Delete(string sysId)
-        {
-            return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeAccess.Button, Delete, PrivilegeRepository.DeleteSysPrivilegeByAccess);
-        }
+        #endregion
+
+        #region Methods
+
+//        internal override dynamic Mapping(SysButton item)
+//        {
+//            return new { item.SysId, item.MenuId, item.BtnName, item.BtnIcon, item.BtnOrder, item.RecordStatus };
+//        }
+
+        #endregion
     }
 }

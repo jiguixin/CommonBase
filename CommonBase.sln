@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests", "Web.Tests\Web.Tests.csproj", "{1639775D-4FC7-445A-8179-2F849D98DCB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperExtensions", "DapperExtensions\DapperExtensions.csproj", "{4C1A2C6C-A469-4C87-98D1-F1D517FA1ACF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1639775D-4FC7-445A-8179-2F849D98DCB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1639775D-4FC7-445A-8179-2F849D98DCB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1639775D-4FC7-445A-8179-2F849D98DCB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C1A2C6C-A469-4C87-98D1-F1D517FA1ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C1A2C6C-A469-4C87-98D1-F1D517FA1ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C1A2C6C-A469-4C87-98D1-F1D517FA1ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C1A2C6C-A469-4C87-98D1-F1D517FA1ACF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

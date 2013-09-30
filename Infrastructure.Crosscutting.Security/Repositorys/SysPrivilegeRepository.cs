@@ -1,133 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
+
 using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Model;
-using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
-    public class SysPrivilegeRepository:Repository<SysPrivilege>
+    using System.Collections.Generic;
+
+    using Dapper;
+
+    using DapperExtensions;
+
+    public class SysPrivilegeRepository : DapperExtenRepository<SysPrivilege>
     {
-        #region 属性
-         
-        public override string AddProc
+        
+        public bool DeleteSysPrivilegeByMaster(string sysId, int masterValue, IDbTransaction trans = null)
         {
-            get
-            {
-                return Constant.ProcSysPrivilegeAdd;
-            }
-        }
-         
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysPrivilegeUpdate;
-            }
-        }
+            IDbConnection cn = trans != null ? trans.Connection : this.Connection;
 
-        public override string TableName
-        {
-            get { return Constant.TableSysPrivilege; }
-        }
-
-        #endregion
-         
-        public int DeleteSysPrivilegeByMaster(PrivilegeMaster master, string sysId)
-        {
-            using (var connection = Connection)
-            {
-                var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'",Constant.ColumnSysPrivilegePrivilegeMaster,(int)master,Constant.ColumnSysPrivilegePrivilegeMasterKey,sysId));
+            using (cn)
+            { 
+                var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
                  
-                return
-                    connection.Execute(Constant.ProcDeleteByWhere, p,
-                        commandType: CommandType.StoredProcedure);
-            }
+                pg.Predicates.Add(Predicates.Field<SysPrivilege>(f => f.PrivilegeMaster, Operator.Eq, masterValue));
+                pg.Predicates.Add(Predicates.Field<SysPrivilege>(f => f.PrivilegeMasterKey, Operator.Eq, sysId));
+                 
+                return this.Delete(pg);
+            } 
+        } 
+
+        public bool DeleteSysPrivilegeByAccess(string sysId, int accessValue, IDbTransaction trans = null)
+        {  
+            IDbConnection cn = trans != null ? trans.Connection : this.Connection;
+
+            using (cn)
+            {
+                var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
+
+                pg.Predicates.Add(Predicates.Field<SysPrivilege>(f => f.PrivilegeAccess, Operator.Eq, accessValue));
+                pg.Predicates.Add(Predicates.Field<SysPrivilege>(f => f.PrivilegeAccessKey, Operator.Eq, sysId));
+
+                return this.Delete(pg);
+            } 
         }
-
-        public int DeleteSysPrivilegeByMaster(string sysId,PrivilegeMaster master,IDbTransaction trans)
-        {
-            var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'", Constant.ColumnSysPrivilegePrivilegeMaster, (int)master, Constant.ColumnSysPrivilegePrivilegeMasterKey, sysId));
-              
-            return
-                trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
-                                         commandType: CommandType.StoredProcedure);
-        }
-
-        public int DeleteSysPrivilegeByMaster(string sysId, int masterValue, IDbTransaction trans)
-        {
-            var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'", Constant.ColumnSysPrivilegePrivilegeMaster, masterValue, Constant.ColumnSysPrivilegePrivilegeMasterKey, sysId));
-
-            return
-                trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
-                                         commandType: CommandType.StoredProcedure);
-        }
-
-        public int DeleteSysPrivilegeByAccess(PrivilegeAccess access, string sysId)
-        {
-            using (var connection = Connection)
-            {   
-                var p = CreateDeleteParameter(string.Format("{0}='{1}' AND {2}='{3}'", Constant.ColumnSysPrivilegePrivilegeAccess, (int)access, Constant.ColumnSysPrivilegePrivilegeAccessKey, sysId));
-
-                return
-                    connection.Execute(Constant.ProcDeleteByWhere, p,
-                        commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public int DeleteSysPrivilegeByAccess(string sysId, PrivilegeAccess access, IDbTransaction trans)
-        {
-            var p =
-                CreateDeleteParameter(
-                    string.Format(
-                        "{0}='{1}' AND {2}='{3}'",
-                        Constant.ColumnSysPrivilegePrivilegeAccess,
-                        (int)access,
-                        Constant.ColumnSysPrivilegePrivilegeAccessKey,
-                        sysId));
-
-            return trans.Connection.Execute(
-                Constant.ProcDeleteByWhere,
-                p,
-                trans,
-                commandType: CommandType.StoredProcedure);
-        }
-
-        public int DeleteSysPrivilegeByAccess(string sysId, int accessValue, IDbTransaction trans)
-        {
-            var p =
-                CreateDeleteParameter(
-                    string.Format(
-                        "{0}='{1}' AND {2}='{3}'",
-                        Constant.ColumnSysPrivilegePrivilegeAccess,
-                        accessValue,
-                        Constant.ColumnSysPrivilegePrivilegeAccessKey,
-                        sysId));
-
-            return trans.Connection.Execute(
-                Constant.ProcDeleteByWhere,
-                p,
-                trans,
-                commandType: CommandType.StoredProcedure);
-        }
-
-        public int AddSysPrivilegeByAccess(SysPrivilege sysPrivilege, IDbTransaction trans)
-        {
-                var p = new DynamicParameters();
-                p.Add("@SysId", Guid.NewGuid());
-                p.Add("@PrivilegeMaster", sysPrivilege.PrivilegeMaster);
-                p.Add("@PrivilegeMasterKey", sysPrivilege.PrivilegeMasterKey);
-                p.Add("@PrivilegeAccess", sysPrivilege.PrivilegeAccess);
-                p.Add("@PrivilegeAccessKey", sysPrivilege.PrivilegeAccessKey);
-                p.Add("@PrivilegeOperation", 2);
-                p.Add("@RecordStatus", string.Format("创建时间：{0},创建人：{1}", DateTime.Now, "JF"));
-
-                int result = trans.Connection.Execute("Sys_Privilege_ADD", p, trans, commandType: CommandType.StoredProcedure);
-                return result;
-        }
+         
 
         #region Helper
 
