@@ -1,7 +1,9 @@
 ﻿using System.Data;
 
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
+using Infrastructure.Crosscutting.Security.Sql;
 using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
@@ -11,26 +13,14 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
     public class SysUserRepository : Repository<SysUser>
     {
-        public SysUserRepository() 
-        {
-            //todo UserInfoRepository实例化一直为空
-            UserInfoRepository = RepositoryFactory.UserInfoRepository;
-            PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
-            UserRoleRepository = RepositoryFactory.UserRoleRepository;
+
+        public SysUserRepository()
+            : base(InstanceLocator.Current.GetInstance<ISql>("SysUserSql"))
+        {   
         }
 
         #region 属性
-         
-        public override string AddProc
-        {
-            get { return Constant.ProcSysUserAdd; }
-        }
-         
-        public override string UpdateProc
-        {
-            get { return Constant.ProcSysUserUpdate; }
-        }
-
+          
         public override string TableName
         {
             get { return Constant.TableSysUser; }
@@ -38,11 +28,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         #endregion
 
-        public SysUserInfoRepository UserInfoRepository { get; private set; }
+        public SysUserInfoRepository UserInfoRepository {
+            get { return RepositoryFactory.UserInfoRepository; }
+        }
 
-        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+        public SysPrivilegeRepository PrivilegeRepository
+        {
+            get { return RepositoryFactory.PrivilegeRepository; }
+        }
 
-        public SysUserRoleRepository UserRoleRepository { get; private set; }
+        public SysUserRoleRepository UserRoleRepository {
+            get { return RepositoryFactory.UserRoleRepository; }
+        }
           
         internal override dynamic Mapping(SysUser item)
         {
@@ -93,20 +90,15 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                var p = new DynamicParameters();
-                p.Add("@Table", table, DbType.String, ParameterDirection.Input, 1000);
-                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
-                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
-
                 return connection.Query<SysUser, SysUserInfo, SysUser>(
-                    Constant.ProcGetList,
+                    CreateSelectSql(table,fields,where),
                     (u, ui) =>
                         {
                             u.UserInfo = ui;
                             return u;
                         },
-                        p,splitOn:"SysId",
-                    commandType: CommandType.StoredProcedure);
+                        splitOn:"SysId",
+                    commandType: CommandType.Text);
             }
         }
     }

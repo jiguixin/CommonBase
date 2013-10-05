@@ -19,14 +19,20 @@ namespace Infrastructure.Crosscutting.Security.Services
 
     public class SysRoleService:ISysRoleService
     {
-        public SysRoleRepository RoleRepository { get; private set; }
-        public SysUserRepository UserRepository { get; private set; }
+        public SysRoleRepository RoleRepository
+        {
+            get { return RepositoryFactory.RoleRepository; }
+        }
+
+        public SysUserRepository UserRepository
+        {
+            get { return RepositoryFactory.UserRepository; }
+        }
 
         public SysRoleService()
-        {
-            RoleRepository = RepositoryFactory.RoleRepository;
-            UserRepository = RepositoryFactory.UserRepository;
+        {  
         }
+
         public IEnumerable<SysUser> GetUsers(string roleId)
         { 
             return UserRepository.GetUserIncludeUserInfo(

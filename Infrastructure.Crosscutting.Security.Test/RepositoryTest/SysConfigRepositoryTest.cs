@@ -8,7 +8,7 @@
  */
 
 using System;
-
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 
 namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
@@ -21,13 +21,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysConfigRepositoryTest
     {
+        static SysConfigRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
         private IRepository<SysConfig> repository;
             /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-            {
+            { 
                 repository =RepositoryFactory.ConfigRepository;
             }
 

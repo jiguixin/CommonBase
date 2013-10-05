@@ -16,81 +16,81 @@ namespace Infrastructure.Crosscutting.Security.Common
     {
         #region Static Fields 储存过程名
 
-        public static readonly string ProcGetPaged = "proc_DataPagination";
-        public static readonly string ProcGetList = "proc_GetList";
+       // public static readonly string ProcGetPaged = "proc_DataPagination";
+       // public static readonly string ProcGetList = "proc_GetList";
 
         //根据条件删除指定表的数据
-        public static readonly string ProcDeleteByWhere = "proc_Delete_By_Where";
+        //public static readonly string ProcDeleteByWhere = "proc_Delete_By_Where";
           
         #region Sys_Button
          
-        public static readonly string ProcSysButtonAdd = "Sys_Button_ADD";
+        public static readonly string SqlSysButtonAdd = "Sys_Button_ADD";
             
-        public static readonly string ProcSysButtonUpdate = "Sys_Button_Update";
+        public static readonly string SqlSysButtonUpdate = "Sys_Button_Update";
          
         #endregion
 
         #region Sys_Config
 
-        public static readonly string ProcSysConfigAdd = "Sys_Config_ADD";
+        public static readonly string SqlSysConfigAdd = "Sys_Config_ADD";
            
-        public static readonly string ProcSysConfigUpdate = "Sys_Config_Update";
+        public static readonly string SqlSysConfigUpdate = "Sys_Config_Update";
 
         #endregion
 
         #region Sys_DataPrivilege
          
-        public static readonly string ProcSysDataPrivilegeAdd = "Sys_DataPrivilege_ADD";
+        public static readonly string SqlSysDataPrivilegeAdd = "Sys_DataPrivilege_ADD";
           
-        public static readonly string ProcSysDataPrivilegeUpdate = "Sys_DataPrivilege_Update";
+        public static readonly string SqlSysDataPrivilegeUpdate = "Sys_DataPrivilege_Update";
 
         #endregion
 
         #region Sys_Menu
 
-        public static readonly string ProcSysMenuAdd = "Sys_Menu_ADD";
+        public static readonly string SqlSysMenuAdd = "Sys_Menu_ADD";
           
-        public static readonly string ProcSysMenuUpdate = "Sys_Menu_Update";
+        public static readonly string SqlSysMenuUpdate = "Sys_Menu_Update";
 
         #endregion
 
         #region Sys_Privilege
 
-        public static readonly string ProcSysPrivilegeAdd = "Sys_Privilege_ADD";
+        public static readonly string SqlSysPrivilegeAdd = "Sys_Privilege_ADD";
           
-        public static readonly string ProcSysPrivilegeUpdate = "Sys_Privilege_Update";
+        public static readonly string SqlSysPrivilegeUpdate = "Sys_Privilege_Update";
           
         #endregion
 
         #region Sys_Role
 
-        public static readonly string ProcSysRoleAdd = "Sys_Role_ADD";
+        public static readonly string SqlSysRoleAdd = "Sys_Role_ADD";
           
-        public static readonly string ProcSysRoleUpdate = "Sys_Role_Update";
+        public static readonly string SqlSysRoleUpdate = "Sys_Role_Update";
 
         #endregion
 
         #region Sys_UserInfo
 
-        public static readonly string ProcSysUserInfoAdd = "Sys_UserInfo_ADD";
+        public static readonly string SqlSysUserInfoAdd = "Sys_UserInfo_ADD";
           
-        public static readonly string ProcSysUserInfoUpdate = "Sys_UserInfo_Update";
+        public static readonly string SqlSysUserInfoUpdate = "Sys_UserInfo_Update";
 
         #endregion
 
         #region Sys_UserRole
 
-        public static readonly string ProcSysUserRoleAdd = "Sys_UserRole_ADD";
+        public static readonly string SqlSysUserRoleAdd = "Sys_UserRole_ADD";
           
-        public static readonly string ProcSysUserRoleUpdate = "Sys_UserRole_Update";
+        public static readonly string SqlSysUserRoleUpdate = "Sys_UserRole_Update";
 
         #endregion
 
         #region Sys_User
 
-        public static readonly string ProcSysUserAdd = "Sys_User_ADD";
+        public static readonly string SqlSysUserAdd = "Sys_User_ADD";
           
-        public static readonly string ProcSysUserUpdate = "Sys_User_Update";
+        public static readonly string SqlSysUserUpdate = "Sys_User_Update";
 
         #endregion
 

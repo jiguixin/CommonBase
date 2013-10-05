@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
+using Infrastructure.Crosscutting.Security.Sql;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
@@ -14,35 +16,23 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysButtonRepository:Repository<SysButton>
     {
         public SysButtonRepository()
-        {
-            PrivilegeRepository = RepositoryFactory.PrivilegeRepository; 
+            : base(InstanceLocator.Current.GetInstance<ISql>("SysButtonSql"))
+        { 
         }
         #region 属性
- 
-        public override string AddProc
-        {
-            get
-            {
-                return Constant.ProcSysButtonAdd;
-            }
-        }
-         
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysButtonUpdate;
-            }
-        }
+  
 
         public override string TableName
         {
             get { return Constant.TableSysButton; }
         }
 
-        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
-         
-          
+        public SysPrivilegeRepository PrivilegeRepository
+        {
+            get { return RepositoryFactory.PrivilegeRepository; }
+        }
+
+
         #endregion
 
         internal override dynamic Mapping(SysButton item)

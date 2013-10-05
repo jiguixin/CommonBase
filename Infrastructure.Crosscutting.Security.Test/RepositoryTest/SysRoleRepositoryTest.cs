@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -12,13 +13,19 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysRoleRepositoryTest
     {
+        static SysRoleRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
+
         private IRepository<SysRole> repository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        { 
             repository =RepositoryFactory.RoleRepository;
         }
 
@@ -56,7 +63,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     RoleDesc = "管理系统的用户",
                     RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
                 };
-           // Console.WriteLine(repository.Add(model));
+            Console.WriteLine(repository.Add(model));
 
             model = new SysRole
             {
@@ -96,6 +103,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void Delete()
         { 
             Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961488"));
+             Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961489"));
         }
 
         [Test]

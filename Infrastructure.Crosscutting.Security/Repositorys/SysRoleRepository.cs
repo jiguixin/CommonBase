@@ -3,41 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
+using Infrastructure.Crosscutting.Security.Sql;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     public class SysRoleRepository:Repository<SysRole>
     {
         public SysRoleRepository()
-        {
-            PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
-            UserRoleRepository = RepositoryFactory.UserRoleRepository;
+            : base(InstanceLocator.Current.GetInstance<ISql>("SysRoleSql"))
+        { 
         }
 
-        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+        public SysPrivilegeRepository PrivilegeRepository
+        {
+            get { return RepositoryFactory.PrivilegeRepository; }
+        }
 
-        public SysUserRoleRepository UserRoleRepository { get; private set; }
+        public SysUserRoleRepository UserRoleRepository
+        {
+            get { return RepositoryFactory.UserRoleRepository; }
+        }
 
         #region 属性
-
-        
-        public override string AddProc
-        {
-            get
-            {
-                return Constant.ProcSysRoleAdd;
-            }
-        }
          
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysRoleUpdate;
-            }
-        }
-
         public override string TableName
         {
             get { return Constant.TableSysRole; }
@@ -51,7 +41,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                        {
                            SysId = item.SysId,
                            RoleName = item.RoleName,
-                           RoleDesc = item.RoleDesc
+                           RoleDesc = item.RoleDesc,
+                           RecordStatus = item.RecordStatus
                        };
         }
 

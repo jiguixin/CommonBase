@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -12,13 +13,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysDataPrivilegeRepositoryTest
     {
+        static SysDataPrivilegeRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
         private IRepository<SysDataPrivilege> repository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        {  
             repository = RepositoryFactory.DataPrivilegeRepository;
         }
 

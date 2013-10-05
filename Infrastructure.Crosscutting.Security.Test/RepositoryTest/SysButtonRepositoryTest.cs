@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
+using Infrastructure.Crosscutting.Security.Sql;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -14,13 +16,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysButtonRepositoryTest
     {
+        static SysButtonRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
         private IRepository<SysButton> repository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        {  
             repository = RepositoryFactory.ButtonRepository;
         }
 
@@ -116,7 +123,16 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void GetPagedTest()
         {
             int total = 0;
-            var s = repository.GetPaged("Sys_Button", "", "BtnName='按钮1'", "", 1, 20, 0, out total);
+            var lstResult = repository.GetPaged("Sys_Button", "", "BtnName='按钮1'", "", 1, 20, 0, out total);
+
+            if (lstResult != null && lstResult.Any())
+            {
+                Console.WriteLine(lstResult.Count());
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
         }
     }
 }

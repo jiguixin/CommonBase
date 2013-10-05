@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
+using Infrastructure.Crosscutting.Security.Sql;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
@@ -11,34 +13,20 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
     public class SysMenuRepository:Repository<SysMenu>
     {
-        public SysPrivilegeRepository PrivilegeRepository { get; private set; }
+        public SysPrivilegeRepository PrivilegeRepository { get
+        {
+            return RepositoryFactory.PrivilegeRepository;
+        }}
 
-        public SysButtonRepository ButtonRepository { get; private set; }
+        public SysButtonRepository ButtonRepository { get { return RepositoryFactory.ButtonRepository; } }
 
         public SysMenuRepository()
-        {
-            PrivilegeRepository = RepositoryFactory.PrivilegeRepository;
-            ButtonRepository = RepositoryFactory.ButtonRepository;  
+            : base(InstanceLocator.Current.GetInstance<ISql>("SysMenuSql"))
+        {  
         }
 
         #region 属性
-         
-        public override string AddProc
-        {
-            get
-            {
-                return Constant.ProcSysMenuAdd;
-            }
-        }
-         
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysMenuUpdate;
-            }
-        }
-
+          
         public override string TableName
         {
             get { return Constant.TableSysMenu; }

@@ -23,28 +23,21 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Crosscutting.Security.Repositorys;
 
     public class SysPrivilegeService : ISysPrivilegeService
-    {
-        private readonly IRepository<SysPrivilege> repository;
+    {  
+        private readonly SysMenuRepository menuRepository = RepositoryFactory.MenuRepository;
 
-        private readonly SysMenuRepository menuRepository;
+        private readonly SysButtonRepository buttonRepository = RepositoryFactory.ButtonRepository;
 
-        private readonly SysButtonRepository buttonRepository;
+        private readonly SysRoleRepository roleRepository = RepositoryFactory.RoleRepository;
 
-        private readonly SysRoleRepository roleRepository;
+        private readonly SysUserRepository userRepository = RepositoryFactory.UserRepository;
 
-        private readonly SysUserRepository userRepository;
-
-        private SysPrivilegeRepository privilegeRepository;
+        private SysPrivilegeRepository privilegeRepository=RepositoryFactory.PrivilegeRepository;
 
 
 
         public SysPrivilegeService()
-        {
-            repository = RepositoryFactory.PrivilegeRepository;
-            this.menuRepository = RepositoryFactory.MenuRepository;
-            this.roleRepository = RepositoryFactory.RoleRepository;
-            buttonRepository = RepositoryFactory.ButtonRepository;
-            userRepository = RepositoryFactory.UserRepository;
+        {     
         }
 
         /// <summary> 
@@ -170,7 +163,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                     sysPrivilege.PrivilegeMaster = privilegeMaster;
                     sysPrivilege.PrivilegeMasterKey = sysId;
 
-                    int addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, tran);
+                    int addResult = privilegeRepository.Add(sysPrivilege, tran);
 
                     if (addResult==0)
                     {
@@ -211,7 +204,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     #region 检查该条数据是否存在
 
-                    var chkResult = repository.GetList<int>(
+                    var chkResult = privilegeRepository.GetList<int>(
                         Constant.SqlCount,
                         string.Format(
                             Constant.SqlExistsSysPrivilegeWhere,
@@ -222,7 +215,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     if (chkResult.FirstOrDefault() == 0)
                     {
-                        Console.WriteLine(repository.Add(model));
+                        Console.WriteLine(privilegeRepository.Add(model));
                     }
 
                     #endregion
@@ -241,7 +234,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                         #region 检查该条数据是否存在
 
-                        chkResult = repository.GetList<int>(
+                        chkResult = privilegeRepository.GetList<int>(
                               Constant.SqlCount,
                               string.Format(
                                   Constant.SqlExistsSysPrivilegeWhere,
@@ -252,7 +245,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                         if (chkResult.FirstOrDefault() == 0)
                         {
-                            Console.WriteLine(repository.Add(model));
+                            Console.WriteLine(privilegeRepository.Add(model));
                         }
 
                         #endregion

@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +54,10 @@
     <Compile Include="Cryptography\CryptoHash.cs" />
     <Compile Include="Cryptography\CryptoHelper.cs" />
     <Compile Include="Cryptography\ICrypto.cs" />
+    <Compile Include="Ioc\IInstanceLocator.cs" />
+    <Compile Include="Ioc\InstanceLocator.cs" />
+    <Compile Include="Ioc\InstanceLocatorNinject.cs" />
+    <Compile Include="Ioc\NinjectContainer.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\SysButton.cs" />
     <Compile Include="Model\SysConfig.cs" />
@@ -87,12 +94,27 @@
     <Compile Include="Services\SysPrivilegeService.cs" />
     <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
+    <Compile Include="Sql\ISql.cs" />
+    <Compile Include="Sql\SqlServer.cs" />
+    <Compile Include="Sql\SysButtonSqlServer.cs" />
+    <Compile Include="Sql\SysConfigSqlServer.cs" />
+    <Compile Include="Sql\SysDataPrivilegeSqlServer.cs" />
+    <Compile Include="Sql\SysMenuSqlServer.cs" />
+    <Compile Include="Sql\SysPrivilegeSqlServer.cs" />
+    <Compile Include="Sql\SysRoleSqlServer.cs" />
+    <Compile Include="Sql\SysUserInfoSqlServer.cs" />
+    <Compile Include="Sql\SysUserRoleSqlServer.cs" />
+    <Compile Include="Sql\SysUserSqlServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">
       <Project>{db1a84dc-06fa-4396-9ca0-e7d7c9833eba}</Project>
       <Name>Infrastructure.Data.Ado</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

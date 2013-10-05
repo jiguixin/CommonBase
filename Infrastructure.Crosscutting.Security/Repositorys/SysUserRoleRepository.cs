@@ -3,30 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
+using Infrastructure.Crosscutting.Security.Sql;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 { 
     public class SysUserRoleRepository:Repository<SysUserRole>
-    { 
-        #region 属性
-         
-        public override string AddProc
+    {
+        public SysUserRoleRepository()
+            : base(InstanceLocator.Current.GetInstance<ISql>("SysUserRoleSql"))
         {
-            get
-            {
-                return Constant.ProcSysUserRoleAdd;
-            }
-        }
-         
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysUserRoleUpdate;
-            }
+            
         }
 
+        #region 属性
+           
         public override string TableName
         {
             get { return Constant.TableSysUserRole; }

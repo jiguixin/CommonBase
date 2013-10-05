@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -12,13 +13,19 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysUserInfoRepositoryTest
     {
+        static SysUserInfoRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
+
         private IRepository<SysUserInfo> repository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        { 
             repository = RepositoryFactory.UserInfoRepository;
         }
 

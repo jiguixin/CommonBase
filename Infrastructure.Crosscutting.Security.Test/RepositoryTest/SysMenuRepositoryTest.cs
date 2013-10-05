@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -12,13 +13,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysMenuRepositoryTest
     {
+        static SysMenuRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
         private IRepository<SysMenu> repository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        { 
             repository = RepositoryFactory.MenuRepository;
         }
 
@@ -98,7 +104,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void GetPagedTest()
         {
             int total = 0;
-            var s = repository.GetPaged("Sys_Menu", "", "MenuNo='1'", "", 1, 20, 0, out total);
+            var s = repository.GetPaged("Sys_Menu", "", "MenuOrder='1'", "", 1, 20, 0, out total);
         }
     }
 }

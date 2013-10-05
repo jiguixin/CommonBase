@@ -11,11 +11,13 @@ namespace Infrastructure.Crosscutting.Security.Services
 
     public class SysButtonService : ISysButtonService
     {
-        public SysButtonRepository ButtonRepository { get; private set; }
+        public SysButtonRepository ButtonRepository
+        {
+            get { return RepositoryFactory.ButtonRepository; }
+        }
 
         public SysButtonService()
-        {
-            ButtonRepository = RepositoryFactory.ButtonRepository;
+        { 
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string buttonId)

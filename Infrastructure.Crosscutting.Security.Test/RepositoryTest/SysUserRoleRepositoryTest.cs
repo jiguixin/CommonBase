@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -12,13 +13,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysUserRoleRepositoryTest
     {
+        static SysUserRoleRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
         private IRepository<SysUserRole> repository;
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        { 
             repository = RepositoryFactory.UserRoleRepository;
         }
 
@@ -55,12 +61,12 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     UserId = "cf9d52cc-0500-4829-9611-fd0056961468",
                     RoleId = "cf9d52cc-0500-4829-9611-fd0056961488"
                 };
-           // Console.WriteLine(repository.Add(model));
+            Console.WriteLine(repository.Add(model));
 
             model = new SysUserRole
             {
                 SysId = "cf9d52cc-0500-4829-9611-fd0056961478",
-                UserId = "cf9d52cc-0500-4829-9611-fd0056961468",
+                UserId = "cf9d52cc-0500-4829-9611-fd0056961469",
                 RoleId = "cf9d52cc-0500-4829-9611-fd0056961489"
             };
             Console.WriteLine(repository.Add(model));
@@ -85,6 +91,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void UpdateTest()
         {
             var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961477");
+            model.UserId = "cf9d52cc-0500-4829-9611-fd0056961469";
 
             Console.WriteLine(repository.Update(model));
         }
@@ -93,13 +100,24 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void Delete()
         {
             Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961477"));
+
+            Console.WriteLine(repository.Delete("cf9d52cc-0500-4829-9611-fd0056961478"));
         }
 
         [Test]
         public void GetPagedTest()
         {
             int total = 0;
-            var s = repository.GetPaged("Sys_UserRole", "", "UserId='cf9d52cc-0500-4829-9611-fd0056961477'", "", 1, 20, 0, out total);
+            var model = repository.GetPaged("Sys_UserRole", "", "UserId='cf9d52cc-0500-4829-9611-fd0056961468'", "", 1, 20, 0, out total);
+            
+            if (model != null && model.Any())
+            {
+                Console.WriteLine(model.FirstOrDefault().SysId);
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
         }
     }
 }

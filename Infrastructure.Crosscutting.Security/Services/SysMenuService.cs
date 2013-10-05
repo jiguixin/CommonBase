@@ -22,11 +22,13 @@ namespace Infrastructure.Crosscutting.Security.Services
     public class SysMenuService : ISysMenuService
     {
         public SysMenuService()
-        {
-            MenuRepository = RepositoryFactory.MenuRepository;
+        { 
         }
 
-        public SysMenuRepository MenuRepository { get; private set; }
+        public SysMenuRepository MenuRepository
+        {
+            get { return RepositoryFactory.MenuRepository; }
+        }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string menuId)
         {

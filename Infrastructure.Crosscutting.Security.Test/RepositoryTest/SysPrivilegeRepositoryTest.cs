@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -11,6 +12,11 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysPrivilegeRepositoryTest
     {
+        static SysPrivilegeRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
         private IRepository<SysPrivilege> repository;
 
         private SysMenuRepository menuRepository;
@@ -21,7 +27,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-        {
+        { 
             repository = RepositoryFactory.PrivilegeRepository;
 
             this.menuRepository = RepositoryFactory.MenuRepository;

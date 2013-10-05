@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Services;
 using NUnit.Framework;
 using System.Globalization;
@@ -13,6 +14,12 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
     [TestFixture]
     public class SysUserRepositoryTest
     {
+        static SysUserRepositoryTest()
+        {
+            InstanceLocator.SetLocator(
+           new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
+
         private SysUserRepository repository;
 
         private ISysUserService service;
@@ -120,6 +127,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void Delete()
         {
             Console.WriteLine(service.UserRepository.Delete("cf9d52cc-0500-4829-9611-fd0056961468"));
+            Console.WriteLine(service.UserRepository.Delete("cf9d52cc-0500-4829-9611-fd0056961469"));
         }
 
         //[Test]

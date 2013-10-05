@@ -8,6 +8,7 @@
  */
 
 using System;
+using Infrastructure.Crosscutting.Security.Sql;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
@@ -22,14 +23,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
     { 
         #region Abstract Property
-          
-        public abstract string AddProc { get;}
            
-        public abstract string UpdateProc { get; }
-
         public abstract string TableName { get; }
 
         #endregion
+
+        private ISql sql;
+
+        protected Repository(ISql sql)
+        {
+            this.sql = sql;
+        }
+
 
         #region Public Method
 
@@ -55,9 +60,9 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 ChkSysId(item);
 
                 var parameters = (object)Mapping(item);
-                 
-                return connection.Execute(AddProc, parameters,
-                    commandType: CommandType.StoredProcedure); 
+
+                return connection.Execute(sql.AddSql, parameters,
+                    commandType: CommandType.Text); 
             }
         }
          
@@ -71,18 +76,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             ChkSysId(item);
             var parameters = (object)Mapping(item);
-            return trans.Connection.Execute(AddProc, parameters,trans,
-                    commandType: CommandType.StoredProcedure); 
+            return trans.Connection.Execute(sql.AddSql, parameters, transaction: trans,
+                    commandType: CommandType.Text); 
         }
 
         public virtual int Delete(string sysId)
         {
             using (var connection = Connection)
             {
-                var p = CreateDeleteParameter(string.Format("{0}='{1}'",Constant.ColumnSysId, sysId)); 
+                var sqlDelete = CreateDeleteSql(string.Format("{0}='{1}'",Constant.ColumnSysId, sysId)); 
                 return
-                    connection.Execute(Constant.ProcDeleteByWhere, p,
-                        commandType: CommandType.StoredProcedure);
+                    connection.Execute(sqlDelete,
+                        commandType: CommandType.Text);
             }
         }
 
@@ -94,20 +99,20 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                var p = CreateDeleteParameter(condition);
+                var sqlDelete = CreateDeleteSql(condition);
                   
                 return
-                    connection.Execute(Constant.ProcDeleteByWhere, p,
-                        commandType: CommandType.StoredProcedure);
+                    connection.Execute(sqlDelete,
+                        commandType: CommandType.Text);
             }
         }
 
         public virtual int Delete(string sysId, IDbTransaction trans)
         {
-            var p = CreateDeleteParameter(string.Format("{0}='{1}'", Constant.ColumnSysId, sysId));
+            var sqlDelete = CreateDeleteSql(string.Format("{0}='{1}'", Constant.ColumnSysId, sysId));
 
-            return trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
-                   commandType: CommandType.StoredProcedure); 
+            return trans.Connection.Execute(sqlDelete, transaction: trans,
+                   commandType: CommandType.Text); 
         }
 
         /// <summary>
@@ -116,10 +121,10 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         /// <param name="condition">格式为[列]=‘a’</param> 
         public virtual int DeleteByWhere(string condition, IDbTransaction trans)
         {
-            var p = CreateDeleteParameter(condition);
+            var sqlDelete = CreateDeleteSql(condition);
 
-            return trans.Connection.Execute(Constant.ProcDeleteByWhere, p, trans,
-                   commandType: CommandType.StoredProcedure);
+            return trans.Connection.Execute(sqlDelete, transaction: trans,
+                   commandType: CommandType.Text);
         }
 
         public virtual int Update(TEntity item)
@@ -128,8 +133,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             {
                 var parameters = (object)Mapping(item);
 
-                return connection.Execute(UpdateProc, parameters,
-                    commandType: CommandType.StoredProcedure);
+                return connection.Execute(sql.UpdateSql, parameters,
+                    commandType: CommandType.Text);
             }
         }
 
@@ -137,8 +142,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             var parameters = (object) Mapping(item);
 
-            return trans.Connection.Execute(UpdateProc, parameters, trans,
-                                            commandType: CommandType.StoredProcedure);
+            return trans.Connection.Execute(sql.UpdateSql, parameters, transaction: trans,
+                                            commandType: CommandType.Text);
         }
 
         public virtual int AddOrModifyTrans<TP, TC>(TP item, TC childValue, Func<TP, IDbTransaction, int> parent, Func<TC, IDbTransaction, int> child)
@@ -254,21 +259,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             int getCount,
             out int total)
         {
-            total = 0;
-            using (var connection = Connection)
-            {
-                var p = new DynamicParameters();
-                p.Add("@Table", table, DbType.String, ParameterDirection.Input, 1000);
-                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
-                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
-                p.Add("@OrderBy", orderBy, DbType.String, ParameterDirection.Input, 50);
-                p.Add("@CurrentPage", currentPage, DbType.Int32, ParameterDirection.Input);
-                p.Add("@PageSize", pageSize, DbType.Int32, ParameterDirection.Input);
-                p.Add("@GetCount", getCount, DbType.Int32, ParameterDirection.Input);
-                p.Add("@Count", total, DbType.String, ParameterDirection.Output);
-
-                return connection.Query<TEntity>(Constant.ProcGetPaged, p, commandType: CommandType.StoredProcedure);
-            }
+            return  sql.GetPaged<TEntity>(table, orderBy, out total, fields, where, currentPage, pageSize, getCount);
         }
 
         public IEnumerable<TEntity> GetList()
@@ -279,42 +270,27 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         /// <summary>
         /// 注：必须要配置子类TableName
         /// </summary> 
-        public IEnumerable<TEntity> GetList(string fields = "", string where = "")
+        public IEnumerable<TEntity> GetList(string fields = null, string where = null)
         {
             using (var connection = Connection)
-            {
-                var p = new DynamicParameters();
-                p.Add("@Table", TableName, DbType.String, ParameterDirection.Input, 1000);
-                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
-                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
-
-                return connection.Query<TEntity>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
+            { 
+                return connection.Query<TEntity>(CreateSelectSql(TableName,fields,where), commandType: CommandType.Text);
             }
         }
 
-        public IEnumerable<T> GetList<T>(string fields = "", string @where = "")
+        public IEnumerable<T> GetList<T>(string fields = null, string where = null)
         {
             using (var connection = Connection)
             {
-                var p = new DynamicParameters();
-                p.Add("@Table", TableName, DbType.String, ParameterDirection.Input, 1000);
-                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
-                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
-
-                return connection.Query<T>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
+                return connection.Query<T>(CreateSelectSql(TableName, fields, where), commandType: CommandType.Text);
             }
         }
 
-        public IEnumerable<T> GetList<T>(string table, string fields = "", string @where = "")
+        public IEnumerable<T> GetList<T>(string table, string fields = null, string where = null)
         {
             using (var connection = Connection)
             {
-                var p = new DynamicParameters();
-                p.Add("@Table", table, DbType.String, ParameterDirection.Input, 1000);
-                p.Add("@Fields", fields, DbType.String, ParameterDirection.Input, 2000);
-                p.Add("@Where", where, DbType.String, ParameterDirection.Input, 1000);
-
-                return connection.Query<T>(Constant.ProcGetList, p, commandType: CommandType.StoredProcedure);
+                return connection.Query<T>(CreateSelectSql(table, fields, where), commandType: CommandType.Text);
             }
         }
 
@@ -352,14 +328,25 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         //创建调用proc_Delete_By_Where的参数
-        public DynamicParameters CreateDeleteParameter(string whereParam)
+        public string CreateDeleteSql(string where)
         {
-            var p = new DynamicParameters();
-            p.Add("Table", TableName, DbType.String, ParameterDirection.Input, 50);
+            where = string.IsNullOrEmpty(where) ? "1=1" : where;
 
-            p.Add("Where", whereParam, DbType.String, ParameterDirection.Input, 1000);
-            return p;
+            string sql = string.Format("delete from {0} where {1}", TableName, where);
+
+            return sql;
         }
+
+        public string CreateSelectSql(string tableName,string fields, string where)
+        {
+            fields = string.IsNullOrEmpty(fields) ? "*" : fields;
+            where = string.IsNullOrEmpty(where) ? "1=1" : where;
+
+            string sql = string.Format("select {0} from {1} where {2}", fields, tableName, where);
+
+            return sql;
+        }
+
 
         #endregion
          

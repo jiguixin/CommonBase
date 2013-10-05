@@ -7,6 +7,9 @@
  *备注：
  */
 
+using Infrastructure.Crosscutting.Security.Ioc;
+using Infrastructure.Crosscutting.Security.Sql;
+
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using Infrastructure.Crosscutting.Security.Common;
@@ -15,21 +18,10 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     public class SysConfigRepository:Repository<SysConfig>
     {
         #region 属性
-         
-        public override string AddProc
+
+        public SysConfigRepository()
+            : base(InstanceLocator.Current.GetInstance<ISql>("SysConfigSql"))
         {
-            get
-            {
-                return Constant.ProcSysConfigAdd;
-            }
-        }
-         
-        public override string UpdateProc
-        {
-            get
-            {
-                return Constant.ProcSysConfigUpdate;
-            }
         }
 
         public override string TableName

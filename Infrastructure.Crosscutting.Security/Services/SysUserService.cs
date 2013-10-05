@@ -16,20 +16,28 @@ namespace Infrastructure.Crosscutting.Security.Services
     public class SysUserService : ISysUserService
     {
         public SysUserService()
-        {
-            UserRepository = RepositoryFactory.UserRepository;
-            UserRoleRepository = RepositoryFactory.UserRoleRepository;
-            RoleRepository = RepositoryFactory.RoleRepository;
-            UserInfoRepository = RepositoryFactory.UserInfoRepository;
+        {   
         }
 
-        public SysUserRepository UserRepository { get; private set; }
+        public SysUserRepository UserRepository
+        {
+            get { return RepositoryFactory.UserRepository; }
+        }
 
-        public SysUserRoleRepository UserRoleRepository { get; private set; }
+        public SysUserRoleRepository UserRoleRepository
+        {
+            get { return RepositoryFactory.UserRoleRepository; }
+        }
 
-        public SysRoleRepository RoleRepository { get; private set; }
+        public SysRoleRepository RoleRepository
+        {
+            get { return RepositoryFactory.RoleRepository; }
+        }
 
-        public SysUserInfoRepository UserInfoRepository { get; private set; }
+        public SysUserInfoRepository UserInfoRepository
+        {
+            get { return RepositoryFactory.UserInfoRepository; }
+        }
 
         public SysUser CheckUser(string name, string pwd)
         {
