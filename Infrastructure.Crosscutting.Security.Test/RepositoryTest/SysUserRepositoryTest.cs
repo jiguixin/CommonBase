@@ -130,11 +130,20 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
             Console.WriteLine(service.UserRepository.Delete("cf9d52cc-0500-4829-9611-fd0056961469"));
         }
 
-        //[Test]
-        //public void GetPagedTest()
-        //{
-        //    int total = 0;
-        //    var s = repository.GetPaged("Sys_User", "", "UserName='admin'", "", 1, 20, 0, out total);
-        //}
+        [Test]
+        public void GetPagedTest()
+        {
+            int total = 0;
+            var lstResult = repository.GetPaged("Sys_User", "", "UserName='admin'", "", 1, 20, 0, out total);
+
+            if (lstResult != null && lstResult.Any())
+            {
+                Console.WriteLine(lstResult.Count());
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
+        }
     }
 }

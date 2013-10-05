@@ -91,7 +91,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void UpdateTest()
         {
             var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961477");
-            model.UserId = "cf9d52cc-0500-4829-9611-fd0056961469";
+            model.UserId = "cf9d52cc-0500-4829-9611-fd0056961468";
 
             Console.WriteLine(repository.Update(model));
         }
@@ -108,11 +108,12 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void GetPagedTest()
         {
             int total = 0;
-            var model = repository.GetPaged("Sys_UserRole", "", "UserId='cf9d52cc-0500-4829-9611-fd0056961468'", "", 1, 20, 0, out total);
-            
-            if (model != null && model.Any())
+            var lstResult = repository.GetPaged("Sys_UserRole", "", "UserId='cf9d52cc-0500-4829-9611-fd0056961468'", "", 1, 20, 0, out total);
+
+
+            if (lstResult != null && lstResult.Any())
             {
-                Console.WriteLine(model.FirstOrDefault().SysId);
+                Console.WriteLine(lstResult.Count());
             }
             else
             {

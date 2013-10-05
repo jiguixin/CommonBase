@@ -9,18 +9,18 @@
 
 using System;
 using Infrastructure.Crosscutting.Security.Sql;
+using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-
+      
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
-    using Infrastructure.Data.Ado.Dapper;
 
-    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
+    public abstract class  Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
     { 
         #region Abstract Property
            

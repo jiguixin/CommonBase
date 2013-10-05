@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Linq;
 using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
@@ -132,7 +132,16 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void GetPagedTest()
         {
             int total = 0;
-            var s = repository.GetPaged("Sys_Privilege", "", "PrivilegeMaster='cf9d52cc-0500-4829-9611-fd0056961468'", "", 1, 20, 0, out total);
+            var lstResult = repository.GetPaged("Sys_Privilege", "", "PrivilegeMasterKey='cf9d52cc-0500-4829-9611-fd0056961488'", "", 1, 20, 0, out total);
+
+            if (lstResult != null && lstResult.Any())
+            {
+                Console.WriteLine(lstResult.Count());
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
         }
 
         [Test]

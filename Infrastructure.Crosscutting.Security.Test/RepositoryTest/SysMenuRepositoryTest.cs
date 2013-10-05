@@ -104,7 +104,16 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void GetPagedTest()
         {
             int total = 0;
-            var s = repository.GetPaged("Sys_Menu", "", "MenuOrder='1'", "", 1, 20, 0, out total);
+            var lstResult = repository.GetPaged("Sys_Menu", "", "MenuOrder='1'", "", 1, 20, 0, out total);
+
+            if (lstResult != null && lstResult.Any())
+            {
+                Console.WriteLine(lstResult.Count());
+            }
+            else
+            {
+                Console.WriteLine("没有查到值");
+            }
         }
     }
 }
