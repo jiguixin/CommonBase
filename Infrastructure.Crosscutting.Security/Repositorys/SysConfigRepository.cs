@@ -8,7 +8,7 @@
  */
 
 using Infrastructure.Crosscutting.Security.Ioc;
-using Infrastructure.Crosscutting.Security.Sql;
+using Infrastructure.Crosscutting.Security.SqlImple;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {

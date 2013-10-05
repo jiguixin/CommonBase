@@ -7,9 +7,7 @@
  *备注：
  */
 
-using System;
-using Infrastructure.Crosscutting.Security.Repositorys;
-using Infrastructure.Crosscutting.Security.Sql;
+using Infrastructure.Crosscutting.Security.SqlImple;
 using Ninject.Modules;
 
 namespace Infrastructure.Crosscutting.Security.Test

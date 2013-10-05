@@ -8,7 +8,7 @@
  */
 
 using System;
-using Infrastructure.Crosscutting.Security.Sql;
+using Infrastructure.Crosscutting.Security.SqlImple;
 using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys

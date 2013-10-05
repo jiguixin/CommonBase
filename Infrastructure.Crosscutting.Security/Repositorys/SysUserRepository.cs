@@ -3,13 +3,12 @@
 using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
-using Infrastructure.Crosscutting.Security.Sql;
+using Infrastructure.Crosscutting.Security.SqlImple;
 using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     public class SysUserRepository : Repository<SysUser>
     {

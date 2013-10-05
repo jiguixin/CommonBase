@@ -94,17 +94,17 @@
     <Compile Include="Services\SysPrivilegeService.cs" />
     <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
-    <Compile Include="Sql\ISql.cs" />
-    <Compile Include="Sql\SqlServer.cs" />
-    <Compile Include="Sql\SysButtonSqlServer.cs" />
-    <Compile Include="Sql\SysConfigSqlServer.cs" />
-    <Compile Include="Sql\SysDataPrivilegeSqlServer.cs" />
-    <Compile Include="Sql\SysMenuSqlServer.cs" />
-    <Compile Include="Sql\SysPrivilegeSqlServer.cs" />
-    <Compile Include="Sql\SysRoleSqlServer.cs" />
-    <Compile Include="Sql\SysUserInfoSqlServer.cs" />
-    <Compile Include="Sql\SysUserRoleSqlServer.cs" />
-    <Compile Include="Sql\SysUserSqlServer.cs" />
+    <Compile Include="SqlImple\ISql.cs" />
+    <Compile Include="SqlImple\SqlServer.cs" />
+    <Compile Include="SqlImple\SysButtonSqlServer.cs" />
+    <Compile Include="SqlImple\SysConfigSqlServer.cs" />
+    <Compile Include="SqlImple\SysDataPrivilegeSqlServer.cs" />
+    <Compile Include="SqlImple\SysMenuSqlServer.cs" />
+    <Compile Include="SqlImple\SysPrivilegeSqlServer.cs" />
+    <Compile Include="SqlImple\SysRoleSqlServer.cs" />
+    <Compile Include="SqlImple\SysUserInfoSqlServer.cs" />
+    <Compile Include="SqlImple\SysUserRoleSqlServer.cs" />
+    <Compile Include="SqlImple\SysUserSqlServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">

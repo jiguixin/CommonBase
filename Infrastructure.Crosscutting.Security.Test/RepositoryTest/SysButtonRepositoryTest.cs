@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Infrastructure.Crosscutting.Security.Ioc;
-using Infrastructure.Crosscutting.Security.Sql;
 using NUnit.Framework;
 using System.Globalization;
 using Infrastructure.Crosscutting.Security.Model;
@@ -11,8 +9,6 @@ using Infrastructure.Crosscutting.Security.Repositorys;
 
 namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
 {
-    using System.Collections;
-
     [TestFixture]
     public class SysButtonRepositoryTest
     {
