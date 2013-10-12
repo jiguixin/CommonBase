@@ -17,6 +17,7 @@ namespace Infrastructure.Data.Ado.Dapper
     using System.ComponentModel;
     using System.Data;
     using System.Dynamic;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -1092,7 +1093,8 @@ namespace Infrastructure.Data.Ado.Dapper
 
                 while (reader.Read())
                 {
-                    yield return (T)func(reader);
+                    yield return (T)Convert.ChangeType(func(reader), typeof(T), CultureInfo.InvariantCulture);
+                    //yield return (T)func(reader);
                 }
                 // happy path; close the reader cleanly - no
                 // need for "Cancel" etc

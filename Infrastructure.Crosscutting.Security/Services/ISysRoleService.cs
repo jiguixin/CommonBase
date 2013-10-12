@@ -20,7 +20,13 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         SysRoleRepository RoleRepository { get; }
 
+        bool AddUserRole(SysUserRole userRole);
+
+        bool SetUserRole(List<SysUserRole> userRoles, string userName);
+
         IEnumerable<SysUser> GetUsers(string roleId);
+
+        IEnumerable<SysRole> GetAllRols();
 
         IEnumerable<SysPrivilege> GetPrivilege(string roleId);
     }

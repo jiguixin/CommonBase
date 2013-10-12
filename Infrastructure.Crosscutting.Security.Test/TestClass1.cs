@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Infrastructure.Crosscutting.Security.Common;
+using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.Services;
 using Infrastructure.Data.Ado.Dapper;
@@ -22,6 +23,12 @@ namespace Infrastructure.Crosscutting.Security.Test
     [TestFixture]
     public class TestClass1
     {
+        static TestClass1()
+        {
+            InstanceLocator.SetLocator(
+                new NinjectContainer().WireDependenciesInAssemblies(typeof (AppModule).Assembly.FullName).Locator);
+        }
+
         /// <summary>
         ///     为每个Test方法创建资源
         /// </summary>
@@ -128,14 +135,14 @@ namespace Infrastructure.Crosscutting.Security.Test
                 var p = new DynamicParameters();
                 p.Add("@SysId", sysId);
                 p.Add("@MenuParentId", "4300916d-b838-4126-9bf3-abcc6615d908");
-                p.Add("@MenuOrder", 502);
-                p.Add("@MenuName", "角色菜单权限配置");
-                p.Add("@MenuLink", "/MenuSetting/Index1");
+                p.Add("@MenuOrder", 504);
+                p.Add("@MenuName", "用户管理");
+                p.Add("@MenuLink", "/User/RoleAssign");
                 p.Add("@MenuIcon", "icon-nav");
-                p.Add("@@IsLeaf", false);
                 p.Add("@IsVisible", true);
+                p.Add("@IsLeaf", false);
                 p.Add("@RecordStatus", "修改时间" + DateTime.Now + ",修改人：JF");
-
+                
                 connection.Execute("Sys_Menu_ADD", p, commandType: CommandType.StoredProcedure);
 
             }
@@ -152,6 +159,23 @@ namespace Infrastructure.Crosscutting.Security.Test
 
             //    connection.Execute("Sys_Privilege_ADD", p, commandType: CommandType.StoredProcedure);
             //}
+        }
+
+        [Test]
+        public void AddButton()
+        {
+            string sysId = Util.NewId();
+            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            {
+                var p = new DynamicParameters();
+                p.Add("@SysId", sysId);
+                p.Add("@MenuId", "69d8eeaa-5c4b-4a27-b148-f46df54baee0");
+                p.Add("@BtnName", "保存");
+                p.Add("@BtnIcon", "icon-nav");
+                p.Add("@BtnOrder", 0);
+                p.Add("@RecordStatus", "修改时间" + DateTime.Now + ",修改人：JF");
+                connection.Execute("Sys_Button_ADD", p, commandType: CommandType.StoredProcedure);
+            }
         }
 
         [Test]
@@ -261,6 +285,15 @@ namespace Infrastructure.Crosscutting.Security.Test
                               .First();
                 Console.WriteLine(SysButton.BtnIcon);
             }
+        }
+
+        [Test]
+        public void TestGetButtonByUserAndMenu()
+        {
+            string userId = "cf9d52cc-0500-4829-9611-fd0056961468";
+            string menuId = "09dcd6e0-774e-4735-b38c-dae02f463240";
+
+            var t = ServiceFactory.ButtonService.TT(userId, menuId);
         }
     }
 }

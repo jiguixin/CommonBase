@@ -22,12 +22,16 @@ namespace Infrastructure.Crosscutting.Security.Services
     public class SysMenuService : ISysMenuService
     {
         public SysMenuService()
-        { 
+        {
         }
 
         public SysMenuRepository MenuRepository
         {
             get { return RepositoryFactory.MenuRepository; }
+        }
+        public SysButtonRepository ButtonRepository
+        {
+            get { return RepositoryFactory.ButtonRepository; }
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string menuId)
@@ -42,57 +46,142 @@ namespace Infrastructure.Crosscutting.Security.Services
         }
 
         /// <summary>
-        /// 根据用户ID获取可用菜单集合
+        /// 根据用户ID获取菜单和按钮权限信息
         /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public IEnumerable<SysMenu> GetPrivilegedSysMenuByUserId(string userId)
+        /// <param name="userId">用户ID</param>
+        /// <returns>SysPrivilege集合</returns>
+        public IEnumerable<SysPrivilege> GetPrivilegesByUserId(string userId)
         {
-            //todo : 用户权限和角色权限优先性需要测试修正
-            ISysUserService sysUserService = new SysUserService();
-
             //通过用户id获取权限菜单数据
-            IEnumerable<SysPrivilege> sysUserPrivileges = sysUserService.GetPrivilege(userId);
-            sysUserPrivileges = sysUserPrivileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Menu).ToList();
+            IEnumerable<SysPrivilege> sysUserPrivileges = ServiceFactory.UserService.GetPrivilege(userId);
 
             //通过用户id获取角色，通过角色获取权限菜单数据
-            IEnumerable<SysRole> sysRoles = sysUserService.GetRoles(userId);
-            ISysRoleService sysRoleService = new SysRoleService();
-            SysRole[] sysRoles1 = sysRoles.ToArray();
-            //一个用户是否会有多个角色？
-            for (int i = 0; i < sysRoles1.Count(); i++)
+            IEnumerable<SysRole> sysRoles = ServiceFactory.UserService.GetRoles(userId);
+
+            //一个用户会有多个角色
+            foreach (SysRole sysRole in sysRoles)
             {
-                string roleId = sysRoles1[0].SysId;
-                IEnumerable<SysPrivilege> sysRolePrivileges = sysRoleService.GetPrivilege(roleId);
+                string roleId = sysRole.SysId;
+                IEnumerable<SysPrivilege> sysRolePrivileges = ServiceFactory.RoleService.GetPrivilege(roleId);
+
+                //获取角色中菜单权限
+                var roleMenuPrivileges = sysRolePrivileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Menu);
+                //获取角色中的不可用按钮数据
+                var roleDisBts =
+                    sysRolePrivileges.Where(
+                        x =>
+                        x.PrivilegeAccess == PrivilegeAccess.Button &&
+                        x.PrivilegeOperation == PrivilegeOperation.Disable);
 
                 //排除同用户权限相同菜单数据
-                SysPrivilege[] sysUserPrivileges1 = sysUserPrivileges.ToArray();
-                for (int j = 0; j < sysUserPrivileges1.Length; j++)
+                foreach (SysPrivilege privilege in sysUserPrivileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Menu))
                 {
-                    sysRolePrivileges =
-                        sysRolePrivileges.Where(
-                            x =>
-                            x.PrivilegeAccessKey != sysUserPrivileges1[j].PrivilegeAccessKey &&
-                            x.PrivilegeAccess == PrivilegeAccess.Menu).ToList();
+                    roleMenuPrivileges =
+                       roleMenuPrivileges.Where(
+                           x =>
+                           x.PrivilegeAccessKey != privilege.PrivilegeAccessKey).ToList();
                 }
+                sysUserPrivileges = sysUserPrivileges.Union(roleMenuPrivileges);
 
-                sysUserPrivileges = sysUserPrivileges.Union(sysRolePrivileges);
-                sysUserPrivileges = sysUserPrivileges.Where(x => x.PrivilegeOperation == PrivilegeOperation.Enable);
+                //排除同用户权限相同按钮数据
+                foreach (SysPrivilege privilege in sysUserPrivileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button))
+                {
+                    roleDisBts =
+                       roleDisBts.Where(
+                           x =>
+                           x.PrivilegeAccessKey == privilege.PrivilegeAccessKey).ToList();
+
+                }
+                sysUserPrivileges = sysUserPrivileges.Union(roleDisBts);
+
             }
+
+            return sysUserPrivileges;
+        }
+
+
+        /// <summary>
+        /// 根据用户ID获取可用菜单和按钮集合
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <returns>SysMenu集合</returns>
+        public IEnumerable<SysMenu> GetPrivilegedSysMenuByUserId(string userId)
+        {
+
+            var sysUserPrivileges = GetPrivilegesByUserId(userId);
+
+            var allButtons = ServiceFactory.ButtonService.GetAllButons();
+
+
+
             //筛选菜单结果
             List<SysMenu> sysMenus = new List<SysMenu>();
-            ISysMenuService sysMenuService = new SysMenuService();
+
             foreach (SysPrivilege sysUserPrivilege in sysUserPrivileges)
             {
                 string menuId = sysUserPrivilege.PrivilegeAccessKey;
-                SysMenu sysMenu = sysMenuService.GetSysMenuById(menuId).ToArray()[0];
-                sysMenus.Add(sysMenu);
+                var c = ServiceFactory.MenuService.GetSysMenuById(menuId);
+                if (c.Count() > 0)
+                {
+
+                    List<SysButton> bts = new List<SysButton>();
+                    //根据用户获取按钮
+                    var userBt = ServiceFactory.ButtonService.GetButtonsPrivilegeByUserAndMenu(userId, menuId, PrivilegeMaster.User, allButtons, sysUserPrivileges);
+                    if (userBt != null)
+                    {
+                        bts = bts.Union(userBt).ToList();
+                    }
+
+                    SysMenu sysMenu = c.FirstOrDefault();
+                    sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
+                    sysMenu.Buttons = bts;
+
+                    sysMenus.Add(sysMenu);
+                }
+
             }
             return sysMenus.OrderBy(x => x.MenuOrder);
         }
 
+
         /// <summary>
-        /// 获取所有菜单列表
+        /// 根据角色ID获取可用菜单和按钮集合
+        /// </summary>
+        /// <param name="roleId">角色ID</param>
+        /// <returns>SysMenu集合</returns>
+        public IEnumerable<SysMenu> GetPrivilegedSysMenuByRoleId(string roleId)
+        {
+            IEnumerable<SysPrivilege> sysRolePrivileges = ServiceFactory.RoleService.GetPrivilege(roleId);
+            //获取所有按钮数据
+            IEnumerable<SysButton> allButtons = ButtonRepository.GetList<SysButton>(Constant.TableSysButton,
+                                                                                    "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
+                                                                                    null);
+
+            //筛选菜单结果
+            List<SysMenu> sysMenus = new List<SysMenu>();
+
+            foreach (SysPrivilege sysUserPrivilege in sysRolePrivileges)
+            {
+                string menuId = sysUserPrivilege.PrivilegeAccessKey;
+                var c = ServiceFactory.MenuService.GetSysMenuById(menuId);
+                if (c.Count() > 0)
+                {
+                    SysMenu sysMenu = ServiceFactory.MenuService.GetSysMenuById(menuId).ToArray()[0];
+                    sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
+                    sysMenu.Buttons = ServiceFactory.ButtonService.GetButtonsPrivilegeByUserAndMenu(roleId, menuId, PrivilegeMaster.Role, allButtons, sysRolePrivileges);
+
+                    sysMenus.Add(sysMenu);
+                }
+
+            }
+
+            return sysMenus;
+        }
+
+
+
+        /// <summary>
+        /// 获取所有菜单列表（不包含按钮）
         /// </summary>
         /// <returns></returns>
         public IEnumerable<SysMenu> GetAllMenu()
@@ -100,8 +189,6 @@ namespace Infrastructure.Crosscutting.Security.Services
             IEnumerable<SysMenu> sysMenus = MenuRepository.GetList<SysMenu>(Constant.TableSysMenu, "*", null);
             return sysMenus.OrderBy(x => x.MenuOrder);
         }
-
-        
 
     }
 }

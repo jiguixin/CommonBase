@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+      
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/easyui/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/easyui") 
+    
+    @RenderSection("stylesHeader", required: false)
+
+    @RenderSection("scriptsHeader", required: false)
+     
+</head>
+    <body> 
+        @RenderSection("OperationContent", required: false)
+         
+        <div id="dialog" title="操作">
+        </div>
+        <br style="clear: both;" />
+        <table id="fixedGrid">
+        </table>
+        
+        @RenderSection("mainContent", required: false)
+
+        @RenderSection("stylesFooter", required: false)
+        @RenderSection("scriptsFooter", required: false)
+    </body>
+</html>

@@ -8,6 +8,7 @@
  */
 
 using System;
+using Infrastructure.Crosscutting.Security.Common;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
@@ -20,5 +21,12 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         SysButtonRepository ButtonRepository { get; }
         IEnumerable<SysPrivilege> GetPrivilege(string buttonId);
+        IEnumerable<SysButton> GetAllButons();
+        IEnumerable<SysButton> GetButtonsPrivilegeByUserAndMenu(string userId, string menuId);
+
+        IEnumerable<SysButton> GetButtonsPrivilegeByUserAndMenu(string sysId, string menuId,
+                                                                       PrivilegeMaster master,
+                                                                       IEnumerable<SysButton> buttons,
+                                                                       IEnumerable<SysPrivilege> privileges);
     }
 }

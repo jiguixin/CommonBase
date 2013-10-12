@@ -1,40 +1,5 @@
 ﻿
-var _menus = {
-    "menus": [
-              {
-                  "menuid": "1", "icon": "icon-sys", "menuname": "控件使用",
-                  "menus": [
-                          { "menuid": "12", "menuname": "cnblogs", "icon": "icon-add", "url": "http://www.cnblogs.com" },
-                          { "menuid": "13", "menuname": "用户管理", "icon": "icon-users", "url": "demo2.html" },
-                          { "menuid": "14", "menuname": "角色管理", "icon": "icon-role", "url": "demo2.html" },
-                          { "menuid": "15", "menuname": "权限设置", "icon": "icon-set", "url": "demo.html" },
-                          { "menuid": "16", "menuname": "系统日志", "icon": "icon-log", "url": "demo1.html" }
-                  ]
-              }, {
-                  "menuid": "8", "icon": "icon-sys", "menuname": "员工管理",
-                  "menus": [{ "menuid": "21", "menuname": "员工列表", "icon": "icon-nav", "url": "demo.html" },
-                          { "menuid": "22", "menuname": "视频监控", "icon": "icon-nav", "url": "demo1.html" }
-                  ]
-              }, {
-                  "menuid": "56", "icon": "icon-sys", "menuname": "部门管理",
-                  "menus": [{ "menuid": "31", "menuname": "添加部门", "icon": "icon-nav", "url": "demo1.html" },
-                          { "menuid": "32", "menuname": "部门列表", "icon": "icon-nav", "url": "demo2.html" }
-                  ]
-              }, {
-                  "menuid": "28", "icon": "icon-sys", "menuname": "财务管理",
-                  "menus": [{ "menuid": "41", "menuname": "收支分类", "icon": "icon-nav", "url": "demo.html" },
-                          { "menuid": "42", "menuname": "报表统计", "icon": "icon-nav", "url": "demo1.html" },
-                          { "menuid": "43", "menuname": "添加支出", "icon": "icon-nav", "url": "demo2.html" }
-                  ]
-              }, {
-                  "menuid": "39", "icon": "icon-sys", "menuname": "商城管理",
-                  "menus": [{ "menuid": "51", "menuname": "商品分类", "icon": "icon-nav", "url": "demo.html" },
-                          { "menuid": "52", "menuname": "商品列表", "icon": "icon-nav", "url": "demo1.html" },
-                          { "menuid": "53", "menuname": "商品订单", "icon": "icon-nav", "url": "demo2.html" }
-                  ]
-              }
-    ]
-};
+var _menus = [];
 
 $(function () {
     InitLeftMenu();
@@ -48,8 +13,9 @@ $(function () {
             var iframe = $(currTab.panel('options').content);
 
             var src = iframe.attr('src');
+            var menuId = iframe.attr('id');
             if (src)
-                $('#tabs').tabs('update', { tab: currTab, options: { content: createFrame(src) } });
+                $('#tabs').tabs('update', { tab: currTab, options: { content: createFrame(src, menuId) } });
         }
     });
 
@@ -60,19 +26,16 @@ $(function () {
 function InitLeftMenu() {
     $("#nav").accordion({ animate: false });
 
-    //$.getJSON("/Home/GetMenusByUser?"+new Date().getTime(), function (data) {
-    //    $.each(data, function (i, field) {
-    //        alert("JSON Data: " + field.SysId);
-    //    });
-    //});
 
-    $.getJSON("/RestApi/GetMenusByLoginUser?" + new Date().getTime(), function (data) {
+    $.getJSON(getCurrentUserMenu + "?" + new Date().getTime(), function (data) {
+        _menus = data;
+        
         var menulist = '';
         var menuListName = null;
 
         $.each(data, function (i, n) {
             //如果是父节点,则添加<ul>标示
-            if (n.MenuParentId == null) {
+            if (n.MenuParentId == null && n.IsVisible == 2) {
                 //如果上一次的父节点名称不为空，表示已经menulist已经有一组菜单需要添加
                 //如果上一次的父节点名称为空，表示是第一次获取到父节点要素，menulist还未生成
                 if (menuListName != null) {
@@ -81,13 +44,13 @@ function InitLeftMenu() {
                         content: menulist,
                         iconCls: 'icon ' + n.MenuIcon
                     });
-                    
+
                 }
                 menulist = '<ul>';
                 menuListName = n.MenuName;
 
-            } else {
-                menulist += '<li><div><a ref="' + n.MenuOrder + '" href="#" rel="' + n.MenuLink + '" ><span class="icon ' + n.MenuIcon + '" >&nbsp;</span><span class="nav">' + n.MenuName + '</span></a></div></li> ';
+            } else if (n.IsVisible == 2) {
+                menulist += '<li><div><a ref="' + n.MenuOrder + '" href="#"  rev="' + n.SysId + '"  rel="' + n.MenuLink + '" ><span class="icon ' + n.MenuIcon + '" >&nbsp;</span><span class="nav">' + n.MenuName + '</span></a></div></li> ';
             }
 
             //循环结束时候再添加一次menulist，否则最后一组的menulist不会显示
@@ -105,10 +68,10 @@ function InitLeftMenu() {
             var tabTitle = $(this).children('.nav').text();
 
             var url = $(this).attr("rel");
-            var menuid = $(this).attr("ref");
-            var icon = getIcon(menuid, icon);
+            var menuid = $(this).attr("rev");
+            var icon = getIcon(menuid);
 
-            addTab(tabTitle, url, icon);
+            addTab(tabTitle, url, icon, menuid);
             $('.easyui-accordion li div').removeClass("selected");
             $(this).parent().addClass("selected");
         }).hover(function () {
@@ -119,51 +82,37 @@ function InitLeftMenu() {
 
         //选中第一个
         var panels = $('#nav').accordion('panels');
-        var t = panels[0].panel('options').title;
-        $('#nav').accordion('select', t);
+        if (panels.length>0) {
+            var t = panels[0].panel('options').title;
+            $('#nav').accordion('select', t);
+        }
+        
     });
 
-    $.getJSON("/RestApi/GetUserInfo?" + new Date().getTime(), function (data) {
-        //alert(data.SysId);
-        $("#userName")[0].innerText = data.RealName;
+     
+    $.getJSON(getCurrentUserInfoUrl + "?" + new Date().getTime(), function (data) {
+        $("#userName")[0].innerText = data.UserInfo.RealName;
     });
-    //$.each(_menus.menus, function (i, n) {
-    //    var menulist = '';
-    //    menulist += '<ul>';
-    //    $.each(n.menus, function(j, o) {
-    //        menulist += '<li><div><a ref="' + o.menuid + '" href="#" rel="' + o.url + '" ><span class="icon ' + o.icon + '" >&nbsp;</span><span class="nav">' + o.menuname + '</span></a></div></li> ';
-    //    });
-    //    menulist += '</ul>';
-
-    //    $('#nav').accordion('add', {
-    //        title: n.menuname,
-    //        content: menulist,
-    //        iconCls: 'icon ' + n.icon
-    //    });
-
-    //});
-
+    
 
 }
 //获取左侧导航的图标
 function getIcon(menuid) {
     var icon = 'icon ';
-    $.each(_menus.menus, function (i, n) {
-        $.each(n.menus, function (j, o) {
-            if (o.menuid == menuid) {
-                icon += o.icon;
-            }
-        });
+    $.each(_menus, function (i, n) {
+        if (n.SysId == menuid) {
+            icon += n.MenuIcon;
+        }
     });
 
     return icon;
 }
 
-function addTab(subtitle, url, icon) {
+function addTab(subtitle, url, icon, menuId) {
     if (!$('#tabs').tabs('exists', subtitle)) {
         $('#tabs').tabs('add', {
             title: subtitle,
-            content: createFrame(url),
+            content: createFrame(url, menuId),
             closable: true,
             icon: icon
         });
@@ -174,8 +123,8 @@ function addTab(subtitle, url, icon) {
     tabClose();
 }
 
-function createFrame(url) {
-    var s = '<iframe scrolling="auto" frameborder="0"  src="' + url + '" style="width:100%;height:100%;"></iframe>';
+function createFrame(url, menuId) {
+    var s = '<iframe frameborder="0" id="'+menuId+'" scrolling="no" src="' + url + '" style="width:100%;height:99.8%;"></iframe>';
     return s;
 }
 
@@ -205,10 +154,11 @@ function tabCloseEven() {
     $('#mm-tabupdate').click(function () {
         var currTab = $('#tabs').tabs('getSelected');
         var url = $(currTab.panel('options').content).attr('src');
+        var menuId = $(currTab.panel('options').content).attr('id');
         $('#tabs').tabs('update', {
             tab: currTab,
             options: {
-                content: createFrame(url)
+                content: createFrame(url,menuId)
             }
         });
     });

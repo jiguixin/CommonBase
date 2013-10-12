@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Web.Models
+{
+    public class UserDetailsModel
+    {
+        /// <summary>
+        /// 用户编号
+        /// </summary>
+        public string SysId { get; set; }
+
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// 密码
+        /// </summary>
+        public string UserPwd { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime? CreateTime { get; set; }
+
+        /// <summary>
+        /// 最后一次登录时间
+        /// </summary>
+        public DateTime? LastLogin { get; set; }
+
+        /// <summary>
+        /// 该条记录的操作情况，用于记录最后一次谁在什么时候创建、修改了该记录
+        /// </summary>
+        public string RecordStatus { get; set; }
+
+        /// <summary>
+        /// 真实名字
+        /// </summary>
+        public string RealName { get; set; }
+
+        /// <summary>
+        /// 职位
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// 性别
+        /// </summary>
+        public string Sex { get; set; }
+
+        /// <summary>
+        /// 手机
+        /// </summary>
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// 传真
+        /// </summary>
+        public string Fax { get; set; }
+
+        /// <summary>
+        /// 邮箱
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// qq
+        /// </summary>
+        public string QQ { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        public string Address { get; set; }
+    }
+}

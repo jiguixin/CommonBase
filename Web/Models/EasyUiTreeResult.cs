@@ -23,6 +23,12 @@ namespace Web.Models
 
         public  bool  @checked{get;set;}
 
+        public string link { get; set; }
+
+        public string recordStatus { get; set; }
+
+        public int? order { get; set; }
+
         public EasyUiTreeResult[] children { get; set; }  
     }
 }

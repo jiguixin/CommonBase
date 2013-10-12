@@ -40,6 +40,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -129,16 +133,23 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\GISController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
-    <Compile Include="Controllers\MenuSettingController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\RestApiController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\EasyUiTreeResult.cs" />
+    <Compile Include="Models\EasyUi\toolbar.cs" />
     <Compile Include="Models\ResultModel.cs" />
+    <Compile Include="Models\UserDetailsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\AppModule.cs" />
+    <Compile Include="Utility\CustomJsonResult.cs" />
     <Compile Include="Utility\MyFormsPrincipal.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2262,6 +2273,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Error.html" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Scripts\eayuiExtend\datagridExtend.js" />
+    <Content Include="Scripts\eayuiExtend\formExtend.js" />
     <Content Include="Scripts\Home\index.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
@@ -2276,7 +2289,6 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
-    <Content Include="Scripts\MenuSetting\index.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
@@ -2292,9 +2304,14 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\MenuSetting\Index.cshtml" />
-    <Content Include="Scripts\MenuSetting\tree_data1.json" />
-    <Content Include="Views\MenuSetting\Index1.cshtml" />
+    <Content Include="Views\Menu\UserMenu.cshtml" />
+    <Content Include="Views\Menu\RoleMenu.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\GIS\Index.cshtml" />
+    <Content Include="Views\User\RoleAssign.cshtml" />
+    <Content Include="Views\Role\Index.cshtml" />
+    <Content Include="Views\Shared\IndexTemp.cshtml" />
+    <Content Include="Views\Menu\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

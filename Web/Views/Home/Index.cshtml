@@ -2,9 +2,13 @@
     this.ViewBag.Title = "Index";
 }
 <link href="~/Content/css/home/index.css" rel="stylesheet" />
-
+<style>
+    body {
+        margin: 0 !important;
+    }
+</style>
 <script type="text/javascript">
-    
+     
     //设置登录窗口
     function openPwd() {
         $('#w').window({
@@ -92,7 +96,7 @@
     </div>
     <div id="mainPanel" region="center">
         <div id="tabs" class="easyui-tabs"  fit="true" border="false" >
-            <div title="首页" style="color: red; overflow: hidden; padding: 20px;" >
+            <div title="首页" style="color: red; overflow: hidden;" >
                 <h1 style="font-size: 24px;">首页</h1> 
             </div>
         </div>
@@ -138,4 +142,10 @@
         <div id="mm-exit">退出</div>
     </div>
 </body>
+<script>
+    //用于获取当前登录用户信息的REST URL 地址
+    var getCurrentUserInfoUrl = '@Url.Action("GetCurrentUserInfo","RestApi")';
+    var getCurrentUserMenu = '@Url.Action("GetMenusByLoginUser","RestApi")';
+</script>
+
 <script src="~/Scripts/Home/index.js"> </script>

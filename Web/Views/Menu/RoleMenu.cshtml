@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "角色菜单权限设置";
+}
+
+<body>
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'west',split:true" style="width: 250px" title="角色列表">
+            <ul id="roleTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
+        </div>
+        <div data-options="region:'center'" >
+            <table id="menuTable" class="easyui-treegrid" toolbar="#toolbar"></table>
+        </div>
+    </div>
+
+    <div id="toolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="Save()">保存</a>
+    </div>
+
+
+    @*    <div class="easyui-layout" style="width: 100%; height: 500px;">
+        <div data-options="region:'center',iconCls:'icon-ok'" title="用户菜单权限设置">
+            <a href="#" class="easyui-linkbutton" onclick="getChecked()" style="float: right; margin: 10px">保存配置</a>
+            <div class="easyui-layout" data-options="fit:true">
+                <div data-options="region:'west',split:true,border:false" style="width: 250px">
+                    <ul id="roleTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
+                </div>
+                <div data-options="region:'center',split:true,border:false">
+                    <ul id="menuTree" class="easyui-tree" data-options="checkbox:true,method:'get',animate:true"></ul>
+                </div>
+            </div>
+        </div>
+    </div>*@
+</body>
+
+<script type="text/javascript">
+    //保存当前角色菜单
+    function Save() {
+        var nodes = $('#menuTable').datagrid('getChecked');
+        
+        var menuIds = '';
+        for (var i = 0; i < nodes.length; i++) {
+            if (menuIds != '') menuIds += ',';
+            menuIds += nodes[i].id;
+        }
+
+        var postData = {
+            'sysId': sltRole.id,
+            'privilegeMaster': 11,
+            'menus': menuIds
+        };
+
+        $.post('@Url.Action("UpdatePrivilege", "RestApi")', postData,
+            function (data) {
+                if (data) {
+                    alert("配置成功");
+                } else {
+                    alert("配置失败");
+                }
+            });
+    }
+
+    //初始化时加载角色列表和点击事件
+    var sltRole;
+    $('#roleTree').tree({
+        url: '@Url.Action("GetRolesListTree", "RestApi")' + "?" + new Date().getTime(),
+        onClick: function (node) {
+            sltRole = node;
+            $('#menuTable').treegrid({
+                url: '@Url.Action("GetMenusPrivilegeTreeForRole", "RestApi")' + "?id=" + sltRole.id + "?" + new Date().getTime(),
+                idField: 'id',
+                treeField: 'text',
+                singleSelect: false,
+                checkOnSelect: true,
+                selectOnCheck: true,
+                columns: [[
+                    { field: 'ck', checkbox: true },
+                    { field: 'text', title: '名称', width: 150 },
+                    { field: 'link', title: '链接', width: 150 },
+                    { field: 'id', title: 'ID', width: 200 },
+                    { field: 'recordStatus', title: '操作记录', width: 250 }
+                ]],
+                onLoadSuccess: function (row, data) {
+                    if (data) {
+                        $.each(data, function (index, item) {
+                            if (item.checked) {
+                                $.each(item.children, function (i, a) {
+                                    if (a.checked) {
+                                        $.each(a.children, function (j, b) {
+                                            if (b.checked) {
+                                                $('#menuTable').treegrid('select', b.id);
+                                            }
+                                        });
+                                        $('#menuTable').treegrid('select', a.id);
+                                    }
+                                });
+                                $('#menuTable').treegrid('select', item.id);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+</script>

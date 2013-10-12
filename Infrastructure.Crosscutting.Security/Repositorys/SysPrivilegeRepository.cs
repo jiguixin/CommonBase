@@ -99,6 +99,21 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 transaction: trans,
                 commandType: CommandType.Text);
         }
+
+        public int AddSysPrivilegeByAccess(SysPrivilege sysPrivilege,string userName, IDbTransaction trans)
+        {
+            var p = new DynamicParameters();
+            p.Add("@SysId", Guid.NewGuid());
+            p.Add("@PrivilegeMaster", sysPrivilege.PrivilegeMaster);
+            p.Add("@PrivilegeMasterKey", sysPrivilege.PrivilegeMasterKey);
+            p.Add("@PrivilegeAccess", sysPrivilege.PrivilegeAccess);
+            p.Add("@PrivilegeAccessKey", sysPrivilege.PrivilegeAccessKey);
+            p.Add("@PrivilegeOperation", sysPrivilege.PrivilegeOperation);
+            p.Add("@RecordStatus", string.Format("创建时间：{0},创建人：{1}", DateTime.Now, userName));
+
+            int result = trans.Connection.Execute("Sys_Privilege_ADD", p, trans, commandType: CommandType.StoredProcedure);
+            return result;
+        }
          
         #region Helper
 

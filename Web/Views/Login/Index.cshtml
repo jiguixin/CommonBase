@@ -4,16 +4,26 @@
 
 <div id="win" class="easyui-window" data-options="modal:true,closable:false,minimizable:false,maximizable:false,collapsible:false,draggable:false,resizable:false" title="登录" style="width:350px;height:200px;">
     <form style="padding:10px 20px 10px 40px;">
-        <p>用户名: <input type="text" id="name"></p>
-        <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd"></p>
+        <p>用户名: <input type="text" id="name" value="admin1"></p>
+        <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd" value="123456"></p>
         <label id="showInfo" style=" color:Red"></label>
-        <div style="padding:5px;text-align:center;">
-            <a href="#" class="easyui-linkbutton" icon="icon-ok" onclick="Login();">确定</a>
+        <div style="padding:5px;text-align:center;"> 
+            <a href="#" id="btnOk" class="easyui-linkbutton" icon="icon-ok" onclick="Login();">确定</a>
             <a href="#" class="easyui-linkbutton" icon="icon-cancel">取消</a>
         </div>
     </form>
 </div>
-<script>
+<script> 
+    $(function () {
+        $('#pwd').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $("#btnOk").focus().click();
+                return false;
+            }
+            return true;
+        });
+    });
+
     function Login() {
         var name = $('#name').val();
         var pwd = $('#pwd').val();
@@ -27,15 +37,15 @@
                 password: $("#pwd").val()
             };
             $.post('@Url.Action("CheckUser","RestApi")', postData,
-               function (data) {
-                   if (data.Result == true) {
-                       $('#showInfo').html("登录成功!");
-                       window.location.href = "/Home/index"; 
-                   } 
-                   else {
-                       $('#showInfo').html(data.ResultInfo);
-                   }
-               });
+                function (data) {
+                    if (data.Result == true) {
+                        $('#showInfo').html("登录成功!");
+                        window.location.href = "/Home/index"; 
+                    } 
+                    else {
+                        $('#showInfo').html(data.ResultInfo);
+                    }
+                });
         }
     }
 

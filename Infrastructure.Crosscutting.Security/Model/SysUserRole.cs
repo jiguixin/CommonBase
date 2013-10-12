@@ -7,6 +7,9 @@
 * 备注：
 */
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 namespace Infrastructure.Crosscutting.Security.Model
 {
 	/// <summary>
@@ -23,14 +26,13 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// </summary>
 		//public string SysId { get; set; }
 
-		/// <summary>
-		/// 用户编号
-		/// </summary>
+        [DisplayName("用户编号")]
+        [Required(ErrorMessage = "不能为空")]
+        [StringLength(50, ErrorMessage = "长度不可超过50")]
 		public string UserId { get; set; }
 
-		/// <summary>
-		/// 角色编号
-		/// </summary>
+        [DisplayName("角色编号")]
+        [Required(ErrorMessage = "不能为空")]
 		public string RoleId { get; set; }
 
 		#endregion Model

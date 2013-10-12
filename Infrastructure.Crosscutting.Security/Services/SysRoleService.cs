@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Data;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
@@ -28,9 +29,38 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
             get { return RepositoryFactory.UserRepository; }
         }
+        public SysUserRoleRepository UserRoleRepository
+        {
+            get { return RepositoryFactory.UserRoleRepository; }
+        }
 
         public SysRoleService()
         {  
+        }
+
+        public bool AddUserRole(SysUserRole userRole)
+        {
+            return UserRoleRepository.Add(userRole)==0?false:true;
+        }
+
+        public bool SetUserRole(List<SysUserRole> userRoles, string userName)
+        {
+            using (IDbTransaction tran = ConnectionFactory.CreateMsSqlConnection().BeginTransaction())
+            {
+                int deleteResult = UserRoleRepository.DeleteByUserId(userRoles[0].UserId, tran);
+
+                foreach (SysUserRole sysUserRole in userRoles)
+                {
+                    int addResult = UserRoleRepository.Add(sysUserRole, tran);
+                    if (addResult==0)
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+                }
+                tran.Commit();
+            }
+            return true;
         }
 
         public IEnumerable<SysUser> GetUsers(string roleId)
@@ -38,6 +68,11 @@ namespace Infrastructure.Crosscutting.Security.Services
             return UserRepository.GetUserIncludeUserInfo(
                 Constant.SqlTableUserAndRoleIncludeUserInfoJoin, Constant.SqlFieldsUserAndRoleIncludeUserInfoJoin,
                 string.Format("r.SysId ='{0}'",roleId)); 
+        }
+
+        public IEnumerable<SysRole> GetAllRols()
+        {
+            return RoleRepository.GetList<SysRole>(Constant.TableSysRole, "*", null);
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string roleId)

@@ -8,7 +8,7 @@
  */
 
 using System;
-
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 
 namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
@@ -20,7 +20,14 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
     [TestFixture]
     public class MenuServiceTest
     {
-        private ISysMenuService MenuService; 
+        private ISysMenuService MenuService;
+
+        static MenuServiceTest()
+        {
+            InstanceLocator.SetLocator(
+                new NinjectContainer().WireDependenciesInAssemblies(typeof (AppModule).Assembly.FullName).Locator);
+        }
+
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>

@@ -56,13 +56,42 @@ namespace Infrastructure.Crosscutting.Security.Services
         }
 
 
-
+        /// <summary>
+        /// 新增用户，增加了密码加密
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public int AddUser(SysUser model)
         {
             model.UserPwd = Crypto.Encrypt(model.UserPwd.Trim());
 
-            return UserRepository.Add(model);
+            return UserRepository.Add(model); 
+        }
 
+        /// <summary>
+        /// 修改用户，实现了将密码进行加密
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int UpdateUser(SysUser model)
+        {
+            model.UserPwd = Crypto.Encrypt(model.UserPwd.Trim());
+            return UserRepository.Update(model);  
+        }
+
+        public int DeleteUser(string sysId)
+        {
+            return UserRepository.Delete(sysId);
+        }
+
+        public int AddUserInfo(SysUserInfo model)
+        {
+            return UserInfoRepository.Add(model);
+        }
+
+        public int UpdateUserInfo(SysUserInfo model)
+        {
+            return UserInfoRepository.Update(model);
         }
 
         public IEnumerable<SysRole> GetRoles(string userId)
@@ -87,7 +116,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns></returns>
         public SysUserInfo GetUserInfo(string userId)
         {
-            IEnumerable<SysUserInfo> userInfos = UserInfoRepository.GetList<SysUserInfo>(Constant.TableSysUserInfo, "RealName,Title,Sex,Phone,Fax,Email,QQ,Address", string.Format("SysId='{0}'", userId));
+            IEnumerable<SysUserInfo> userInfos = UserInfoRepository.GetList<SysUserInfo>(Constant.TableSysUserInfo, "SysId,RealName,Title,Sex,Phone,Fax,Email,QQ,Address", string.Format("SysId='{0}'", userId));
             if (userInfos.Count() == 0)
             {
                 return null;

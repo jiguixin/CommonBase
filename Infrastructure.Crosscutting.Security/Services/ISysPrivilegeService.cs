@@ -16,7 +16,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         void InitDataByRole();
         void InitDataByUser();
-        bool SetMenuPrivilege(string id, PrivilegeMaster privilegeMaster, string[] menuIds);
+        bool SetMenuPrivilege(string id, PrivilegeMaster privilegeMaster, string[] menuIds,string userName);
 
     }
 }

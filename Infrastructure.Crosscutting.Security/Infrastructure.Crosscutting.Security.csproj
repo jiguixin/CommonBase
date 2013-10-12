@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +36,9 @@
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,6 +98,7 @@
     <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
     <Compile Include="SqlImple\ISql.cs" />
+    <Compile Include="SqlImple\Oracle.cs" />
     <Compile Include="SqlImple\SqlServer.cs" />
     <Compile Include="SqlImple\SysButtonSqlServer.cs" />
     <Compile Include="SqlImple\SysConfigSqlServer.cs" />
@@ -105,6 +109,15 @@
     <Compile Include="SqlImple\SysUserInfoSqlServer.cs" />
     <Compile Include="SqlImple\SysUserRoleSqlServer.cs" />
     <Compile Include="SqlImple\SysUserSqlServer.cs" />
+    <Compile Include="SqlImple\SysButtonOracle.cs" />
+    <Compile Include="SqlImple\SysConfigOracle.cs" />
+    <Compile Include="SqlImple\SysDataPrivilegeOracle.cs" />
+    <Compile Include="SqlImple\SysMenuOracle.cs" />
+    <Compile Include="SqlImple\SysPrivilegeOracle.cs" />
+    <Compile Include="SqlImple\SysRoleOracle.cs" />
+    <Compile Include="SqlImple\SysUserInfoOracle.cs" />
+    <Compile Include="SqlImple\SysUserRoleOracle.cs" />
+    <Compile Include="SqlImple\SysUserOracle.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">

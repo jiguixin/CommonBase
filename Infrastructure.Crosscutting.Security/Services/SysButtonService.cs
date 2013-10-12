@@ -17,12 +17,100 @@ namespace Infrastructure.Crosscutting.Security.Services
         }
 
         public SysButtonService()
-        { 
+        {
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string buttonId)
         {
-            return ButtonRepository.GetList<SysPrivilege>(Constant.SqlTableButtonPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and b.SysId = '{1}'", (int)PrivilegeAccess.Button, buttonId));  
+            return ButtonRepository.GetList<SysPrivilege>(Constant.SqlTableButtonPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and b.SysId = '{1}'", (int)PrivilegeAccess.Button, buttonId));
+        }
+
+        public IEnumerable<SysButton> GetAllButons()
+        {
+            return RepositoryFactory.ButtonRepository.GetList<SysButton>(Constant.TableSysButton,
+                                                                         "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
+                                                                         null);
+        }
+
+        /// <summary>
+        /// 根据用户id和菜单id获取当前菜单可用按钮
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="menuId"></param>
+        /// <returns></returns>
+        public IEnumerable<SysButton> GetButtonsPrivilegeByUserAndMenu(string userId, string menuId)
+        {
+            var privileges = ServiceFactory.MenuService.GetPrivilegesByUserId(userId);
+            privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
+
+            var buttons = GetAllButons().Where(x => x.MenuId == menuId).ToList();
+
+            List<SysButton> resultBts = new List<SysButton>();
+            foreach (SysPrivilege sysPrivilege in privileges)
+            {
+                var bts = buttons.Where(x => x.SysId == sysPrivilege.PrivilegeAccessKey);
+
+                resultBts.AddRange(bts);
+            }
+            foreach (SysButton bt in resultBts)
+            {
+                buttons.Remove(bt);
+            }
+
+            return buttons;
+        }
+
+        /// <summary>
+        /// 根据用户id和菜单id获取当前菜单可用按钮
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="menuId"></param>
+        /// <param name="master"></param>
+        /// <param name="buttons"></param>
+        /// <param name="privileges"></param>
+        /// <returns></returns>
+        public IEnumerable<SysButton> GetButtonsPrivilegeByUserAndMenu(string userId, string menuId, PrivilegeMaster master,
+                                                                              IEnumerable<SysButton> buttons, IEnumerable<SysPrivilege> privileges)
+        {
+            privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
+
+            var resultButtons=buttons.Where(x => x.MenuId == menuId).ToList();
+
+            List<SysButton> disableButtons = new List<SysButton>();
+            foreach (SysPrivilege sysPrivilege in privileges)
+            {
+                var bts = buttons.Where(x => x.SysId == sysPrivilege.PrivilegeAccessKey);
+
+                disableButtons.AddRange(bts);
+            }
+            //foreach (SysButton bt in disableButtons)
+            //{
+            //    resultButtons.Remove(bt);
+            //}
+            resultButtons = resultButtons.Where(x => (!disableButtons.Contains(x))).ToList();
+            return resultButtons;
+        }
+
+        public IEnumerable<SysButton> TT(string userId, string menuId)
+        {
+            var privileges = ServiceFactory.MenuService.GetPrivilegesByUserId(userId);
+            privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
+
+            var buttons = GetAllButons().Where(x => x.MenuId == menuId).ToList();
+
+            List<SysButton> resultBts = new List<SysButton>();
+            foreach (SysPrivilege sysPrivilege in privileges)
+            {
+                var bts = buttons.Where(x => x.SysId == sysPrivilege.PrivilegeAccessKey);
+
+                resultBts.AddRange(bts);
+            }
+            foreach (SysButton bt in resultBts)
+            {
+                buttons.Remove(bt);
+            }
+
+            return buttons;
         }
     }
 }

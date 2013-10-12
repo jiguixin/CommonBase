@@ -20,7 +20,25 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns></returns>
         SysUser CheckUser(string name, string pwd);
 
+        /// <summary>
+        /// 新增用户，增加了密码加密
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         int AddUser(SysUser model);
+
+        /// <summary>
+        /// 修改用户，实现了将密码进行加密
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        int UpdateUser(SysUser model);
+
+        int AddUserInfo(SysUserInfo model);
+
+        int DeleteUser(string sysId);
+
+        int UpdateUserInfo(SysUserInfo model);
 
         IEnumerable<SysRole> GetRoles(string userId);
 

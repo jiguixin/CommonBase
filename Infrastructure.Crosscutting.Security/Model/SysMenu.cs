@@ -7,6 +7,9 @@
 * 备注：
 */
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 namespace Infrastructure.Crosscutting.Security.Model
 {
     using System.Collections.Generic;
@@ -20,55 +23,42 @@ namespace Infrastructure.Crosscutting.Security.Model
 		public SysMenu()
 		{}
 		#region Model
-		/// <summary>
-        /// 菜单编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中
-		/// </summary>
-		public string SysId { get; set; }
-         
-		/// <summary>
-		/// 对应的父菜单编号
-		/// </summary>
+
+//        [DisplayName("菜单编号,该编号会用在Sys_Privilege中PrivilegeAccessKey中")]
+//        [Required(ErrorMessage = "不能为空")]
+//        [StringLength(50, ErrorMessage = "长度不可超过50")]
+//		public string SysId { get; set; }
+
+        [DisplayName("对应的父菜单编号")]
+        [StringLength(50, ErrorMessage = "长度不可超过50")]
         public string MenuParentId { get; set; }
 
-		/// <summary>
-		/// 显示顺序
-		/// </summary>
+        [DisplayName("显示顺序")]
+        [Range(0, 2147483646, ErrorMessage = "数值超出范围")]
 		public int? MenuOrder { get; set; }
 
-		/// <summary>
-		/// 菜单名
-		/// </summary>
+		[DisplayName("菜单名")]
+        [StringLength(20, ErrorMessage = "长度不可超过20")]
 		public string MenuName { get; set; }
 
-		/// <summary>
-		/// 菜单链接
-		/// </summary>
+        [DisplayName("菜单链接")]
+        [StringLength(100, ErrorMessage = "长度不可超过100")]
 		public string MenuLink { get; set; }
 
-		/// <summary>
-		/// 菜单图标
-		/// </summary>
+        [DisplayName("菜单图标")]
+        [StringLength(100, ErrorMessage = "长度不可超过100")]
 		public string MenuIcon { get; set; }
 
-		/// <summary>
-		/// 菜单是否可见
-		/// </summary>
+        [DisplayName("菜单是否可见")]
 		public long? IsVisible { get; set; }
 
-		/// <summary>
-		/// 是否为叶子菜单
-		/// </summary>
+		[DisplayName("是否为叶子菜单")]
 		public long? IsLeaf { get; set; }
 
-		/// <summary>
-		/// 该条记录的操作情况，用于记录最后一次谁在什么时候创建、修改了该记录
-		/// </summary>
+        [DisplayName("该条记录的操作情况，用于记录最后一次谁在什么时候创建、修改了该记录")]
+        [StringLength(200, ErrorMessage = "长度不可超过200")]
 		public string RecordStatus { get; set; }
 
-        /// <summary>
-        /// 改条菜单时候有可用权限
-        /// </summary>
-        public bool HasPrivilege { get; set; }
 
         #endregion Model
 

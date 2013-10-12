@@ -7,6 +7,9 @@
 * 备注：
 */
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 namespace Infrastructure.Crosscutting.Security.Model
 {
 	/// <summary>
@@ -23,24 +26,21 @@ namespace Infrastructure.Crosscutting.Security.Model
 		/// </summary>
 		//public string SysId { get; set; }
 
-		/// <summary>
-		/// 系统配置Key
-		/// </summary>
+        [DisplayName("系统配置Key")]
+        [Required(ErrorMessage = "不能为空")]
+        [StringLength(20, ErrorMessage = "长度不可超过20")]
 		public string SysKey { get; set; }
 
-		/// <summary>
-		/// 对应KEY的值
-		/// </summary>
+        [DisplayName("对应KEY的值")]
+        [StringLength(2000, ErrorMessage = "长度不可超过2000")]
 		public string SysValue { get; set; }
 
-		/// <summary>
-		/// 父结点编号
-		/// </summary>
+        [DisplayName("父结点编号")]
+        [StringLength(50, ErrorMessage = "长度不可超过50")]
 		public string SysParentId { get; set; }
 
-		/// <summary>
-		/// 该条记录的操作情况，用于记录最后一次谁在什么时候创建、修改了该记录
-		/// </summary>
+        [DisplayName("该条记录的操作情况，用于记录最后一次谁在什么时候创建、修改了该记录")]
+        [StringLength(200, ErrorMessage = "长度不可超过200")]
 		public string RecordStatus { get; set; }
 
 		#endregion Model

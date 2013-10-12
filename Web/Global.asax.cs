@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Infrastructure.Crosscutting.Security.Ioc;
 
 namespace Web
 {
@@ -26,6 +27,9 @@ namespace Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            InstanceLocator.SetLocator(
+         new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)

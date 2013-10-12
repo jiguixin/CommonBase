@@ -8,7 +8,7 @@
  */
 
 using System;
-
+using Infrastructure.Crosscutting.Security.Ioc;
 using NUnit.Framework;
 
 namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
@@ -19,6 +19,13 @@ namespace Infrastructure.Crosscutting.Security.Test.ServiceTest
     public class SysPrivilegeServiceTest
     {
         private ISysPrivilegeService privilegeService;
+
+        static SysPrivilegeServiceTest()
+        {
+            InstanceLocator.SetLocator(
+                new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+        }
+
         /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>

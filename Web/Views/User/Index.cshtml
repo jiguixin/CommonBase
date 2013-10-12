@@ -1,0 +1,547 @@
+﻿
+@model Infrastructure.Crosscutting.Security.Model.SysUser
+
+@{
+    ViewBag.Title = "用户管理";
+    this.Layout = "~/Views/Shared/IndexTemp.cshtml";
+}
+
+@section scriptsHeader
+{
+    <script src="~/Scripts/eayuiExtend/formExtend.js"></script>
+    <script src="~/Scripts/eayuiExtend/datagridExtend.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $('#fixedGrid').datagrid({
+                title: '用户列表', //列表的标题
+                //fit: true, //列表自动适应宽度 有Bug
+                url: '@Url.Action("GetAllUerInfo", "RestApi")', //获取数据的url
+                pagination: true, //是否显示分页控件
+                rownumbers: true, //是否显示行号 
+                singleSelect: true,//是否为单选
+                nowrap: true,
+                striped: true,
+                collapsible: true,
+                remoteSort: false,
+                toolbar: [], 
+                columns: [[
+                        { field: 'SysId', title: '@Html.LabelFor(model => model.SysId)', hidden: true },
+                        { field: 'UserName', title: '@Html.LabelFor(model => model.UserName)', width: 80, sortable: true, rowspan: 2 }, {
+                            title: '@Html.LabelFor(model => model.UserInfo)',
+                            colspan: 8
+                        }],
+                    [{
+                            field: 'UserInfo.RealName',
+                            title: '@Html.LabelFor(model => model.UserInfo.RealName)',
+                            width: 80,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['RealName'];
+                            }
+                        },
+                        {
+                            field: 'UserInfo.Sex',
+                            title: '@Html.LabelFor(model => model.UserInfo.Sex)',
+                            width: 50,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+
+                                return rec.UserInfo['Sex'] ? '男' : '女';
+                            }
+                        },
+                        {
+                            field: 'UserInfo.Title',
+                            title: '@Html.LabelFor(model => model.UserInfo.Title)',
+                            width: 150,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['Title'];
+                            }
+                        },
+                        {
+                            field: 'UserInfo.Phone',
+                            title: '@Html.LabelFor(model => model.UserInfo.Phone)',
+                            width: 100,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['Phone'];
+                            }
+                        },
+                        {
+                            field: 'UserInfo.Fax',
+                            title: '@Html.LabelFor(model => model.UserInfo.Fax)',
+                            width: 100,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['Fax'];
+                            }
+                        },
+                        {
+                            field: 'UserInfo.Email',
+                            title: '@Html.LabelFor(model => model.UserInfo.Email)',
+                            width: 100,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['Email'];
+                            }
+                        },
+                        {
+                            field: 'UserInfo.QQ',
+                            title: '@Html.LabelFor(model => model.UserInfo.QQ)',
+                            width: 100,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['QQ'];
+                            }
+                        },
+                        {
+                            field: 'UserInfo.Address',
+                            title: '@Html.LabelFor(model => model.UserInfo.Address)',
+                            width: 250,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: function(value, rec) {
+                                return rec.UserInfo['Address'];
+                            }
+                        }
+                    ]
+                ]
+            });
+        });
+
+        //首先获取iframe标签的id值
+        var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
+
+        //获取按钮值
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")', { menuId: iframeid }, function (data) {
+            if (data == null) {
+                return;
+            }
+            $('#fixedGrid').datagrid("addToolbarItem", data);
+
+        });
+
+        function NewItem() {
+            $('#dlgNew').dialog('open').dialog('setTitle', '新增用户');
+            $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
+        }
+
+        function EditItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $('#dlgEdit').dialog('open').dialog('setTitle', '编辑用户');
+
+                $('#UpdateForm').form("reset");
+                var id = row.SysId;
+                //去读取数据库中的最新数据，防止多人编辑
+                $.getJSON('@Url.Action("GetCompleteUserInfoById", "RestApi")' + '/' + id + '?' + new Date().getTime(), function(data) {
+                    $('#UpdateForm').form('myload', data);
+                });
+            }
+        }
+
+        function DelItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('Confirm', '确定删除此用户?', function(r) {
+                    if (r) {
+                        $.post('@Url.Action("DeleteUser", "RestApi")', { SysId: row.SysId }, function(result) {
+                            if (result) {
+                                $('#fixedGrid').datagrid("reload", {}); // 后台必须要跟花括号不然更新不成功
+                            } else {
+                                $.messager.show({
+// show error message
+                                    title: 'Error',
+                                    msg: result.errorMsg
+                                });
+                            }
+                        }, 'json');
+                    }
+                });
+            }
+        }
+
+        function sort(a, b) {
+            a = a.split('/');
+            b = b.split('/');
+            if (a[2] == b[2]) {
+                if (a[0] == b[0]) {
+                    return (a[1] > b[1] ? 1 : -1);
+                } else {
+                    return (a[0] > b[0] ? 1 : -1);
+                }
+            } else {
+                return (a[2] > b[2] ? 1 : -1);
+            }
+        }
+
+    </script>
+}
+
+@section stylesHeader
+{
+    <style> 
+        table tr td {
+            padding: 3px 10px; 
+        }
+        .errMsg {
+            text-align: center;
+        }
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+        .fitem label {
+            display: inline-block;
+            width: 80px;
+        }
+    </style>
+}
+
+@section mainContent
+{ 
+    <div id="dlgNew" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true" >@*buttons="#dlg-buttons"*@
+        @using (Ajax.BeginForm("AddUser", "RestApi", null, new AjaxOptions() { HttpMethod = "Post", OnSuccess = "onAddSuccess" }, new { Id = "CreateForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>创建用户</legend>  
+                <table>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserName) 
+                        </td> 
+                        <td >
+                            @Html.LabelFor(model => model.UserPwd)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserPwd) 
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserName) 
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserPwd) 
+                        </td> 
+                    </tr>
+                      
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.RealName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.RealName)
+                           
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Title)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Title)
+                           
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.RealName)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Title)
+                        </td> 
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Sex)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Sex) 
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Phone)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Phone) 
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Sex)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Phone)
+                        </td> 
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Fax)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Fax)
+                           
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Email)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Email)
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Fax)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Email)
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.QQ)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.QQ)
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Address)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Address)
+                        </td>
+                    </tr> 
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.QQ)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Address)
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding-top:5px;">
+                            <input type="submit" value="保存" />     
+                            <input type="reset" value="重置" />     
+                        </td>  
+                    </tr>
+                </table> 
+
+            </fieldset>
+           
+        }
+
+    </div>
+    
+    <div id="dlgEdit" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true" > 
+        @using (Ajax.BeginForm("UpdateUser", "RestApi", null, new AjaxOptions() { HttpMethod = "Post", OnSuccess = "onEditSuccess" }, new { Id = "UpdateForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>修改用户</legend>  
+                @Html.HiddenFor(model=>model.SysId)
+                @Html.HiddenFor(model=>model.CreateTime)
+                @Html.HiddenFor(model=>model.LastLogin)
+                @Html.HiddenFor(model=>model.SysId)
+                @Html.HiddenFor(model=>model.RecordStatus)  
+
+                <table>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserName) 
+                        </td> 
+                        <td >
+                            @Html.LabelFor(model => model.UserPwd)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserPwd) 
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserName) 
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserPwd) 
+                        </td> 
+                    </tr>
+                      
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.RealName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.RealName)
+                           
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Title)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Title)
+                           
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.RealName)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Title)
+                        </td> 
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Sex)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Sex) 
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Phone)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Phone) 
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Sex)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Phone)
+                        </td> 
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Fax)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Fax)
+                           
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Email)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Email)
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Fax)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Email)
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.QQ)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.QQ)
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.UserInfo.Address)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.UserInfo.Address)
+                        </td>
+                    </tr> 
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.QQ)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.UserInfo.Address)
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding-top:5px;">
+                            <input type="submit" value="保存" />     
+                            <input type="reset" value="重置" />     
+                        </td>  
+                    </tr>
+                </table> 
+
+            </fieldset>
+           
+        }
+
+    </div>
+ 
+}
+
+@section scriptsFooter
+{
+     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript"> 
+        
+        function onAddSuccess(data) {
+            if (data) {
+               // alert("操作成功");
+                $('#dlgNew').dialog('close');
+                $('#fixedGrid').datagrid('reload');
+            } else {
+                alert("操作失败");
+            }
+        }
+        
+        function onEditSuccess(data) {
+            if (data) {
+               // alert("操作成功");
+                $('#dlgEdit').dialog('close');
+                $('#fixedGrid').datagrid('reload');
+            } else {
+                alert("操作失败");
+            }
+        }
+         
+    </script> 
+}
+  

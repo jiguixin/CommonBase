@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "角色管理";
+}
+<table id="dg" class="easyui-datagrid"
+    toolbar="#toolbar" pagination="true"  url="@Url.Action("GetRoleList", "RestApi")"
+    rownumbers="true" fitcolumns="true" singleselect="true">
+    <thead>
+        <tr>
+            <th field="SysId" width="50" hidden="hidden">Id</th>
+            <th field="RoleName" width="50">角色名</th>
+            <th field="RoleDesc" width="50">角色描述</th> 
+        </tr>
+    </thead>
+</table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="destroy()">移除</a>
+</div>

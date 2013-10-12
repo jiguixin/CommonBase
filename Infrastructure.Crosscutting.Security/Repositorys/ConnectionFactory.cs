@@ -10,16 +10,28 @@
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using System.Data;
+    using System.Data.OracleClient;
     using System.Data.SqlClient;
 
     public class ConnectionFactory
     {
         public static IDbConnection CreateMsSqlConnection()
         {
-            // const string ConnString = "Data Source=192.168.1.30;Initial Catalog=BaseDB;User Id = sa;Password=123456;";
-            const string ConnString = @"Data Source=THINKPADHOME\SQLEXPRESS;Initial Catalog=BaseDB;Integrated Security=true;";
+             const string ConnString = "Data Source=192.168.1.30;Initial Catalog=BaseDB;User Id = sa;Password=123456;";
+            //const string ConnString = @"Data Source=THINKPADHOME\SQLEXPRESS;Initial Catalog=BaseDB;Integrated Security=true;";
 
             var conn = new SqlConnection(ConnString);
+            conn.Open();
+            return conn;
+        }
+
+        public static IDbConnection CreateOracleConnection()
+        {
+            const string ConnString = "Data Source=wjdb;User Id=wjgh;Password=wjgh;";
+
+#pragma warning disable 618
+            var conn = new OracleConnection(ConnString);
+#pragma warning restore 618
             conn.Open();
             return conn;
         }
