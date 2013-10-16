@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Crosscutting.Security.Model
 {
+    using System.Collections;
     using System.Collections.Generic;
 
     /// <summary>
@@ -29,7 +30,7 @@ namespace Infrastructure.Crosscutting.Security.Model
 //        [StringLength(50, ErrorMessage = "长度不可超过50")]
 //		public string SysId { get; set; }
 
-        [DisplayName("对应的父菜单编号")]
+        [DisplayName("父菜单编号")]
         [StringLength(50, ErrorMessage = "长度不可超过50")]
         public string MenuParentId { get; set; }
 
@@ -37,19 +38,21 @@ namespace Infrastructure.Crosscutting.Security.Model
         [Range(0, 2147483646, ErrorMessage = "数值超出范围")]
 		public int? MenuOrder { get; set; }
 
-		[DisplayName("菜单名")]
+		[DisplayName("菜单名称")]
         [StringLength(20, ErrorMessage = "长度不可超过20")]
+        [Required]
 		public string MenuName { get; set; }
 
-        [DisplayName("菜单链接")]
+        [DisplayName("链接")]
         [StringLength(100, ErrorMessage = "长度不可超过100")]
+        [Required]
 		public string MenuLink { get; set; }
 
         [DisplayName("菜单图标")]
         [StringLength(100, ErrorMessage = "长度不可超过100")]
 		public string MenuIcon { get; set; }
 
-        [DisplayName("菜单是否可见")]
+        [DisplayName("状态")]
 		public long? IsVisible { get; set; }
 
 		[DisplayName("是否为叶子菜单")]
@@ -63,6 +66,8 @@ namespace Infrastructure.Crosscutting.Security.Model
         #endregion Model
 
         public IEnumerable<SysButton> Buttons { get; set; }
+
+        public IEnumerable<SysMenu> Children { get; set; }
 	}
 }
 

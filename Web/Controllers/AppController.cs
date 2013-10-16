@@ -20,7 +20,7 @@ namespace Web.Controllers
             get
             {
                 var us = HttpContext.User as MyFormsPrincipal<SysUser>;
-
+             
                 return us != null ? us.UserData : null;
             }
         }

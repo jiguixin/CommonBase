@@ -1,34 +1,449 @@
-﻿@{
+﻿@model Infrastructure.Crosscutting.Security.Model.SysMenu
+@{
     ViewBag.Title = "菜单管理";
+    this.Layout = "~/Views/Shared/IndexTemp.cshtml";
 }
-<div class="easyui-layout" data-options="fit:true">
-    <table id="menuTable" class="easyui-treegrid" toolbar="#toolbar"></table>
-</div>
-<div id="toolbar">
-     <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="create()">新增</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="edit()">编辑</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="destroy()">移除</a>
-</div>
+
+@section scriptsHeader
+ {
+    <script src="~/Scripts/eayuiExtend/formExtend.js"></script>
+    <script src="~/Scripts/eayuiExtend/datagridExtend.js"></script>    
+}
+
+@section stylesHeader
+{
+    <style> 
+        table tr td {
+            padding: 3px 6px; 
+        }
+        .errMsg {
+            text-align: center;
+        }
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+        .fitem label {
+            display: inline-block;
+            width: 80px;
+        }
+    </style>
+}
 
 
-<script type="text/javascript">
-    $('#menuTable').treegrid({
-        url: '@Url.Action("GetMenusPrivilegeTreeForUser", "RestApi")',
-        idField: 'id',
-        treeField: 'text',
-        singleSelect: true,
-        columns: [[
-            { field: 'text', title: '名称', width: 150 },
-            { field: 'link', title: '链接', width: 150 },
-            { field: 'id', title: 'ID', width: 200 },
-            { field: 'recordStatus', title: '操作记录', width: 250 }
-        ]],
-        onLoadSuccess: function(row, data) {
-            if (data) {
-                $.each(data, function(index, item) {
 
+@section mainContent
+{ 
+    <div id="dlgNew" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true" >@*buttons="#dlg-buttons"*@
+        @using (Ajax.BeginForm("AddMenu", "RestApi", null, new AjaxOptions() { HttpMethod = "Post", OnSuccess = "onAddSuccess" }, new { Id = "CreateForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>创建菜单</legend>  
+                <table>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.MenuName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuName) 
+                        </td> 
+                        <td >
+                            @Html.LabelFor(model => model.MenuLink)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuLink) 
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuName) 
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuLink) 
+                        </td> 
+                    </tr>
+                      
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.MenuOrder)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuOrder)
+                           
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.IsVisible)：
+                        </td>
+                        <td>
+                            @Html.RadioButtonFor(model => model.IsVisible, 1, new { @checked = true }) 启用
+                            @Html.RadioButtonFor(model => model.IsVisible, 0) 禁用
+                           
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuOrder)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.IsVisible)
+                        </td> 
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.MenuIcon)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuIcon)
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.MenuParentId)：
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => model.MenuParentId, new { @class = "hiddenMenuId" })
+                            @Html.TextBox("txtMenu", null, new { @class = "text-box single-line txtMenuId" }) 
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuIcon)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuParentId)
+                        </td> 
+                    </tr>
+                     
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding-top: 5px;">
+                            <input type="submit" value="保存" />     
+                            <input type="reset" value="重置" />     
+                        </td>  
+                    </tr>
+                </table> 
+
+            </fieldset>
+        }
+
+    </div>
+    
+    <div id="dlgEdit" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true" > 
+        @using (Ajax.BeginForm("UpdateMenu", "RestApi", null, new AjaxOptions() { HttpMethod = "Post", OnSuccess = "onEditSuccess" }, new { Id = "UpdateForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>修改菜单</legend>  
+                @Html.HiddenFor(model => model.SysId)
+                @Html.HiddenFor(model => model.IsLeaf)
+                  
+                <table>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.MenuName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuName) 
+                        </td> 
+                        <td >
+                            @Html.LabelFor(model => model.MenuLink)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuLink) 
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuName) 
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuLink) 
+                        </td> 
+                    </tr>
+                      
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.MenuOrder)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuOrder)
+                           
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.IsVisible)：
+                        </td>
+                        <td>  
+                            @Html.RadioButtonFor(model => model.IsVisible, 1) 启用
+                            @Html.RadioButtonFor(model => model.IsVisible, 0) 禁用
+
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuOrder)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.IsVisible)
+                        </td> 
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.MenuIcon)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.MenuIcon)
+                        </td>
+                        
+                        <td>
+                            @Html.LabelFor(model => model.MenuParentId)：
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => model.MenuParentId, new { @class = "hiddenMenuId" })
+                            @Html.TextBox("txtMenu", null, new { @class = "text-box single-line txtMenuId" }) 
+                        </td>
+                    </tr>
+                    
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuIcon)
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.MenuParentId)
+                        </td> 
+                    </tr>
+                     
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding-top: 5px;">
+                            <input type="submit" value="保存" />     
+                            <input type="reset" value="重置" />     
+                        </td>  
+                    </tr>
+                </table> 
+
+            </fieldset>
+
+        }
+
+    </div>
+ 
+    @Html.Partial("_DlgSelectMenu")
+
+    @* <div id="dlgSelectMenu" class="easyui-dialog" style="width: 600px; height: 600px;"
+         closed="true" 
+         data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var row = $('#menuTreeGrid').datagrid('getSelected');
+                      if (row) 
+                       {
+                         $('.txtMenuId').val(row.text);
+                        $('.hiddenMenuId').val(row.id);
+                        $('#dlgSelectMenu').dialog('close');
+                       }
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgSelectMenu').dialog('close');
+                    }
+                }]" 
+        >
+        <table id="menuTreeGrid" class="easyui-treegrid" 
+               data-options="
+                url: '@Url.Action("GetAllMenusRetTreeGrid", "RestApi")',
+                method: 'get',
+                rownumbers: true,
+                idField: 'id',
+                treeField: 'text',
+                fitColumns:'true',
+                fit:true 
+            ">
+            <thead>
+                <tr> 
+                    <th data-options="field:'id',hidden:'true'">id</th>
+                    <th data-options="field:'text'" width="150">@Html.LabelFor(model => model.MenuName)</th>
+                    <th data-options="field:'link'" width="150" >@Html.LabelFor(model => model.MenuLink)</th>
+                    <th data-options="field:'order'" width="70" >@Html.LabelFor(model => model.MenuOrder)</th>
+                    <th data-options="field:'visible'" width="50">@Html.LabelFor(model => model.IsVisible)</th>
+                </tr>
+            </thead>
+        </table>
+    </div>*@
+}
+
+@section scriptsFooter
+{
+    <script type="text/javascript">
+        $('.txtMenuId').click(function() {
+            selectMenuDialog();
+        });
+
+        $("#menuTreeGrid").treegrid({
+            onDblClickRow: function(row) {
+                if (row != null) {
+                    $('.txtMenuId').val(row.text);
+                    $(".hiddenMenuId").val(row.id);
+                    $('#dlgSelectMenu').dialog('close');
+                }
+            }
+        });
+
+
+        //绑定菜单数据
+        $('#fixedGrid').treegrid({
+            url: '@Url.Action("GetAllMenusRetTreeGrid", "RestApi")',
+            idField: 'id',
+            treeField: 'text',
+            singleSelect: true,
+            rownumbers: true,
+            fit:true,
+            title:'菜单列表',
+            toolbar: [],
+            columns: [[
+                { field: 'id', title: 'ID', width: 200, hidden: true },
+                { field: 'text', title: '@Html.LabelFor(model => model.MenuName)', width: 150 },
+                { field: 'link', title: '@Html.LabelFor(model => model.MenuLink)', width: 150 },
+                { field: 'order', title: '@Html.LabelFor(model => model.MenuOrder)', width: 150 },
+                { field: 'visible', title: '@Html.LabelFor(model => model.IsVisible)', width: 150 }
+            ]],
+            onLoadSuccess: function(row, data) {
+                if (data) {
+                    $.each(data, function(index, item) {
+
+                    });
+                }
+            }
+        });
+
+        //首先获取iframe标签的id值
+        var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
+
+        //获取按钮值
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")', { menuId: iframeid }, function(data) {
+            if (data == null) {
+                return;
+            }
+            $('#fixedGrid').datagrid("addToolbarItem", data);
+
+        });
+
+        function NewItem() {
+            $('#dlgNew').dialog('open').dialog('setTitle', '新增');
+            $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
+        }
+
+        function EditItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $('#dlgEdit').dialog('open').dialog('setTitle', '编辑');
+
+                $('#UpdateForm').form("reset");
+                var id = row.id;
+                //去读取数据库中的最新数据，防止多人编辑
+                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function(data) {
+                    if (data != null) {
+                        $('#UpdateForm').form('load', data);
+                        //查询父ID，获得Name绑定到文本框中
+                        if (data.MenuParentId != null) {
+                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function(pData) {
+                                if (pData != null) {
+                                    $(".txtMenuId").val(pData.MenuName);
+                                }
+                            });
+                        }
+                    }
                 });
             }
         }
-    });
-</script>
+
+
+        function DelItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('Confirm', '确定删除此记录?', function(r) {
+                    if (r) {
+                        $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function(result) {
+                            if (result) {
+                                $('#fixedGrid').treegrid("reload", {}); // 后台必须要跟花括号不然更新不成功
+                            } else {
+                                $.messager.show({
+                                    // show error message
+                                    title: 'Error',
+                                    msg: result.errorMsg
+                                });
+                            }
+                        }, 'json');
+                    }
+                });
+            }
+        }
+
+    </script> 
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        function onAddSuccess(data) {
+            if (data) {
+                // alert("操作成功");
+                $('#dlgNew').dialog('close');
+                $('#fixedGrid').treegrid('reload', {});
+            } else {
+                alert("操作失败");
+            }
+        }
+
+        function onEditSuccess(data) {
+            if (data) {
+                // alert("操作成功");
+                $('#dlgEdit').dialog('close');
+                $('#fixedGrid').treegrid('reload', {});
+            } else {
+                alert("操作失败");
+            }
+        }
+
+        //function selectMenuDialog() {
+        //    $('#dlgSelectMenu').dialog('open').dialog('setTitle', '选择父菜单');
+        //}
+
+        function GetSelectedMenu(row) {
+            if (row) {
+                $('.txtMenuId').val(row.text);
+                $('.hiddenMenuId').val(row.id);
+                $('#dlgSelectMenu').dialog('close');
+            }
+        }
+         
+    </script> 
+}
+  
+
+
+
+

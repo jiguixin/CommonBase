@@ -7,6 +7,7 @@ using Infrastructure.Crosscutting.Security.SqlImple;
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using System.Data;
+    using System.Linq;
 
     public class SysMenuRepository:Repository<SysMenu>
     {
@@ -99,6 +100,43 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                     return result;
                 }
             }
+        }
+
+        /// <summary>
+        /// 得到有层级关系的菜单集合
+        /// </summary>
+        /// <returns></returns>
+        public virtual IEnumerator<SysMenu> GetAllMenusByLoop()
+        { 
+            var lstSource = GetList();
+
+            if (lstSource == null)
+                return null;
+
+            //得到所有父菜单
+           var lstParent = lstSource.Where(p => string.IsNullOrEmpty(p.MenuParentId));
+
+            foreach (var m in lstParent)
+            {
+                var childs = GetChildre(lstSource, m);
+                if (childs != null && childs.Any()) m.Children = childs.OrderBy(c => c.MenuOrder);
+            }
+
+            return (IEnumerator<SysMenu>)lstParent;
+        }
+
+        private IEnumerable<SysMenu> GetChildre(IEnumerable<SysMenu> lstSource, SysMenu sysMenu)
+        {
+            var lstResult = lstSource.Where(m => m.MenuParentId == sysMenu.SysId);
+
+            if (!lstResult.Any()) return null;
+
+            foreach (var menu in lstResult)
+            {
+                menu.Children = GetChildre(lstSource, menu);
+            }
+
+            return lstResult;
         }
     }
 }

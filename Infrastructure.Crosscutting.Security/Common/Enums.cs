@@ -46,7 +46,7 @@ namespace Infrastructure.Crosscutting.Security.Common
     /// </summary>
     public enum PrivilegeOperation
     {
-        Disable=1,  //不可用
+        Disable=0,  //不可用
         Enable,   //可用  
     } 
 }

@@ -145,6 +145,7 @@
     </Compile>
     <Compile Include="Models\EasyUiTreeResult.cs" />
     <Compile Include="Models\EasyUi\toolbar.cs" />
+    <Compile Include="Models\EasyUi\TreeGridResult.cs" />
     <Compile Include="Models\ResultModel.cs" />
     <Compile Include="Models\UserDetailsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -2312,6 +2313,7 @@
     <Content Include="Views\Role\Index.cshtml" />
     <Content Include="Views\Shared\IndexTemp.cshtml" />
     <Content Include="Views\Menu\Index.cshtml" />
+    <Content Include="Views\Shared\_DlgSelectMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

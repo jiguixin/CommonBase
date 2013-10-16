@@ -17,11 +17,10 @@ namespace Web.Controllers
 
     public class LoginController : Controller
     {
-        private ISysUserService userService ;
+        private ISysUserService userService = ServiceFactory.UserService;
 
         public LoginController()
-        {
-            userService = new SysUserService();
+        { 
         }
         //
         // GET: /Login/
@@ -31,6 +30,20 @@ namespace Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        //检查用户名和密码匹配
+        public JsonResult CheckUser(string userName, string password)
+        {
+            SysUser user;
+            if ((user = userService.CheckUser(userName, password)) != null)
+            {
+                //FormsAuthentication.SetAuthCookie(userName, true);
+                MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 10);
+                return Json(new ResultModel() { Result = true, ResultInfo = "登录成功" });
+            }
+
+            return Json(new ResultModel() { Result = false, ResultInfo = "用户名或密码错误请重新输入" });
+        }
 
 
         

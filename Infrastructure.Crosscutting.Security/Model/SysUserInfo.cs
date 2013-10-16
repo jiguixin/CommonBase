@@ -30,7 +30,7 @@ namespace Infrastructure.Crosscutting.Security.Model
         [StringLength(15, ErrorMessage = "长度不可超过15")]
 		public string Title { get; set; }
 
-        [DisplayName("男性")]
+        [DisplayName("性别")] 
 		public bool Sex { get; set; }
 
 

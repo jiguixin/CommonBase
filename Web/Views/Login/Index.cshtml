@@ -36,7 +36,7 @@
                 userName: $("#name").val(),
                 password: $("#pwd").val()
             };
-            $.post('@Url.Action("CheckUser","RestApi")', postData,
+            $.post('@Url.Action("CheckUser","Login")', postData,
                 function (data) {
                     if (data.Result == true) {
                         $('#showInfo').html("登录成功!");

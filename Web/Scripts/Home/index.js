@@ -124,7 +124,7 @@ function addTab(subtitle, url, icon, menuId) {
 }
 
 function createFrame(url, menuId) {
-    var s = '<iframe frameborder="0" id="'+menuId+'" scrolling="no" src="' + url + '" style="width:100%;height:99.8%;"></iframe>';
+    var s = '<iframe frameborder="0" id="'+menuId+'" scrolling="no" src="' + url + '" style="width:100%;height:99.5%;"></iframe>';
     return s;
 }
 

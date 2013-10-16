@@ -79,7 +79,8 @@ $.extend($.fn.form.methods, {
                 rr._propAttr("checked", false);
                 rr.each(function () {
                     var f = $(this);
-                    if (f.val() == String(val) || $.inArray(f.val(), val) >= 0) {
+                    //避免字符串大小写问题
+                    if (f.val().toUpperCase() == String(val).toUpperCase() || $.inArray(f.val(), val) >= 0) {
                         f._propAttr("checked", true);
                     }
                 });

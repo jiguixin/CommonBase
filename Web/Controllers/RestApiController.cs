@@ -21,7 +21,7 @@ namespace Web.Controllers
     using Web.Models.EasyUi;
     using Web.Utility;
 
-    public class RestApiController : AppController
+    public class RestApiController : BaseController
     {
         private ISysRoleService roleService = ServiceFactory.RoleService;
         private ISysMenuService menuService = ServiceFactory.MenuService;
@@ -60,17 +60,13 @@ namespace Web.Controllers
             model.UserPwd = Crypto.Decrypt(model.UserPwd);
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-
-
-
+         
         //获取登录用户菜单列表
         public JsonResult GetMenusByLoginUser()
         {
             return Json(menuService.GetPrivilegedSysMenuByUserId(UserData.SysId), JsonRequestBehavior.AllowGet);
         }
-
-        
-
+         
         //获取某用户可用菜单（tree格式）
         public JsonResult GetMenusPrivilegeTreeForUser()
         {
@@ -85,67 +81,43 @@ namespace Web.Controllers
 
         //获取所有用户包含用户详细信息
         public JsonResult GetAllUerInfo()
-        { 
-          // var lstUsers = userService.UserRepository.GetList();
-            //List<UserDetailsModel> userDetails = new List<UserDetailsModel>();
-            //foreach (SysUser lstUser in lstUsers)
-            //{
-            //    SysUserInfo userInfo = userService.GetUserInfo(lstUser.SysId);
-            //    UserDetailsModel userDetail = new UserDetailsModel()
-            //    {
-            //        SysId = lstUser.SysId,
-            //        UserName = lstUser.UserName,
-            //        RealName = userInfo.RealName,
-            //        Title = userInfo.Title,
-            //        Sex = userInfo.Sex ? "男" : "女",
-            //        Phone = userInfo.Phone,
-            //        Fax = userInfo.Fax,
-            //        Email = userInfo.Email,
-            //        QQ = userInfo.QQ,
-            //        Address = userInfo.Address
-            //    };
-            //    userDetails.Add(userDetail);
-            //}
-//            return Json(userDetails, JsonRequestBehavior.AllowGet);
-            var lstUsers = userService.UserRepository.GetList();
-            //List<UserDetailsModel> userDetails = new List<UserDetailsModel>();
-            foreach (SysUser lstUser in lstUsers)
-            {
-                SysUserInfo userInfo = userService.GetUserInfo(lstUser.SysId);
-                lstUser.UserInfo = userInfo;
-//                UserDetailsModel userDetail = new UserDetailsModel()
-//                {
-//                    SysId = lstUser.SysId,
-//                    UserName = lstUser.UserName,
-//                    RealName = userInfo.RealName,
-//                    Title = userInfo.Title,
-//                    Sex = userInfo.Sex ? "男" : "女",
-//                    Phone = userInfo.Phone,
-//                    Fax = userInfo.Fax,
-//                    Email = userInfo.Email,
-//                    QQ = userInfo.QQ,
-//                    Address = userInfo.Address
-//                };
-//                userDetails.Add(userDetail);
-            }
-            //            return Json(userDetails, JsonRequestBehavior.AllowGet);
-            return Json(lstUsers, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        //检查用户名和密码匹配
-        public JsonResult CheckUser(string userName, string password)
         {
-            SysUser user;
-            if ((user = userService.CheckUser(userName, password)) != null)
-            {
-                //FormsAuthentication.SetAuthCookie(userName, true);
-                MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 100);
-                return Json(new ResultModel() { Result = true, ResultInfo = "登录成功" });
-            }
+            var lstUsers = userService.UserRepository.GetList();
 
-            return Json(new ResultModel() { Result = false, ResultInfo = "用户名或密码错误请重新输入" });
+            List<UserDetailsModel> userDetails = (from user in lstUsers
+                                                  let userInfo = this.userService.GetUserInfo(user.SysId)
+                                                  select
+                                                      new UserDetailsModel()
+                                                          {
+                                                              SysId = user.SysId,
+                                                              UserName = user.UserName,
+                                                              RealName = userInfo.RealName,
+                                                              Title = userInfo.Title,
+                                                              Sex = userInfo.Sex ? "男" : "女",
+                                                              Phone = userInfo.Phone,
+                                                              Fax = userInfo.Fax,
+                                                              Email = userInfo.Email,
+                                                              QQ = userInfo.QQ,
+                                                              Address = userInfo.Address
+                                                          }).ToList();
+
+            return Json(userDetails, JsonRequestBehavior.AllowGet);
         }
+
+        //[HttpPost]
+        ////检查用户名和密码匹配
+        //public JsonResult CheckUser(string userName, string password)
+        //{
+        //    SysUser user;
+        //    if ((user = userService.CheckUser(userName, password)) != null)
+        //    {
+        //        //FormsAuthentication.SetAuthCookie(userName, true);
+        //        MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 1);
+        //        return Json(new ResultModel() { Result = true, ResultInfo = "登录成功" });
+        //    }
+
+        //    return Json(new ResultModel() { Result = false, ResultInfo = "用户名或密码错误请重新输入" });
+        //}
 
         [HttpPost]
         public JsonResult AddUser(SysUser user)
@@ -175,31 +147,7 @@ namespace Web.Controllers
             }
 
             return Json(false);
-        }
-
-       /* [HttpPost]
-        //修改用户
-        public JsonResult UpdateUser(string SysId, string RealName, string Title, string sex, string Phone, string Fax,
-                                     string Email, string QQ, string Address)
-        {
-            SysUserInfo userInfo = new SysUserInfo()
-            {
-                SysId = SysId,
-                RealName = RealName,
-                Title = Title,
-                Sex = (sex == "10男男") ? true : false,
-                Phone = Phone,
-                Fax = Fax,
-                Email = Email,
-                QQ = QQ,
-                Address = Address
-            };
-            if (userService.UpdateUserInfo(userInfo) == 1)
-            {
-                return Json(true);
-            }
-            return Json(false);
-        }*/
+        } 
 
         [HttpPost]
         //删除用户
@@ -294,6 +242,95 @@ namespace Web.Controllers
 
             return Json(lstResult,
                 JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region 菜单
+
+        [HttpPost]
+        public JsonResult AddMenu(SysMenu menu)
+        {
+            if (!ModelState.IsValid) Json(false);
+
+            menu.RecordStatus = CreateRecordMsg;
+
+            if (menuService.MenuRepository.Add(menu) > 0)
+            {
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
+        [HttpPost]
+        public JsonResult UpdateMenu(SysMenu menu)
+        {
+            if (!ModelState.IsValid) Json(false);
+
+            if (menu.SysId == menu.MenuParentId) return Json(true);
+
+            menu.RecordStatus = UpdateRecordMsg;
+
+            if (menuService.MenuRepository.Update(menu) > 0)
+            {
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteMenu(string SysId)
+        {
+            if (menuService.MenuRepository.Delete(SysId) > 0)
+            {
+                return Json(true);
+            }
+            return Json(false);
+        }
+
+        public JsonResult GetMenu(string id)
+        {
+            var model = menuService.MenuRepository.GetModel(id);
+
+            return model == null ? null : this.Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult GetAllMenusRetTreeGrid()
+        {
+            IEnumerable<SysMenu> lstSource = (IEnumerable<SysMenu>)menuService.MenuRepository.GetAllMenusByLoop();
+            if (lstSource == null) return Json(null);
+              
+            return Json(BuildAllTreeMenu(lstSource),
+              JsonRequestBehavior.AllowGet);
+        }
+
+        private IEnumerable<EasyUiTreeResult> BuildAllTreeMenu(IEnumerable<SysMenu> lstSource)
+        {
+            var lstResult = new List<EasyUiTreeResult>();
+
+            foreach (var s in lstSource)
+            {
+                var model = new EasyUiTreeResult()
+                                {
+                                    id = s.SysId,
+                                    link = s.MenuLink,
+                                    order = s.MenuOrder,
+                                    text = s.MenuName,
+                                    iconCls = s.MenuIcon,
+                                    visible = s.IsVisible != null && ((PrivilegeOperation)(s.IsVisible.Value)) == PrivilegeOperation.Enable ? "启用" : "禁用"
+                                };
+                if (s.Children != null && s.Children.Any())
+                {
+                    model.children = this.BuildAllTreeMenu(s.Children).ToArray();
+                }
+                lstResult.Add(model);
+            }
+
+            return lstResult;
+
         }
 
         #endregion

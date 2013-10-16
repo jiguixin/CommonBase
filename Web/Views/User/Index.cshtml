@@ -27,90 +27,62 @@
                 toolbar: [], 
                 columns: [[
                         { field: 'SysId', title: '@Html.LabelFor(model => model.SysId)', hidden: true },
-                        { field: 'UserName', title: '@Html.LabelFor(model => model.UserName)', width: 80, sortable: true, rowspan: 2 }, {
-                            title: '@Html.LabelFor(model => model.UserInfo)',
-                            colspan: 8
-                        }],
-                    [{
-                            field: 'UserInfo.RealName',
+                        { field: 'UserName', title: '@Html.LabelFor(model => model.UserName)', width: 80, sortable: true, rowspan: 2 },
+                        {
+                            field: 'RealName',
                             title: '@Html.LabelFor(model => model.UserInfo.RealName)',
                             width: 80,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['RealName'];
-                            }
+                            sorter: sort
                         },
                         {
-                            field: 'UserInfo.Sex',
+                            field: 'Sex',
                             title: '@Html.LabelFor(model => model.UserInfo.Sex)',
                             width: 50,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-
-                                return rec.UserInfo['Sex'] ? '男' : '女';
-                            }
+                            sorter: sort 
                         },
                         {
-                            field: 'UserInfo.Title',
+                            field: 'Title',
                             title: '@Html.LabelFor(model => model.UserInfo.Title)',
                             width: 150,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['Title'];
-                            }
+                            sorter: sort 
                         },
                         {
-                            field: 'UserInfo.Phone',
+                            field: 'Phone',
                             title: '@Html.LabelFor(model => model.UserInfo.Phone)',
                             width: 100,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['Phone'];
-                            }
+                            sorter: sort 
                         },
                         {
-                            field: 'UserInfo.Fax',
+                            field: 'Fax',
                             title: '@Html.LabelFor(model => model.UserInfo.Fax)',
                             width: 100,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['Fax'];
-                            }
+                            sorter: sort 
                         },
                         {
-                            field: 'UserInfo.Email',
+                            field: 'Email',
                             title: '@Html.LabelFor(model => model.UserInfo.Email)',
                             width: 100,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['Email'];
-                            }
+                            sorter: sort 
                         },
                         {
-                            field: 'UserInfo.QQ',
+                            field: 'QQ',
                             title: '@Html.LabelFor(model => model.UserInfo.QQ)',
                             width: 100,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['QQ'];
-                            }
+                            sorter: sort 
                         },
                         {
-                            field: 'UserInfo.Address',
+                            field: 'Address',
                             title: '@Html.LabelFor(model => model.UserInfo.Address)',
                             width: 250,
                             sortable: true,
-                            sorter: sort,
-                            formatter: function(value, rec) {
-                                return rec.UserInfo['Address'];
-                            }
+                            sorter: sort 
                         }
                     ]
                 ]
@@ -285,7 +257,8 @@
                             @Html.LabelFor(model => model.UserInfo.Sex)：
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.UserInfo.Sex) 
+                             @Html.RadioButtonFor(model => model.UserInfo.Sex,true,new {@checked = true}) 男
+                             @Html.RadioButtonFor(model => model.UserInfo.Sex,false) 女
                         </td>
                         
                         <td>
@@ -434,8 +407,9 @@
                         <td>
                             @Html.LabelFor(model => model.UserInfo.Sex)：
                         </td>
-                        <td>
-                            @Html.EditorFor(model => model.UserInfo.Sex) 
+                        <td> 
+                            @Html.RadioButtonFor(model => model.UserInfo.Sex,true) 男
+                            @Html.RadioButtonFor(model => model.UserInfo.Sex,false) 女
                         </td>
                         
                         <td>

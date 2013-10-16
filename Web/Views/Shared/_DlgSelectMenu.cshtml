@@ -1,0 +1,53 @@
+﻿@* 
+1，获取该对话框选中的值要调用GetSelectedMenu方法。
+2，
+
+ *@
+@model Infrastructure.Crosscutting.Security.Model.SysMenu
+<div id="dlgSelectMenu" class="easyui-dialog" style="width: 600px; height: 600px;"
+      closed="true" 
+      data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var row = $('#menuTreeGrid').datagrid('getSelected');
+                      if (row) 
+                       {
+                            GetSelectedMenu(row);
+                       }
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgSelectMenu').dialog('close');
+                    }
+                }]" 
+     >
+     <table id="menuTreeGrid" class="easyui-treegrid" 
+            data-options="
+                url: '@Url.Action("GetAllMenusRetTreeGrid", "RestApi")',
+                method: 'get',
+                rownumbers: true,
+                idField: 'id',
+                treeField: 'text',
+                fitColumns:'true',
+                fit:true 
+            ">
+         <thead>
+             <tr> 
+                 <th data-options="field:'id',hidden:'true'">id</th>
+                 <th data-options="field:'text'" width="150">@Html.LabelFor(model => model.MenuName)</th>
+                 <th data-options="field:'link'" width="150" >@Html.LabelFor(model => model.MenuLink)</th>
+                 <th data-options="field:'order'" width="70" >@Html.LabelFor(model => model.MenuOrder)</th>
+                 <th data-options="field:'visible'" width="50">@Html.LabelFor(model => model.IsVisible)</th>
+             </tr>
+         </thead>
+     </table>
+ </div>
+
+<script>
+    function selectMenuDialog() {
+        $('#dlgSelectMenu').dialog('open').dialog('setTitle', '选择菜单');
+    }
+</script>

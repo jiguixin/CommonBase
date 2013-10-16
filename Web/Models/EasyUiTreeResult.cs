@@ -19,6 +19,8 @@ namespace Web.Models
          
         public string state { get; set; }
 
+        public string visible { get; set; }
+
         public string iconCls { get; set; }
 
         public  bool  @checked{get;set;}
