@@ -152,6 +152,7 @@
     <Compile Include="Utility\AppModule.cs" />
     <Compile Include="Utility\CustomJsonResult.cs" />
     <Compile Include="Utility\MyFormsPrincipal.cs" />
+    <Compile Include="Utility\MyAuth.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\home\index.css" />

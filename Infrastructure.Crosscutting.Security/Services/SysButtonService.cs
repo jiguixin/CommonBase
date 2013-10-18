@@ -112,5 +112,42 @@ namespace Infrastructure.Crosscutting.Security.Services
 
             return buttons;
         }
+
+        public IEnumerable<SysButton> InitialAddModifyDelBtn(string menuId, string recordStatus)
+        {
+            List<SysButton> lstResult = new List<SysButton>
+                                            {
+                                                new SysButton
+                                                    {
+                                                        BtnName = "新增",
+                                                        BtnFunction = "NewItem",
+                                                        BtnIcon = "icon-add",
+                                                        BtnOrder = 10,
+                                                        MenuId = menuId,
+                                                        RecordStatus = recordStatus
+                                                    },
+                                                new SysButton
+                                                    {
+                                                        BtnName = "编辑",
+                                                        BtnFunction = "EditItem",
+                                                        BtnIcon = "icon-edit",
+                                                        BtnOrder = 20,
+                                                        MenuId = menuId,
+                                                        RecordStatus = recordStatus
+                                                    },
+                                                new SysButton
+                                                    {
+                                                        BtnName = "废弃",
+                                                        BtnFunction = "DelItem",
+                                                        BtnIcon = "icon-remove",
+                                                        BtnOrder = 30,
+                                                        MenuId = menuId,
+                                                        RecordStatus = recordStatus
+                                                    }
+                                            };
+
+            return lstResult;
+
+        }
     }
 }

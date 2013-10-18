@@ -27,6 +27,8 @@ namespace Web.Controllers
 
         public ActionResult Index()
         {
+            //todo:返回请求的URL还没有实现
+            ViewBag.returnUrl = Request.QueryString["returnUrl"];
             return View();
         }
 
@@ -38,7 +40,7 @@ namespace Web.Controllers
             if ((user = userService.CheckUser(userName, password)) != null)
             {
                 //FormsAuthentication.SetAuthCookie(userName, true);
-                MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 10);
+                MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 100);
                 return Json(new ResultModel() { Result = true, ResultInfo = "登录成功" });
             }
 

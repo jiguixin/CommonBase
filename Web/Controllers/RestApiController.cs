@@ -249,16 +249,35 @@ namespace Web.Controllers
         #region 菜单
 
         [HttpPost]
-        public JsonResult AddMenu(SysMenu menu)
+        public JsonResult AddMenu(SysMenu menu, bool IsAddButton)
         {
             if (!ModelState.IsValid) Json(false);
 
             menu.RecordStatus = CreateRecordMsg;
 
-            if (menuService.MenuRepository.Add(menu) > 0)
+            if (IsAddButton && !string.IsNullOrEmpty(menu.MenuParentId) && menu.MenuParentId.Trim().Length > 0)
             {
-                return Json(true);
+                menu.SysId = Util.NewId();
+
+                if (menuService.MenuRepository.AddOrModifyTrans(
+                    menu,
+                    buttonService.InitialAddModifyDelBtn(menu.SysId, CreateRecordMsg),
+                    menuService.MenuRepository.Add,
+                    buttonService.ButtonRepository.Add) > 0)
+                {
+                    return Json(true);
+                }
             }
+            else
+            { 
+                if (menuService.MenuRepository.Add(menu) > 0)
+                {
+                    return Json(true);
+                }
+            }
+
+
+
 
             return Json(false);
         }

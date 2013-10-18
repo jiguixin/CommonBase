@@ -28,5 +28,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                                                                        PrivilegeMaster master,
                                                                        IEnumerable<SysButton> buttons,
                                                                        IEnumerable<SysPrivilege> privileges);
+
+        IEnumerable<SysButton> InitialAddModifyDelBtn(string menuId, string recordStatus);
     }
 }

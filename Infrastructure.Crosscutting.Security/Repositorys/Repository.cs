@@ -13,6 +13,7 @@ using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -65,6 +66,27 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                     commandType: CommandType.Text); 
             }
         }
+
+        /// <summary>
+        /// 添加集合时可以不给实体的SysId赋值
+        /// </summary>
+        /// <param name="lstSource"></param>
+        /// <returns></returns>
+        public virtual int Add(IEnumerable<TEntity> lstSource)
+        {
+            var total = 0;
+            using (var connection = Connection)
+            {
+                using (var tran = connection.BeginTransaction())
+                {
+                    total += lstSource.Sum(item => this.Add(item, tran));
+                    tran.Commit();
+                } 
+            }
+            return total;
+        }
+
+
          
         /// <summary>
         /// 添加时可以不给实体的SysId赋值
@@ -78,6 +100,25 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             var parameters = (object)Mapping(item);
             return trans.Connection.Execute(sql.AddSql, parameters, transaction: trans,
                     commandType: CommandType.Text); 
+        }
+
+        /// <summary>
+        /// 添加一个集合时可以不给实体的SysId赋值
+        /// </summary>
+        /// <param name="lstSource"></param>
+        /// <param name="trans"></param>
+        /// <returns></returns>
+        public virtual int Add(IEnumerable<TEntity> lstSource, IDbTransaction trans)
+        {
+            var total = 0;
+            foreach (var item in lstSource)
+            {
+                ChkSysId(item);
+                var parameters = (object)Mapping(item);
+                total += trans.Connection.Execute(sql.AddSql, parameters, transaction: trans,
+                        commandType: CommandType.Text);
+            }
+            return total;
         }
 
         public virtual int Delete(string sysId)
@@ -152,10 +193,10 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             {
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-                    int result;
-                    if ((result = parent(item, tran)) > 0)
+                    int result = 0;
+                    if ((result += parent(item, tran)) > 0)
                     {
-                        if ((result = child(childValue, tran)) > 0)
+                        if ((result += child(childValue, tran)) > 0)
                         {
                             tran.Commit();
                             return result;
@@ -173,15 +214,13 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-
                     //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
-                    int result;
-                    if ((result = child(sysId, tran)) >= 0)
+                    int result = 0;
+                    if ((result += child(sysId, tran)) >= 0)
                     {
-                        if ((result = parent(sysId, tran)) >= 0)
+                        if ((result += parent(sysId, tran)) >= 0)
                         {
                             tran.Commit();
                             return result;
@@ -207,16 +246,15 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                
                 using (var tran = connection.BeginTransaction(IsolationLevel.ReadCommitted))
                 {
-                    int result;
+                    int result = 0;
                     //等于0是考虑有些表并没有相关的数据，如权限表有可能没有用户SysId数据。
-                    if ((result = grandChild(sysId, tran)) >= 0)
+                    if ((result += grandChild(sysId, tran)) >= 0)
                     {
-                        if ((result = child(sysId, tran)) >= 0)
+                        if ((result += child(sysId, tran)) >= 0)
                         {
-                            if ((result = parent(sysId, tran)) >= 0)
+                            if ((result += parent(sysId, tran)) >= 0)
                             {
                                 tran.Commit();
                                 return result;

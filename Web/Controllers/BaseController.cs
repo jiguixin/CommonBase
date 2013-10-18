@@ -17,7 +17,7 @@ namespace Web.Controllers
 
     using Web.Utility;
 
-    [Authorize]
+    [MyAuth]
     public class BaseController : AppController
     {
         protected override void OnActionExecuting(ActionExecutingContext filterContext)

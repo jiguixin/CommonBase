@@ -40,7 +40,18 @@
                 function (data) {
                     if (data.Result == true) {
                         $('#showInfo').html("登录成功!");
-                        window.location.href = "/Home/index"; 
+                        //todo:思路：
+                        //1，将retUrl返回到Home/index中。
+                        //2，在home 的action方法中增加ViewBag.retUrl 
+                        //3,在Home/index界面中增加JS检查retUrl是否有值，如果有值，就调用addTab方法
+                          @*
+                                                var retUrl = '@ViewBag.returnUrl';
+                        if (retUrl != "") {
+                            window.location.href = retUrl;
+                        } else {
+                            window.location.href = "/Home/index";
+                        }*@
+                        window.location.href = "/Home/index";
                     } 
                     else {
                         $('#showInfo').html(data.ResultInfo);
