@@ -85,7 +85,7 @@ namespace Web.Controllers
             var lstUsers = userService.UserRepository.GetList();
 
             List<UserDetailsModel> userDetails = (from user in lstUsers
-                                                  let userInfo = this.userService.GetUserInfo(user.SysId)
+                                                  let userInfo = this.userService.UserInfoRepository.GetModel(user.SysId)
                                                   select
                                                       new UserDetailsModel()
                                                           {
@@ -153,7 +153,7 @@ namespace Web.Controllers
         //删除用户
         public JsonResult DeleteUser(string SysId)
         {
-            if (userService.DeleteUser(SysId) > 0)
+            if (userService.UserRepository.Delete(SysId) > 0)
             {
                 return Json(true);
             }
@@ -163,6 +163,53 @@ namespace Web.Controllers
         #endregion
 
         #region 角色
+         
+        [HttpPost]
+        public JsonResult AddRole(SysRole role)
+        {
+            if (!ModelState.IsValid) Json(false);
+
+            role.RecordStatus = CreateRecordMsg;
+
+            if (roleService.RoleRepository.Add(role) > 0)
+            {
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
+        [HttpPost]
+        public JsonResult UpdateRole(SysRole role)
+        {
+            if (!ModelState.IsValid) Json(false);
+
+            role.RecordStatus = UpdateRecordMsg;
+
+            if (roleService.RoleRepository.Update(role) > 0)
+            {
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
+        [HttpPost] 
+        public JsonResult DeleteRole(string SysId)
+        {
+            if (roleService.RoleRepository.Delete(SysId) > 0)
+            {
+                return Json(true);
+            }
+            return Json(false);
+        }
+
+        public JsonResult GetRole(string id)
+        {
+            var model = roleService.RoleRepository.GetModel(id);
+
+            return model == null ? null : this.Json(model, JsonRequestBehavior.AllowGet); 
+        }
 
         //获取全部角色列表(tree格式)
         public JsonResult GetRolesListTree()
@@ -199,14 +246,14 @@ namespace Web.Controllers
             {
                 SysUserRole userRole = new SysUserRole()
                 {
-                    SysId = Infrastructure.Crosscutting.Security.Common.Util.NewId(),
+                    SysId = Util.NewId(),
                     UserId = userId,
                     RoleId = roleIds[i]
                 };
                 userRoles.Add(userRole);
             }
 
-            return Json(roleService.SetUserRole(userRoles, UserData.UserName), JsonRequestBehavior.AllowGet);
+            return Json(roleService.SetUserRole(userRoles), JsonRequestBehavior.AllowGet);
         }
 
         #endregion
@@ -229,8 +276,7 @@ namespace Web.Controllers
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-         
-
+          
         public JsonResult GetCurrentUserButtonsPrivilege(string menuId)
         {
             var lstSource = buttonService.GetButtonsPrivilegeByUserAndMenu(UserData.SysId, menuId);
@@ -315,8 +361,7 @@ namespace Web.Controllers
 
             return model == null ? null : this.Json(model, JsonRequestBehavior.AllowGet);
         }
-
-
+         
         public JsonResult GetAllMenusRetTreeGrid()
         {
             IEnumerable<SysMenu> lstSource = (IEnumerable<SysMenu>)menuService.MenuRepository.GetAllMenusByLoop();
@@ -425,7 +470,7 @@ namespace Web.Controllers
             //获取所有菜单
             IEnumerable<SysMenu> allMenus = menuService.GetAllMenu();
             //获取所有按钮数据
-            IEnumerable<SysButton> allButtons = RepositoryFactory.ButtonRepository.GetList<SysButton>(Constant.TableSysButton,
+            IEnumerable<SysButton> allButtons = RepositoryFactory.ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
                                                                                     "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
                                                                                     null);
             //去除掉所有菜单中用户已有权限的菜单
@@ -561,7 +606,7 @@ namespace Web.Controllers
         /// <returns></returns>
         public List<EasyUiTreeResult> GetUserRoles(string userId)
         {
-            IEnumerable<SysRole> allRoles = roleService.GetAllRols();
+            IEnumerable<SysRole> allRoles = roleService.RoleRepository.GetList();
             IEnumerable<SysRole> userRoles = userService.GetRoles(userId);
 
             List<EasyUiTreeResult> treeResults = new List<EasyUiTreeResult>();

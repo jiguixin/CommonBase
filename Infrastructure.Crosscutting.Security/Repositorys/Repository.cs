@@ -27,9 +27,20 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
            
         public abstract string TableName { get; }
 
+        /// <summary>
+        /// 生成SysId列的,参数化sql 语句
+        /// </summary>
+        public string SysIdCondition
+        {
+            get
+            {
+                return string.Format("{0}={1}{0}", Constant.ColumnSysId, sql.ParameterPrefix);
+            }
+        }
+
         #endregion
 
-        private ISql sql;
+        protected ISql sql { get; private set; }
 
         protected Repository(ISql sql)
         {
@@ -46,7 +57,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public virtual IDbConnection Connection
         {
-            get { return ConnectionFactory.CreateMsSqlConnection(); }
+            get { return sql.Connection; }
         }
 
         /// <summary>
@@ -125,49 +136,60 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         {
             using (var connection = Connection)
             {
-                var sqlDelete = CreateDeleteSql(string.Format("{0}='{1}'",Constant.ColumnSysId, sysId)); 
+                var sqlDelete = CreateDeleteSql(SysIdCondition); 
                 return
-                    connection.Execute(sqlDelete,
+                    connection.Execute(sqlDelete, param: CreateSysIdCondition(sysId),
                         commandType: CommandType.Text);
             }
         }
-
-        /// <summary>
-        /// 根据条件删除表数据，不用加where
-        /// </summary>
-        /// <param name="condition">格式为[列]=‘a’</param> 
-        public int DeleteByWhere(string condition)
-        {
-            using (var connection = Connection)
-            {
-                var sqlDelete = CreateDeleteSql(condition);
-                  
-                return
-                    connection.Execute(sqlDelete,
-                        commandType: CommandType.Text);
-            }
-        }
-
+         
         public virtual int Delete(string sysId, IDbTransaction trans)
         {
-            var sqlDelete = CreateDeleteSql(string.Format("{0}='{1}'", Constant.ColumnSysId, sysId));
+            var sqlDelete = CreateDeleteSql(SysIdCondition);
 
-            return trans.Connection.Execute(sqlDelete, transaction: trans,
-                   commandType: CommandType.Text); 
-        }
-
-        /// <summary>
-        /// 根据条件删除表数据，不用加where
-        /// </summary>
-        /// <param name="condition">格式为[列]=‘a’</param> 
-        public virtual int DeleteByWhere(string condition, IDbTransaction trans)
-        {
-            var sqlDelete = CreateDeleteSql(condition);
-
-            return trans.Connection.Execute(sqlDelete, transaction: trans,
+            return trans.Connection.Execute(sqlDelete, param: CreateSysIdCondition(sysId), transaction: trans,
                    commandType: CommandType.Text);
         }
 
+        /// <summary>
+        /// 根据条件删除表数据，不用加where
+        /// 可以不加param 那么就是不用参数形势。
+        /// </summary>
+        /// <param name="condition">格式为[列]=‘a’</param>
+        /// <param name="param">如果使用了 param 那么
+        /// condition格式为：[列]=Constant.SqlReplaceParameterPrefix[列]</param> 
+        public int DeleteByWhere(string condition, object param = null)
+        {
+            using (var connection = Connection)
+            {
+                var sqlText = CreateDeleteSql(condition);
+
+                sqlText = Util.ReplaceParameterPrefix(param, sqlText, sql.ParameterPrefix);
+
+                return
+                    connection.Execute(sqlText, param: param,
+                        commandType: CommandType.Text);
+            }
+        }
+         
+        /// <summary>
+        /// 根据条件删除表数据，不用加where
+        /// 可以不加param 那么就是不用参数形势。
+        /// </summary>
+        /// <param name="condition">格式为[列]=‘a’</param>
+        /// <param name="trans"></param>
+        /// <param name="param">如果使用了 param 那么
+        /// condition格式为：[列]=Constant.SqlReplaceParameterPrefix[列]</param> 
+        public virtual int DeleteByWhere(string condition, IDbTransaction trans, object param = null)
+        {
+            var sqlText = CreateDeleteSql(condition);
+
+            sqlText = Util.ReplaceParameterPrefix(param, sqlText, sql.ParameterPrefix);
+
+            return trans.Connection.Execute(sqlText, param: param, transaction: trans,
+                   commandType: CommandType.Text);
+        }
+         
         public virtual int Update(TEntity item)
         {
             using (var connection = Connection)
@@ -273,7 +295,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public virtual bool Exists(string sysId)
         {
-            IEnumerable<int> lstResult = GetList<int>(Constant.SqlCount, CreateSysIdCondition(sysId));
+            IEnumerable<int> lstResult = GetList<int>(Constant.SqlCount,SysIdCondition, CreateSysIdCondition(sysId));
 
             if (lstResult.FirstOrDefault() > 0)
             {
@@ -284,7 +306,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public virtual TEntity GetModel(string sysId)
         {
-            return GetList(string.Empty, CreateSysIdCondition(sysId)).FirstOrDefault();
+            return GetList(string.Empty,SysIdCondition, CreateSysIdCondition(sysId)).FirstOrDefault();
         }
          
         public virtual IEnumerable<TEntity> GetPaged(
@@ -306,29 +328,63 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         /// <summary>
+        /// 查询该实体的数据集
         /// 注：必须要配置子类TableName
+        /// <param name="param">如果使用了 param 那么
+        /// where格式为：[列]=Constant.SqlReplaceParameterPrefix[列]</param> 
         /// </summary> 
-        public IEnumerable<TEntity> GetList(string fields = null, string where = null)
-        {
-            using (var connection = Connection)
-            { 
-                return connection.Query<TEntity>(CreateSelectSql(TableName,fields,where), commandType: CommandType.Text);
-            }
-        }
-
-        public IEnumerable<T> GetList<T>(string fields = null, string where = null)
+        public IEnumerable<TEntity> GetList(string fields = null, string where = null, object param = null)
         {
             using (var connection = Connection)
             {
-                return connection.Query<T>(CreateSelectSql(TableName, fields, where), commandType: CommandType.Text);
+                var sqlText = CreateSelectSql(TableName, fields, where);
+
+                sqlText = Util.ReplaceParameterPrefix(param, sqlText, sql.ParameterPrefix);
+
+                return connection.Query<TEntity>(sqlText, param: param, commandType: CommandType.Text);
             }
         }
 
-        public IEnumerable<T> GetList<T>(string table, string fields = null, string where = null)
+        /// <summary>
+        /// 查询该实体的数据集
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fields"></param>
+        /// <param name="where"></param>
+        /// <param name="param">如果使用了 param 那么
+        /// where格式为：[列]=Constant.SqlReplaceParameterPrefix[列]</param> 
+        /// <returns></returns>
+        public IEnumerable<T> GetList<T>(string fields = null, string where = null, object param = null)
         {
             using (var connection = Connection)
             {
-                return connection.Query<T>(CreateSelectSql(table, fields, where), commandType: CommandType.Text);
+                var sqlText = CreateSelectSql(TableName, fields, where);
+
+                sqlText = Util.ReplaceParameterPrefix(param, sqlText,sql.ParameterPrefix);
+
+                return connection.Query<T>(sqlText, param: param, commandType: CommandType.Text);
+            }
+        }
+
+        /// <summary>
+        /// 查询其它表的数据集
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table">表名</param>
+        /// <param name="fields"></param>
+        /// <param name="where"></param>
+        /// <param name="param">如果使用了 param 那么
+        /// where格式为：[列]=Constant.SqlReplaceParameterPrefix[列]</param> 
+        /// <returns></returns>
+        public IEnumerable<T> GetListByTable<T>(string table, string fields = null, string where = null, object param = null)
+        {
+            using (var connection = Connection)
+            {
+                var sqlText = CreateSelectSql(table, fields, where);
+
+                sqlText = Util.ReplaceParameterPrefix(param, sqlText, sql.ParameterPrefix);
+
+                return connection.Query<T>(sqlText, param: param, commandType: CommandType.Text);
             }
         }
 
@@ -347,15 +403,15 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                 item.SysId = Util.NewId();
             }
         }
-
+          
         /// <summary>
-        /// 结果为：SysId='sysId'
+        /// 结果为：new { SysId = sysId }
         /// </summary>
         /// <param name="sysId"></param>
         /// <returns></returns>
-        public string CreateSysIdCondition(string sysId)
+        public object CreateSysIdCondition(string sysId)
         {
-            return string.Format("{0}='{1}'", Constant.ColumnSysId, sysId);
+            return new { SysId = sysId };
         }
 
         private static DynamicParameters CreateSysIdDynamicParameters(string sysId)
@@ -365,7 +421,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             return p;
         }
 
-        //创建调用proc_Delete_By_Where的参数
+        //创建删除的参数
         public string CreateDeleteSql(string where)
         {
             where = string.IsNullOrEmpty(where) ? "1=1" : where;
@@ -384,6 +440,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
             return sql;
         }
+
+        
 
 
         #endregion

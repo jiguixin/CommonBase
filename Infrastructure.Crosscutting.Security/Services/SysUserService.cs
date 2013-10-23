@@ -9,6 +9,8 @@ using Infrastructure.Crosscutting.Security.Repositorys;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
+    using System.Data;
+
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Cryptography;
     using Infrastructure.Data.Ado.Dapper;
@@ -43,14 +45,18 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(pwd)) return null;
 
-            var lstResult = UserRepository.GetList("",
-              string.Format(
-                  "{0}='{1}' and {2}='{3}'",
-                  Constant.ColumnSysUserUserName,
-                  name.Trim(),
-                  Constant.ColumnSysUserUserPwd,
-                  Crypto.Encrypt(pwd.Trim())));
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysUserUserName, name.Trim());
+            p.Add(Constant.ColumnSysUserUserPwd, Crypto.Encrypt(pwd.Trim()));
 
+            var lstResult = UserRepository.GetList("",
+             string.Format(
+                 "{0}={1}{0} and {2}={1}{2}",
+                 Constant.ColumnSysUserUserName,
+                 Constant.SqlReplaceParameterPrefix,
+                 Constant.ColumnSysUserUserPwd
+                 ), p);
+              
             return lstResult.FirstOrDefault();
 
         }
@@ -78,50 +84,27 @@ namespace Infrastructure.Crosscutting.Security.Services
             model.UserPwd = Crypto.Encrypt(model.UserPwd.Trim());
             return UserRepository.Update(model);  
         }
-
-        public int DeleteUser(string sysId)
-        {
-            return UserRepository.Delete(sysId);
-        }
-
-        public int AddUserInfo(SysUserInfo model)
-        {
-            return UserInfoRepository.Add(model);
-        }
-
-        public int UpdateUserInfo(SysUserInfo model)
-        {
-            return UserInfoRepository.Update(model);
-        }
-
+            
         public IEnumerable<SysRole> GetRoles(string userId)
         {
-            return UserRoleRepository.GetList<SysRole>(Constant.SqlTableUserAndRoleJoin, "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("u.SysId='{0}'", userId));
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysId, userId.Trim());
+
+            return UserRoleRepository.GetListByTable<SysRole>(Constant.SqlTableUserAndRoleJoin, "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("u.{1}={0}{1}", Constant.SqlReplaceParameterPrefix, Constant.ColumnSysId), p);
+
         }
 
         public IEnumerable<SysPrivilege> GetPrivilege(string userId)
         {
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysId, userId.Trim());
+            p.Add(Constant.ColumnSysPrivilegePrivilegeMaster, (int)PrivilegeMaster.User);
 
             return
-                UserRoleRepository.GetList<SysPrivilege>(
+                UserRoleRepository.GetListByTable<SysPrivilege>(
                     Constant.SqlTableUserPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin
                     ,
-                    string.Format("p.PrivilegeMaster = {0} and u.SysId='{1}'", (int)PrivilegeMaster.User, userId));
-        }
-
-        /// <summary>
-        /// 根据用户id获取用户资料
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public SysUserInfo GetUserInfo(string userId)
-        {
-            IEnumerable<SysUserInfo> userInfos = UserInfoRepository.GetList<SysUserInfo>(Constant.TableSysUserInfo, "SysId,RealName,Title,Sex,Phone,Fax,Email,QQ,Address", string.Format("SysId='{0}'", userId));
-            if (userInfos.Count() == 0)
-            {
-                return null;
-            }
-            return userInfos.ToArray()[0];
-        }
+                    string.Format("p.{0} = {2}{0} and u.{1}={2}{1}", Constant.ColumnSysPrivilegePrivilegeMaster, Constant.ColumnSysId, Constant.SqlReplaceParameterPrefix), p);
+        } 
     }
 }

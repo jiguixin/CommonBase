@@ -36,12 +36,12 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public IEnumerable<SysPrivilege> GetPrivilege(string menuId)
         {
-            return MenuRepository.GetList<SysPrivilege>(Constant.SqlTableMenuPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and m.SysId = '{1}'", (int)PrivilegeAccess.Menu, menuId));
+            return MenuRepository.GetListByTable<SysPrivilege>(Constant.SqlTableMenuPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and m.SysId = '{1}'", (int)PrivilegeAccess.Menu, menuId));
         }
 
         public IEnumerable<SysMenu> GetSysMenuById(string menuId)
         {
-            IEnumerable<SysMenu> sysMenus = MenuRepository.GetList<SysMenu>(Constant.TableSysMenu, "SysId,MenuParentId,MenuOrder,MenuName,MenuLink,MenuIcon,IsVisible,IsLeaf,RecordStatus", string.Format("SysId='{0}'", menuId));
+            IEnumerable<SysMenu> sysMenus = MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu, "SysId,MenuParentId,MenuOrder,MenuName,MenuLink,MenuIcon,IsVisible,IsLeaf,RecordStatus", string.Format("SysId='{0}'", menuId));
             return sysMenus;
         }
 
@@ -153,7 +153,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
             IEnumerable<SysPrivilege> sysRolePrivileges = ServiceFactory.RoleService.GetPrivilege(roleId);
             //获取所有按钮数据
-            IEnumerable<SysButton> allButtons = ButtonRepository.GetList<SysButton>(Constant.TableSysButton,
+            IEnumerable<SysButton> allButtons = ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
                                                                                     "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
                                                                                     null);
 
@@ -186,7 +186,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns></returns>
         public IEnumerable<SysMenu> GetAllMenu()
         {
-            IEnumerable<SysMenu> sysMenus = MenuRepository.GetList<SysMenu>(Constant.TableSysMenu, "*", null);
+            IEnumerable<SysMenu> sysMenus = MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu, "*", null);
             return sysMenus.OrderBy(x => x.MenuOrder);
         }
 

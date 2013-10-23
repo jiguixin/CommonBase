@@ -90,18 +90,30 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             return sysUser;
         }
 
-        public IEnumerable<SysUser> GetUserIncludeUserInfo(string table,string fields = "", string @where = "")
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="fields"></param>
+        /// <param name="where"></param>
+        /// <param name="param">如果使用了 param 那么
+        /// where格式为：[列]=Constant.SqlReplaceParameterPrefix[列]</param> 
+        /// <returns></returns>
+        public IEnumerable<SysUser> GetUserIncludeUserInfo(string table, string fields = "", string @where = "", object param = null)
         {
             using (var connection = Connection)
             {
+                var sqlText = CreateSelectSql(table,fields,where);
+                sqlText = Util.ReplaceParameterPrefix(param, sqlText, sql.ParameterPrefix);
+
                 return connection.Query<SysUser, SysUserInfo, SysUser>(
-                    CreateSelectSql(table,fields,where),
+                    sqlText,
                     (u, ui) =>
                         {
                             u.UserInfo = ui;
                             return u;
                         },
-                        splitOn:"SysId",
+                        splitOn:"SysId",param:param,
                     commandType: CommandType.Text);
             }
         }

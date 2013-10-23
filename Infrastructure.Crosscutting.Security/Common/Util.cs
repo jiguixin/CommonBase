@@ -118,8 +118,7 @@
               
            return string.Format("{0}{1}", DateTime.Now.ToString("yyyyMMddHHmmssfff"), ran.Next(10000, 99999));
         }
-
-
+         
         ///<summary>
         /// 返回 GUID 用于数据库操作，特定的时间代码可以提高检索效率
         /// </summary>
@@ -321,6 +320,16 @@
         } 
 
         #endregion
+
+        //替换带参数化查询的SQL前缀
+        public static string ReplaceParameterPrefix(object param, string sqlText, string parameterPrefix)
+        {
+            if (param != null)
+            {
+                sqlText = sqlText.Replace(Constant.SqlReplaceParameterPrefix, parameterPrefix);
+            }
+            return sqlText;
+        }
 
     }
 }

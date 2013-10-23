@@ -12,8 +12,10 @@ using System;
 namespace Infrastructure.Crosscutting.Security.SqlImple
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
 
+    using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Repositorys;
     using Infrastructure.Data.Ado.Dapper;
 
@@ -27,7 +29,7 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
             string @where = "1=1",
             int currentPage = 1,
             int pageSize = 10,
-            int getCount = 0)
+            int getCount = 0, object param = null)
         {
             fields = string.IsNullOrEmpty(fields) ? "*" : fields;
             where = string.IsNullOrEmpty(where) ? "1=1" : where;
@@ -92,6 +94,8 @@ user_constraints au where cu.constraint_name = au.constraint_name and
                 {
                     string sqlQueryCount = string.Format(@"SELECT COUNT(*) FROM {0}{1}", table, where);
 
+                    sqlQueryCount = Util.ReplaceParameterPrefix(param, sqlQueryCount, ParameterPrefix);
+
                     total = cn.Query<int>(sqlQueryCount).FirstOrDefault();
                 }
                 else
@@ -108,6 +112,8 @@ user_constraints au where cu.constraint_name = au.constraint_name and
                     ) 
                     WHERE RN >= {4} ", fields, table, where, orderBy, startRow, endRow);
 
+                sqlQuery = Util.ReplaceParameterPrefix(param, sqlQuery, ParameterPrefix);
+
                 return cn.Query<T>(sqlQuery);
             }
              
@@ -115,5 +121,22 @@ user_constraints au where cu.constraint_name = au.constraint_name and
 
         public abstract string AddSql { get; }
         public abstract string UpdateSql { get;}
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return ConnectionFactory.CreateOracleConnection();
+            }
+        }
+
+        public string ParameterPrefix
+        {
+            get
+            {
+                return Constant.OracleParameterPrefix;
+            }
+        }
+         
     }
 }

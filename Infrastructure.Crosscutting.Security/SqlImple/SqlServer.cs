@@ -15,10 +15,14 @@ using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.SqlImple
 {
+    using System.Data;
+
+    using Infrastructure.Crosscutting.Security.Common;
+
     public abstract class SqlServer : ISql
     {
         public IEnumerable<T> GetPaged<T>(string table, string orderBy, out int total, string fields = "*", string where = "1=1", int currentPage = 1, int pageSize = 10,
-                                       int getCount = 0)
+                                       int getCount = 0, object param = null)
         {
             fields = string.IsNullOrEmpty(fields) ? "*" : fields;
             where = string.IsNullOrEmpty(where) ? "1=1" : where;
@@ -79,6 +83,8 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
                 {
                     string sqlQueryCount = string.Format(@"SELECT COUNT(*) FROM {0}{1}", table, where);
 
+                    sqlQueryCount = Util.ReplaceParameterPrefix(param, sqlQueryCount, ParameterPrefix);
+
                     total = cn.Query<int>(sqlQueryCount).FirstOrDefault();
                 }
                 else
@@ -88,11 +94,30 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
 
                 string sqlQuery = string.Format(@"SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY {0}) AS rownumber,{1} FROM {2}{3}) AS tempdt WHERE rownumber BETWEEN {4} AND {5}",orderBy,fields,table,where,startRow,endRow);
 
+                sqlQuery = Util.ReplaceParameterPrefix(param, sqlQuery, ParameterPrefix);
+
                return cn.Query<T>(sqlQuery); 
             } 
         }
 
         public abstract string AddSql { get;}
         public abstract string UpdateSql { get;  }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return ConnectionFactory.CreateMsSqlConnection();
+            }
+        }
+
+        public string ParameterPrefix
+        {
+            get
+            {
+                return Constant.SqlServerParameterPrefix;
+            }
+        }
+         
     }
 }

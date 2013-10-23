@@ -10,16 +10,16 @@
 namespace Infrastructure.Crosscutting.Security.SqlImple
 {
     public class SysConfigSqlServer : SqlServer
-    { 
+    {
         public override string AddSql
         {
             get
             {
-                return @"INSERT INTO [Sys_Config](
-	[SysId],[SysKey],[SysValue],[SysParentId],[RecordStatus]
+                return string.Format(@"INSERT INTO Sys_Config(
+	SysId,SysKey,SysValue,SysParentId,RecordStatus
 	)VALUES(
-	@SysId,@SysKey,@SysValue,@SysParentId,@RecordStatus
-	)";
+	{0}SysId,{0}SysKey,{0}SysValue,{0}SysParentId,{0}RecordStatus
+	)", ParameterPrefix);
             }
         }
 
@@ -27,9 +27,9 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"UPDATE [Sys_Config] SET 
-	[SysKey] = @SysKey,[SysValue] = @SysValue,[SysParentId] = @SysParentId,[RecordStatus] = @RecordStatus
-	WHERE SysId=@SysId";
+                return string.Format(@"UPDATE Sys_Config SET 
+	SysKey = {0}SysKey,SysValue = {0}SysValue,SysParentId = {0}SysParentId,RecordStatus = {0}RecordStatus
+	WHERE SysId={0}SysId", ParameterPrefix);
             }
         }
     }

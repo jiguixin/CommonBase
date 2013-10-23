@@ -79,11 +79,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         /// <returns>List of selected elements</returns>
         IEnumerable<TEntity> GetList();
 
-        IEnumerable<TEntity> GetList(string fields = "", string where = "");
+        IEnumerable<TEntity> GetList(string fields = "", string where = "", object param = null);
 
-        IEnumerable<T> GetList<T>(string fields = "", string where = "");
+        IEnumerable<T> GetList<T>(string fields = "", string where = "", object param = null);
 
-        IEnumerable<T> GetList<T>(string table, string fields = "", string where = "");
+        IEnumerable<T> GetListByTable<T>(string table, string fields = "", string where = "", object param = null);
 
 
     }

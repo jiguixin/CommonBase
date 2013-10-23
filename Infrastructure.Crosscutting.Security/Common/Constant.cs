@@ -96,6 +96,22 @@ namespace Infrastructure.Crosscutting.Security.Common
 
         #endregion
 
+        #region 字符串常量
+
+        public static readonly string OracleParameterPrefix = ":";
+        public static readonly string SqlServerParameterPrefix = "@";
+
+        /// <summary>
+        /// 在不同数据库中，构造sql语句会用不同的前缀，如sqlserver为'@'，oracle为':'
+        /// 为了在通用查询中不依赖具体数据库，所以用此常量来统一作为sql的参数，
+        /// 在Repository中在替换该字符串，
+        /// </summary>
+        public static readonly string SqlReplaceParameterPrefix = "$$";
+
+
+
+        #endregion
+
         #region 表名
 
         public static readonly string TableSysButton = "Sys_Button";
@@ -112,7 +128,7 @@ namespace Infrastructure.Crosscutting.Security.Common
 
         #region 列名
 
-        public static readonly string ColumnSysId = "SysId";
+        public static string ColumnSysId = "SysId";
          
         #region Sys_User
         

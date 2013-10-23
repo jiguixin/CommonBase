@@ -15,7 +15,7 @@
         $(function() {
             $('#fixedGrid').datagrid({
                 title: '用户列表', //列表的标题
-                //fit: true, //列表自动适应宽度 有Bug
+                fit: true, //列表自动适应宽度 有Bug
                 url: '@Url.Action("GetAllUerInfo", "RestApi")', //获取数据的url
                 pagination: true, //是否显示分页控件
                 rownumbers: true, //是否显示行号 

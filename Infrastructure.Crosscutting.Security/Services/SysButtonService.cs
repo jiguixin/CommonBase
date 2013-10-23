@@ -22,12 +22,12 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public IEnumerable<SysPrivilege> GetPrivilege(string buttonId)
         {
-            return ButtonRepository.GetList<SysPrivilege>(Constant.SqlTableButtonPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and b.SysId = '{1}'", (int)PrivilegeAccess.Button, buttonId));
+            return ButtonRepository.GetListByTable<SysPrivilege>(Constant.SqlTableButtonPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and b.SysId = '{1}'", (int)PrivilegeAccess.Button, buttonId));
         }
 
         public IEnumerable<SysButton> GetAllButons()
         {
-            return RepositoryFactory.ButtonRepository.GetList<SysButton>(Constant.TableSysButton,
+            return RepositoryFactory.ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
                                                                          "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
                                                                          null);
         }

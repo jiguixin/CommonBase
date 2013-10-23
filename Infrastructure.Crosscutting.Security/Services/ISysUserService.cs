@@ -12,6 +12,12 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         SysUserRepository UserRepository { get; }
 
+        SysUserRoleRepository UserRoleRepository { get; }
+
+        SysRoleRepository RoleRepository { get; }
+
+        SysUserInfoRepository UserInfoRepository { get; }
+
         /// <summary>
         /// 根据用户名、密码查询该用户是否存在，如果不存在者会返回null
         /// </summary>
@@ -33,18 +39,10 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <param name="model"></param>
         /// <returns></returns>
         int UpdateUser(SysUser model);
-
-        int AddUserInfo(SysUserInfo model);
-
-        int DeleteUser(string sysId);
-
-        int UpdateUserInfo(SysUserInfo model);
-
+          
         IEnumerable<SysRole> GetRoles(string userId);
 
         IEnumerable<SysPrivilege> GetPrivilege(string userId);
-
-        SysUserInfo GetUserInfo(string userId);
-
+          
     }
 }

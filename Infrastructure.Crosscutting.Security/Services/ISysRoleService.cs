@@ -22,12 +22,15 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         bool AddUserRole(SysUserRole userRole);
 
-        bool SetUserRole(List<SysUserRole> userRoles, string userName);
+        /// <summary>
+        /// 先删除该用户对应的角色，然后在添加角色对应数据
+        /// </summary>
+        /// <param name="userRoles"></param>
+        /// <returns></returns>
+        bool SetUserRole(List<SysUserRole> userRoles);
 
         IEnumerable<SysUser> GetUsers(string roleId);
-
-        IEnumerable<SysRole> GetAllRols();
-
+          
         IEnumerable<SysPrivilege> GetPrivilege(string roleId);
     }
 }

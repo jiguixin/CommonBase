@@ -10,21 +10,27 @@
 namespace Infrastructure.Crosscutting.Security.SqlImple
 {
     public class SysButtonSqlServer:SqlServer
-    { 
+    {
         public override string AddSql
         {
-            get { return @"INSERT INTO [Sys_Button](
-	[SysId],[MenuId],[BtnName],[BtnIcon],[BtnOrder],[RecordStatus]
+            get
+            {
+                return string.Format(@"INSERT INTO Sys_Button(
+	SysId,MenuId,BtnName,BtnIcon,BtnOrder,RecordStatus
 	)VALUES(
-	@SysId,@MenuId,@BtnName,@BtnIcon,@BtnOrder,@RecordStatus
-	)"; }
+	{0}SysId,{0}MenuId,{0}BtnName,{0}BtnIcon,{0}BtnOrder,{0}RecordStatus
+	)", ParameterPrefix);
+            }
         }
 
         public override string UpdateSql
         {
-            get { return @"UPDATE [Sys_Button] SET 
-	[MenuId] = @MenuId,[BtnName] = @BtnName,[BtnIcon] = @BtnIcon,[BtnOrder] = @BtnOrder,[RecordStatus] = @RecordStatus
-	WHERE SysId=@SysId"; }
+            get
+            {
+                return string.Format(@"UPDATE Sys_Button SET 
+	MenuId = {0}MenuId,BtnName = {0}BtnName,BtnIcon = {0}BtnIcon,BtnOrder = {0}BtnOrder,RecordStatus = {0}RecordStatus
+	WHERE SysId={0}SysId", ParameterPrefix);
+            }
         }
     }
 }

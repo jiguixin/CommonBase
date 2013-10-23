@@ -153,7 +153,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             //获取所有菜单
             IEnumerable<SysMenu> allMenus = ServiceFactory.MenuService.GetAllMenu();
             //获取所有按钮数据
-            IEnumerable<SysButton> allButtons = buttonRepository.GetList<SysButton>(Constant.TableSysButton,
+            IEnumerable<SysButton> allButtons = buttonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
                                                                                     "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
                                                                                     null);
 

@@ -1,19 +1,269 @@
-﻿@{
+﻿@model Infrastructure.Crosscutting.Security.Model.SysRole
+
+@{
     ViewBag.Title = "角色管理";
+    this.Layout = "~/Views/Shared/IndexTemp.cshtml";
 }
-<table id="dg" class="easyui-datagrid"
-    toolbar="#toolbar" pagination="true"  url="@Url.Action("GetRoleList", "RestApi")"
-    rownumbers="true" fitcolumns="true" singleselect="true">
-    <thead>
-        <tr>
-            <th field="SysId" width="50" hidden="hidden">Id</th>
-            <th field="RoleName" width="50">角色名</th>
-            <th field="RoleDesc" width="50">角色描述</th> 
-        </tr>
-    </thead>
-</table>
-<div id="toolbar">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="create()">新增</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="edit()">编辑</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="destroy()">移除</a>
-</div>
+  
+@section scriptsHeader
+{
+    <script src="~/Scripts/eayuiExtend/formExtend.js"></script>
+    <script src="~/Scripts/eayuiExtend/datagridExtend.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $('#fixedGrid').datagrid({
+                title: '角色列表', //列表的标题
+                fit: true, //列表自动适应宽度 有Bug
+                url: '@Url.Action("GetRoleList", "RestApi")', //获取数据的url
+                pagination: true, //是否显示分页控件
+                rownumbers: true, //是否显示行号 
+                singleSelect: true,//是否为单选
+                nowrap: true,
+                striped: true,
+                collapsible: true,
+                remoteSort: false,
+                toolbar: [],
+                columns: [[
+                        { field: 'SysId', title: '@Html.LabelFor(model => model.SysId)', hidden: true },
+                        { field: 'RoleName', title: '@Html.LabelFor(model => model.RoleName)', width: 120, sortable: true, rowspan: 2 },
+                        {
+                            field: 'RoleDesc',
+                            title: '@Html.LabelFor(model => model.RoleDesc)',
+                            width: 250,
+                            sortable: true,
+                            sorter: sort
+                        }
+                    ]
+                ]
+            });
+        });
+
+        //首先获取iframe标签的id值
+        var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
+
+        //获取按钮值
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")', { menuId: iframeid }, function(data) {
+            if (data == null) {
+                return;
+            }
+            $('#fixedGrid').datagrid("addToolbarItem", data);
+
+        });
+
+        function NewItem() {
+            $('#dlgNew').dialog('open').dialog('setTitle', '新增角色');
+            $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
+        }
+
+        function EditItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $('#dlgEdit').dialog('open').dialog('setTitle', '编辑角色');
+
+                $('#UpdateForm').form("reset");
+                var id = row.SysId;
+                //去读取数据库中的最新数据，防止多人编辑
+                $.getJSON('@Url.Action("GetRole", "RestApi")' + '/' + id + '?' + new Date().getTime(), function(data) {
+                    $('#UpdateForm').form('load', data);
+                });
+            }
+        }
+
+        function DelItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('Confirm', '确定删除此角色?', function (r) {
+                    if (r) {
+                        $.post('@Url.Action("DeleteRole", "RestApi")', { SysId: row.SysId }, function(result) {
+                            if (result) {
+                                $('#fixedGrid').datagrid("reload", {}); // 后台必须要跟花括号不然更新不成功
+                            } else {
+                                $.messager.show({
+// show error message
+                                    title: 'Error',
+                                    msg: result.errorMsg
+                                });
+                            }
+                        }, 'json');
+                    }
+                });
+            }
+        }
+
+        function sort(a, b) {
+            a = a.split('/');
+            b = b.split('/');
+            if (a[2] == b[2]) {
+                if (a[0] == b[0]) {
+                    return (a[1] > b[1] ? 1 : -1);
+                } else {
+                    return (a[0] > b[0] ? 1 : -1);
+                }
+            } else {
+                return (a[2] > b[2] ? 1 : -1);
+            }
+        }
+
+    </script>
+}
+
+@section stylesHeader
+{
+    <style> 
+        table tr td {
+            padding: 3px 10px; 
+        }
+        .errMsg {
+            text-align: center;
+        }
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+        .fitem label {
+            display: inline-block;
+            width: 80px;
+        }
+    </style>
+}
+
+@section mainContent
+{ 
+    <div id="dlgNew" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true" >@*buttons="#dlg-buttons"*@
+        @using (Ajax.BeginForm("AddRole", "RestApi", null, new AjaxOptions() { HttpMethod = "Post", OnSuccess = "onAddSuccess" }, new { Id = "CreateForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>创建角色</legend>  
+                <table>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.RoleName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.RoleName) 
+                        </td> 
+                        <td >
+                            @Html.LabelFor(model => model.RoleDesc)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.RoleDesc) 
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.RoleName) 
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.RoleDesc) 
+                        </td> 
+                    </tr>
+                      
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding-top:5px;">
+                            <input type="submit" value="保存" />     
+                            <input type="reset" value="重置" />     
+                        </td>  
+                    </tr>
+                </table> 
+
+            </fieldset>
+           
+        }
+
+    </div>
+    
+    <div id="dlgEdit" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true" > 
+        @using (Ajax.BeginForm("UpdateRole", "RestApi", null, new AjaxOptions() { HttpMethod = "Post", OnSuccess = "onEditSuccess" }, new { Id = "UpdateForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>修改角色</legend>  
+                @Html.HiddenFor(model=>model.SysId) 
+                @Html.HiddenFor(model=>model.RecordStatus)  
+
+                <table>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.RoleName)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.RoleName) 
+                        </td> 
+                        <td >
+                            @Html.LabelFor(model => model.RoleDesc)：
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.RoleDesc) 
+                        </td>
+                    </tr>
+                    <tr class="errMsg">
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.RoleName) 
+                        </td> 
+                        <td colspan="2">
+                            @Html.ValidationMessageFor(model => model.RoleDesc) 
+                        </td> 
+                    </tr> 
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding-top:5px;">
+                            <input type="submit" value="保存" />     
+                            <input type="reset" value="重置" />     
+                        </td>  
+                    </tr>
+                </table> 
+
+            </fieldset>
+           
+        }
+
+    </div>
+ 
+}
+
+@section scriptsFooter
+{
+     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript"> 
+        
+        function onAddSuccess(data) {
+            if (data) {
+               // alert("操作成功");
+                $('#dlgNew').dialog('close');
+                $('#fixedGrid').datagrid('reload');
+            } else {
+                alert("操作失败");
+            }
+        }
+        
+        function onEditSuccess(data) {
+            if (data) {
+               // alert("操作成功");
+                $('#dlgEdit').dialog('close');
+                $('#fixedGrid').datagrid('reload');
+            } else {
+                alert("操作失败");
+            }
+        }
+         
+    </script> 
+}
+  

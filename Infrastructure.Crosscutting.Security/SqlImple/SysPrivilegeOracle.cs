@@ -15,11 +15,11 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"INSERT INTO Sys_Privilege(
+                return string.Format(@"INSERT INTO Sys_Privilege(
 	SysId,PrivilegeMaster,PrivilegeMasterKey,PrivilegeAccess,PrivilegeAccessKey,PrivilegeOperation,RecordStatus
 	)VALUES(
-	:SysId,:PrivilegeMaster,:PrivilegeMasterKey,:PrivilegeAccess,:PrivilegeAccessKey,:PrivilegeOperation,:RecordStatus
-	)";
+	{0}SysId,{0}PrivilegeMaster,{0}PrivilegeMasterKey,{0}PrivilegeAccess,{0}PrivilegeAccessKey,{0}PrivilegeOperation,{0}RecordStatus
+	)", ParameterPrefix);
             }
         }
 
@@ -27,9 +27,9 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"UPDATE Sys_Privilege SET 
-	PrivilegeMaster = :PrivilegeMaster,PrivilegeMasterKey = :PrivilegeMasterKey,PrivilegeAccess = :PrivilegeAccess,PrivilegeAccessKey = :PrivilegeAccessKey,PrivilegeOperation = :PrivilegeOperation,RecordStatus = :RecordStatus
-	WHERE SysId=:SysId";
+                return string.Format(@"UPDATE Sys_Privilege SET 
+	PrivilegeMaster = {0}PrivilegeMaster,PrivilegeMasterKey = {0}PrivilegeMasterKey,PrivilegeAccess = {0}PrivilegeAccess,PrivilegeAccessKey = {0}PrivilegeAccessKey,PrivilegeOperation = {0}PrivilegeOperation,RecordStatus = {0}RecordStatus
+	WHERE SysId={0}SysId", ParameterPrefix);
             }
         }
     }

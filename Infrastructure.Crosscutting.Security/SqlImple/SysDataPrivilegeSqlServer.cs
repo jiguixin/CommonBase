@@ -12,15 +12,15 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
     public class SysDataPrivilegeSqlServer:SqlServer
     {
          
-        public override string AddSql
+       public override string AddSql
         {
             get
             {
-                return @"INSERT INTO [Sys_DataPrivilege](
-	[SysId],[DataPrivilegeView],[DataPrivilegeRule],[RecordStatus]
+                return string.Format(@"INSERT INTO Sys_DataPrivilege(
+	SysId,DataPrivilegeView,DataPrivilegeRule,RecordStatus
 	)VALUES(
-	@SysId,@DataPrivilegeView,@DataPrivilegeRule,@RecordStatus
-	)";
+	{0}SysId,{0}DataPrivilegeView,{0}DataPrivilegeRule,{0}RecordStatus
+	)", ParameterPrefix);
             }
         }
 
@@ -28,9 +28,9 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"UPDATE [Sys_DataPrivilege] SET 
-	[DataPrivilegeView] = @DataPrivilegeView,[DataPrivilegeRule] = @DataPrivilegeRule,[RecordStatus] = @RecordStatus
-	WHERE SysId=@SysId";
+                return string.Format(@"UPDATE Sys_DataPrivilege SET 
+	DataPrivilegeView = {0}DataPrivilegeView,DataPrivilegeRule = {0}DataPrivilegeRule,RecordStatus = {0}RecordStatus
+	WHERE SysId={0}SysId", ParameterPrefix);
             }
         }
     }

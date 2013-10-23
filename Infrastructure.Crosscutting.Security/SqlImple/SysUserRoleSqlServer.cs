@@ -10,17 +10,17 @@
 namespace Infrastructure.Crosscutting.Security.SqlImple
 {
     public class SysUserRoleSqlServer : SqlServer
-    { 
+    {
 
         public override string AddSql
         {
             get
             {
-                return @"INSERT INTO [Sys_UserRole](
-	[SysId],[UserId],[RoleId]
+                return string.Format(@"INSERT INTO Sys_UserRole(
+	SysId,UserId,RoleId
 	)VALUES(
-	@SysId,@UserId,@RoleId
-	)";
+	{0}SysId,{0}UserId,{0}RoleId
+	)", ParameterPrefix);
             }
         }
 
@@ -28,9 +28,9 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"UPDATE [Sys_UserRole] SET 
-	[UserId] = @UserId,[RoleId] = @RoleId
-	WHERE SysId=@SysId";
+                return string.Format(@"UPDATE Sys_UserRole SET 
+	UserId = {0}UserId,RoleId = {0}RoleId
+	WHERE SysId={0}SysId", ParameterPrefix);
             }
         }
     }

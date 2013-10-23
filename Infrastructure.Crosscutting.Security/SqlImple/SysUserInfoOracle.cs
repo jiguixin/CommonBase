@@ -15,11 +15,11 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"INSERT INTO Sys_UserInfo(
+                return string.Format(@"INSERT INTO Sys_UserInfo(
 	SysId,RealName,Title,Sex,Phone,Fax,Email,QQ,Address
 	)VALUES(
-	:SysId,:RealName,:Title,:Sex,:Phone,:Fax,:Email,:QQ,:Address
-	)";
+	{0}SysId,{0}RealName,{0}Title,{0}Sex,{0}Phone,{0}Fax,{0}Email,{0}QQ,{0}Address
+	)", ParameterPrefix);
             }
         }
 
@@ -27,9 +27,9 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
         {
             get
             {
-                return @"UPDATE Sys_UserInfo SET 
-	RealName = :RealName,Title = :Title,Sex = :Sex,Phone = :Phone,Fax = :Fax,Email = :Email,QQ = :QQ,Address = :Address
-	WHERE SysId=:SysId";
+                return string.Format(@"UPDATE Sys_UserInfo SET 
+	RealName = {0}RealName,Title = {0}Title,Sex = {0}Sex,Phone = {0}Phone,Fax = {0}Fax,Email = {0}Email,QQ = {0}QQ,Address = {0}Address
+	WHERE SysId={0}SysId", ParameterPrefix);
             }
         }
     }
