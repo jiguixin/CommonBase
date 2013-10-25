@@ -110,9 +110,8 @@ namespace Infrastructure.Crosscutting.Security.Services
 
             var sysUserPrivileges = GetPrivilegesByUserId(userId);
 
-            var allButtons = ServiceFactory.ButtonService.GetAllButons();
-
-
+            var allButtons = ServiceFactory.ButtonService.ButtonRepository.GetList();
+             
 
             //筛选菜单结果
             List<SysMenu> sysMenus = new List<SysMenu>();
@@ -151,7 +150,11 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns>SysMenu集合</returns>
         public IEnumerable<SysMenu> GetPrivilegedSysMenuByRoleId(string roleId)
         {
+            //todo:此方法有问题
             IEnumerable<SysPrivilege> sysRolePrivileges = ServiceFactory.RoleService.GetPrivilege(roleId);
+
+            //todo:如果sysRolePrivileges 没有查到菜单是不是就直接返回空集合，不用在去查所有菜单数据
+
             //获取所有按钮数据
             IEnumerable<SysButton> allButtons = ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
                                                                                     "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
@@ -166,7 +169,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                 var c = ServiceFactory.MenuService.GetSysMenuById(menuId);
                 if (c.Count() > 0)
                 {
-                    SysMenu sysMenu = ServiceFactory.MenuService.GetSysMenuById(menuId).ToArray()[0];
+                    SysMenu sysMenu = ServiceFactory.MenuService.GetSysMenuById(menuId).ToArray()[0];//todo:前面已经读取了菜单，怎么还要读一次
                     sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
                     sysMenu.Buttons = ServiceFactory.ButtonService.GetButtonsPrivilegeByUserAndMenu(roleId, menuId, PrivilegeMaster.Role, allButtons, sysRolePrivileges);
 

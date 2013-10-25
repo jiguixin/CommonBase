@@ -467,12 +467,18 @@ namespace Web.Controllers
         /// <returns></returns>
         public List<EasyUiTreeResult> BuildTreeMenu(IEnumerable<SysMenu> userMenus)
         {
+            //todo:如果我新建一个角色，参数userMenus没有值，那么直接就把所有菜单和按钮全新加载出来，不勾选就对了。
+            //todo:此方法有BUG
+
             //获取所有菜单
             IEnumerable<SysMenu> allMenus = menuService.GetAllMenu();
             //获取所有按钮数据
             IEnumerable<SysButton> allButtons = RepositoryFactory.ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
                                                                                     "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
-                                                                                    null);
+                                                                                    null);//todo：不要用这个方法，因为有提供调用所有的记录的方法。GetList（）
+
+            //todo:为什么去掉了又要加进来。
+
             //去除掉所有菜单中用户已有权限的菜单
             foreach (SysMenu userMenu in userMenus)
             {
@@ -582,6 +588,7 @@ namespace Web.Controllers
                         #endregion
                     }
 
+                    //todo:allMenu.IsVisible 这个列主要是说明是否让菜单不可见，跟在tree中勾选没有关系。
                     EasyUiTreeResult treeResult = new EasyUiTreeResult()
                     {
                         id = allMenu.SysId,

@@ -11,12 +11,15 @@ using System;
 
 namespace Web.Utility
 {
+    using System.Linq;
+    using System.Web;
     using System.Web.Mvc;
+    using System.Web.Routing;
     using System.Web.Security;
 
     public class MyAuth: AuthorizeAttribute
-    {
-        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+    { 
+       /* protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
             if (filterContext.HttpContext.Request.IsAjaxRequest())
             {
@@ -41,6 +44,26 @@ namespace Web.Utility
             {
                 base.HandleUnauthorizedRequest(filterContext);
             } 
+        }*/
+
+        public override void OnAuthorization(AuthorizationContext filterContext)
+        {
+            if (filterContext.HttpContext.Request.IsAjaxRequest()
+                && !filterContext.HttpContext.User.Identity.IsAuthenticated
+                && (filterContext.ActionDescriptor.GetCustomAttributes(typeof(AuthorizeAttribute), true).Any()
+                    || filterContext.ActionDescriptor.ControllerDescriptor.GetCustomAttributes(
+                        typeof(AuthorizeAttribute),
+                        true).Any()))
+            {
+                filterContext.HttpContext.SkipAuthorization = true;
+                filterContext.HttpContext.Response.Clear();
+                filterContext.HttpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                filterContext.Result = new HttpUnauthorizedResult("Unauthorized");
+                filterContext.Result.ExecuteResult(filterContext.Controller.ControllerContext);
+                filterContext.HttpContext.Response.End();
+            }
+            else base.OnAuthorization(filterContext);
         }
+ 
     }
 }

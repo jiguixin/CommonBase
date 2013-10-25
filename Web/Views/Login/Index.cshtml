@@ -1,63 +1,70 @@
 ﻿@{
     ViewBag.Title = "登录";
+    //this.Layout = "~/Views/Shared/IndexTemp.cshtml";
 }
-
-<div id="win" class="easyui-window" data-options="modal:true,closable:false,minimizable:false,maximizable:false,collapsible:false,draggable:false,resizable:false" title="登录" style="width:350px;height:200px;">
-    <form style="padding:10px 20px 10px 40px;">
-        <p>用户名: <input type="text" id="name" value="admin1"></p>
-        <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd" value="123456"></p>
-        <label id="showInfo" style=" color:Red"></label>
-        <div style="padding:5px;text-align:center;"> 
-            <a href="#" id="btnOk" class="easyui-linkbutton" icon="icon-ok" onclick="Login();">确定</a>
-            <a href="#" class="easyui-linkbutton" icon="icon-cancel">取消</a>
-        </div>
-    </form>
-</div>
-<script> 
-    $(function () {
-        $('#pwd').keydown(function (e) {
-            if (e.keyCode == 13) {
-                $("#btnOk").focus().click();
-                return false;
-            }
-            return true;
+@*@section mainContent
+{*@
+    <div id="win" class="easyui-window" data-options="modal:true,closable:false,minimizable:false,maximizable:false,collapsible:false,draggable:false,resizable:false" title="登录" style="width: 350px; height: 200px;">
+        <form style="padding: 10px 20px 10px 40px;">
+            <p>用户名: <input type="text" id="name" value="admin1"></p>
+            <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd" value="123456"></p>
+            <label id="showInfo" style="color: Red"></label>
+            <div style="padding: 5px; text-align: center;"> 
+                <a href="#" id="btnOk" class="easyui-linkbutton" icon="icon-ok" onclick=" Login(); ">确定</a>
+                <a href="#" class="easyui-linkbutton" icon="icon-cancel">取消</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(function() {
+            $('#pwd').keydown(function(e) {
+                if (e.keyCode == 13) {
+                    $("#btnOk").focus().click();
+                    return false;
+                }
+                return true;
+            });
         });
-    });
 
-    function Login() {
-        var name = $('#name').val();
-        var pwd = $('#pwd').val();
-        //做一层验证
-        if (name == '' || pwd=='') {
-            alert('用户名和密码不能为空!');
-        }
-        else {
-            var postData = {
-                userName: $("#name").val(),
-                password: $("#pwd").val()
-            };
-            $.post('@Url.Action("CheckUser","Login")', postData,
-                function (data) {
-                    if (data.Result == true) {
-                        $('#showInfo').html("登录成功!");
-                        //todo:思路：
-                        //1，将retUrl返回到Home/index中。
-                        //2，在home 的action方法中增加ViewBag.retUrl 
-                        //3,在Home/index界面中增加JS检查retUrl是否有值，如果有值，就调用addTab方法
-                          @*
+        function Login() {
+            var name = $('#name').val();
+            var pwd = $('#pwd').val();
+            //做一层验证
+            if (name == '' || pwd == '') {
+                alert('用户名和密码不能为空!');
+            } else {
+                var postData = {
+                    userName: $("#name").val(),
+                    password: $("#pwd").val()
+                };
+                $.post('@Url.Action("CheckUser", "Login")', postData,
+                    function(data) {
+                        if (data.Result == true) {
+                            $('#showInfo').html("登录成功!");
+                            //todo:思路：
+                            //1，将retUrl返回到Home/index中。
+                            //2，在home 的action方法中增加ViewBag.retUrl 
+                            //3,在Home/index界面中增加JS检查retUrl是否有值，如果有值，就调用addTab方法
+                                                                                @*
                                                 var retUrl = '@ViewBag.returnUrl';
                         if (retUrl != "") {
                             window.location.href = retUrl;
                         } else {
                             window.location.href = "/Home/index";
                         }*@
-                        window.location.href = "/Home/index";
-                    } 
-                    else {
-                        $('#showInfo').html(data.ResultInfo);
-                    }
-                });
-        }
-    }
+                            var ajaxLogin = '@ViewBag.AJAX_Login';
+                            if (ajaxLogin == 1) {
+                                parent.LoginSuccessCallBack(); 
+                            } else {
+                                window.location.href = "/Home/index";
+                            }
 
-</script>
+                        } else {
+                            $('#showInfo').html(data.ResultInfo);
+                        }
+                    });
+            }
+        }
+
+    </script>
+@*}*@

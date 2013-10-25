@@ -21,7 +21,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     {
         SysButtonRepository ButtonRepository { get; }
         IEnumerable<SysPrivilege> GetPrivilege(string buttonId);
-        IEnumerable<SysButton> GetAllButons();
+         
         IEnumerable<SysButton> GetButtonsPrivilegeByUserAndMenu(string userId, string menuId);
 
         IEnumerable<SysButton> GetButtonsPrivilegeByUserAndMenu(string sysId, string menuId,

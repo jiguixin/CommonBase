@@ -26,7 +26,9 @@ namespace Web.Controllers
         // GET: /Login/
 
         public ActionResult Index()
-        {
+        { 
+            ViewBag.AJAX_Login = Request.QueryString["AJAX_Login"];
+             
             //todo:返回请求的URL还没有实现
             ViewBag.returnUrl = Request.QueryString["returnUrl"];
             return View();
@@ -40,7 +42,7 @@ namespace Web.Controllers
             if ((user = userService.CheckUser(userName, password)) != null)
             {
                 //FormsAuthentication.SetAuthCookie(userName, true);
-                MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 100);
+                MyFormsPrincipal<SysUser>.SignIn(user.UserName, user, 15);
                 return Json(new ResultModel() { Result = true, ResultInfo = "登录成功" });
             }
 

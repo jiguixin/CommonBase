@@ -44,91 +44,8 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// 注：在添加时要优先检查该权限记录是否存在。存在则不添加，不存在则添加。
         /// </summary>
         public void InitDataByRole()
-        {
-
-            InitData<SysRole>(lstSource: roleRepository.GetList(), master: PrivilegeMaster.Role);
-
-            /*
-            int num = 1;
-            //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
-            var lstMenu = this.menuRepository.GetList();
-              
-            foreach (var sysMenu in lstMenu)
-            {
-                sysMenu.Buttons = this.menuRepository.GetButtons(sysMenu.SysId);
-            }
-
-            //获取在该系统中的角色数据
-            var lstRole = roleRepository.GetList();
-
-            foreach (var sysRole in lstRole)
-            {
-                foreach (var sysMenu in lstMenu)
-                {
-                    var model = new SysPrivilege
-                    { 
-                        PrivilegeMaster = PrivilegeMaster.Role,
-                        PrivilegeMasterKey = sysRole.SysId,
-                        PrivilegeAccess = PrivilegeAccess.Menu,
-                        PrivilegeAccessKey = sysMenu.SysId,
-                        PrivilegeOperation = PrivilegeOperation.Disable,
-                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
-                    };
-                     
-                    #region 检查该条数据是否存在
-                    
-                    var chkResult =  repository.GetList<int>(
-                        Constant.SqlCount,
-                        string.Format(
-                            Constant.SqlExistsSysPrivilegeWhere,
-                            (int)PrivilegeMaster.Role,
-                            sysRole.SysId,
-                            (int)PrivilegeAccess.Menu,
-                            sysMenu.SysId));
-
-                    if (chkResult.FirstOrDefault() == 0)
-                    { 
-                        model.SysId = Util.NewId();
-
-                        Console.WriteLine(repository.Add(model));
-                    }
-
-                    #endregion
-
-                    foreach (var sysButton in sysMenu.Buttons)
-                    {
-                        model = new SysPrivilege
-                        { 
-                            PrivilegeMaster = PrivilegeMaster.Role,
-                            PrivilegeMasterKey = sysRole.SysId,
-                            PrivilegeAccess = PrivilegeAccess.Button,
-                            PrivilegeAccessKey = sysButton.SysId,
-                            PrivilegeOperation = PrivilegeOperation.Disable,
-                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
-                        }; 
-
-                        #region 检查该条数据是否存在
-                        
-                        chkResult = repository.GetList<int>(
-                              Constant.SqlCount,
-                              string.Format(
-                                  Constant.SqlExistsSysPrivilegeWhere,
-                                  (int)PrivilegeMaster.Role,
-                                  sysRole.SysId,
-                                  (int)PrivilegeAccess.Button,
-                                  sysButton.SysId));
-
-                        if (chkResult.FirstOrDefault() == 0)
-                        { 
-                            model.SysId = Util.NewId();
-                            Console.WriteLine(repository.Add(model));
-                        }
-
-                        #endregion
-
-                    }
-                }
-            }*/
+        { 
+            InitData<SysRole>(lstSource: roleRepository.GetList(), master: PrivilegeMaster.Role); 
         }
 
         /// <summary> 
@@ -145,7 +62,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// </summary>
         /// <param name="sysId"></param>
         /// <param name="privilegeMaster"></param>
-        /// <param name="menuIds"></param>
+        /// <param name="menuIds">包括菜单、按钮编号</param>
         /// <param name="userName">当前操作用户</param>
         /// <returns></returns>
         public bool SetMenuPrivilege(string sysId, PrivilegeMaster privilegeMaster, string[] menuIds, string userName)
@@ -153,33 +70,21 @@ namespace Infrastructure.Crosscutting.Security.Services
             //获取所有菜单
             IEnumerable<SysMenu> allMenus = ServiceFactory.MenuService.GetAllMenu();
             //获取所有按钮数据
-            IEnumerable<SysButton> allButtons = buttonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
-                                                                                    "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
-                                                                                    null);
+            IEnumerable<SysButton> allButtons = buttonRepository.GetList();
 
             //存储传入的menuid集合
-            List<string> menus = new List<string>();
-            //存储传入的buttonid集合
-            List<string> buttons = new List<string>();
+            List<string> menus = (from menu in allMenus where menuIds.Contains(menu.SysId) select menu.SysId).ToList();
 
-            foreach (SysMenu menu in allMenus)
-            {
-                if (menuIds.Contains(menu.SysId))
-                    menus.Add(menu.SysId);
-            }
-            foreach (SysButton button in allButtons)
-            {
-                if (menuIds.Contains(button.SysId))
-                    buttons.Add(button.SysId);
-            }
+            //存储传入的buttonid集合 
+            List<string> buttons = (from button in allButtons where menuIds.Contains(button.SysId) select button.SysId).ToList();
 
-            using (IDbTransaction tran = ConnectionFactory.CreateMsSqlConnection().BeginTransaction())
+            using (IDbTransaction tran = privilegeRepository.Connection.BeginTransaction())
             {
                 //根据用户ID获取原来用户可用菜单
                 //用于和现在选中的菜单进行判断，是否屏蔽原来可用菜单
                 IEnumerable<SysMenu> userMenus = ServiceFactory.MenuService.GetPrivilegedSysMenuByUserId(sysId);
 
-                int deleteResult = privilegeRepository.DeleteSysPrivilegeByMaster(sysId, privilegeMaster, tran);
+                this.privilegeRepository.DeleteSysPrivilegeByMaster(sysId, privilegeMaster, tran);
 
                 #region 如果是用户权限，先将用户和角色的权限进行对比，将用户禁用而角色启用的菜单和按钮设置为禁用
                 if (privilegeMaster == PrivilegeMaster.User)

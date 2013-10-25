@@ -8,6 +8,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
     using Infrastructure.Crosscutting.Security.Repositorys;
+    using Infrastructure.Data.Ado.Dapper;
 
     public class SysButtonService : ISysButtonService
     {
@@ -22,16 +23,14 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public IEnumerable<SysPrivilege> GetPrivilege(string buttonId)
         {
-            return ButtonRepository.GetListByTable<SysPrivilege>(Constant.SqlTableButtonPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and b.SysId = '{1}'", (int)PrivilegeAccess.Button, buttonId));
-        }
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysId, buttonId.Trim());
+            p.Add(Constant.ColumnSysPrivilegePrivilegeAccess, (int)PrivilegeAccess.Button);
 
-        public IEnumerable<SysButton> GetAllButons()
-        {
-            return RepositoryFactory.ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
-                                                                         "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
-                                                                         null);
+            return ButtonRepository.GetListByTable<SysPrivilege>(Constant.SqlTableButtonPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.{0}={2}{0} and b.{1} = {2}{1}", Constant.ColumnSysPrivilegePrivilegeAccess, Constant.ColumnSysId, Constant.SqlReplaceParameterPrefix),p);
+ 
         }
-
+          
         /// <summary>
         /// 根据用户id和菜单id获取当前菜单可用按钮
         /// </summary>
@@ -43,7 +42,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             var privileges = ServiceFactory.MenuService.GetPrivilegesByUserId(userId);
             privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
 
-            var buttons = GetAllButons().Where(x => x.MenuId == menuId).ToList();
+            var buttons = ButtonRepository.GetList().Where(x => x.MenuId == menuId).ToList();
 
             List<SysButton> resultBts = new List<SysButton>();
             foreach (SysPrivilege sysPrivilege in privileges)
@@ -91,12 +90,13 @@ namespace Infrastructure.Crosscutting.Security.Services
             return resultButtons;
         }
 
+        //todo:TT 是作什么用的
         public IEnumerable<SysButton> TT(string userId, string menuId)
         {
             var privileges = ServiceFactory.MenuService.GetPrivilegesByUserId(userId);
             privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
 
-            var buttons = GetAllButons().Where(x => x.MenuId == menuId).ToList();
+            var buttons = ButtonRepository.GetList().Where(x => x.MenuId == menuId).ToList();
 
             List<SysButton> resultBts = new List<SysButton>();
             foreach (SysPrivilege sysPrivilege in privileges)
