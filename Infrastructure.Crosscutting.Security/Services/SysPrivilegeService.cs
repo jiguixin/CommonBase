@@ -9,6 +9,7 @@
 
 using System;
 using System.Data;
+using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
@@ -62,21 +63,21 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// </summary>
         /// <param name="sysId"></param>
         /// <param name="privilegeMaster"></param>
-        /// <param name="menuIds">包括菜单、按钮编号</param>
+        /// <param name="IDs">包括菜单、按钮编号</param>
         /// <param name="userName">当前操作用户</param>
         /// <returns></returns>
-        public bool SetMenuPrivilege(string sysId, PrivilegeMaster privilegeMaster, string[] menuIds, string userName)
+        public bool SetMenuPrivilege(string sysId, PrivilegeMaster privilegeMaster, string[] IDs, string userName)
         {
             //获取所有菜单
-            IEnumerable<SysMenu> allMenus = ServiceFactory.MenuService.GetAllMenu();
-            //获取所有按钮数据
+            IEnumerable<SysMenu> allMenus = menuRepository.GetList();
+            //获取所有按钮
             IEnumerable<SysButton> allButtons = buttonRepository.GetList();
 
-            //存储传入的menuid集合
-            List<string> menus = (from menu in allMenus where menuIds.Contains(menu.SysId) select menu.SysId).ToList();
+            //存储传入的menuId集合
+            List<string> menus = (from menu in allMenus where IDs.Contains(menu.SysId) select menu.SysId).ToList();
 
-            //存储传入的buttonid集合 
-            List<string> buttons = (from button in allButtons where menuIds.Contains(button.SysId) select button.SysId).ToList();
+            //存储传入的buttonId集合 
+            List<string> buttons = (from button in allButtons where IDs.Contains(button.SysId) select button.SysId).ToList();
 
             using (IDbTransaction tran = privilegeRepository.Connection.BeginTransaction())
             {
@@ -196,34 +197,6 @@ namespace Infrastructure.Crosscutting.Security.Services
                 }
                 #endregion
 
-                #region 角色权限，只存储可用按钮，不进行和现在选中按钮判断
-
-                //foreach (string id in buttons)
-                //{
-                //    allButtons = allButtons.Where(x => x.SysId != id);
-                //}
-                //allButtons = allButtons.Where(x => (!buttons.Contains(x.SysId)));
-                //foreach (SysButton button in allButtons)
-                //{
-                //    SysPrivilege sysPrivilege = new SysPrivilege
-                //    {
-                //        PrivilegeAccess = PrivilegeAccess.Button,
-                //        PrivilegeAccessKey = button.SysId,
-                //        PrivilegeMaster = privilegeMaster,
-                //        PrivilegeMasterKey = sysId,
-                //        PrivilegeOperation = PrivilegeOperation.Enable
-                //    };
-
-                //    int addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, userName, tran);
-
-                //    if (addResult == 0)
-                //    {
-                //        tran.Rollback();
-                //        return false;
-                //    }
-                //}
-                #endregion
-
                 tran.Commit();
                 return true;
             }
@@ -257,15 +230,23 @@ namespace Infrastructure.Crosscutting.Security.Services
                     };
 
                     #region 检查该条数据是否存在
+                    var p = new DynamicParameters();
+                    p.Add("PrivilegeMaster", (int)master);
+                    p.Add("PrivilegeMasterKey", source.SysId.Trim());
+                    p.Add("PrivilegeAccess", (int) PrivilegeAccess.Menu);
+                    p.Add("PrivilegeAccessKey", sysMenu.SysId.Trim());
 
-                    var chkResult = privilegeRepository.GetList<int>(
-                        Constant.SqlCount,
-                        string.Format(
-                            Constant.SqlExistsSysPrivilegeWhere,
-                            (int)master,
-                            source.SysId,
-                            (int)PrivilegeAccess.Menu,
-                            sysMenu.SysId));
+                    var chkResult = privilegeRepository.GetList<int>(Constant.SqlCount,
+                                                                     Constant.SqlExistsSysPrivilegeWhere, p);
+
+                    //var chkResult = privilegeRepository.GetList<int>(
+                    //    Constant.SqlCount,
+                    //    string.Format(
+                    //        Constant.SqlExistsSysPrivilegeWhere,
+                    //        (int)master,
+                    //        source.SysId,
+                    //        (int)PrivilegeAccess.Menu,
+                    //        sysMenu.SysId));
 
                     if (chkResult.FirstOrDefault() == 0)
                     {
@@ -288,14 +269,23 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                         #region 检查该条数据是否存在
 
-                        chkResult = privilegeRepository.GetList<int>(
-                              Constant.SqlCount,
-                              string.Format(
-                                  Constant.SqlExistsSysPrivilegeWhere,
-                                  (int)master,
-                                  source.SysId,
-                                  (int)PrivilegeAccess.Button,
-                                  sysButton.SysId));
+                        p = new DynamicParameters();
+                        p.Add("PrivilegeMaster", (int)master);
+                        p.Add("PrivilegeMasterKey", source.SysId.Trim());
+                        p.Add("PrivilegeAccess", (int)PrivilegeAccess.Button);
+                        p.Add("PrivilegeAccessKey", sysButton.SysId.Trim());
+                        chkResult = privilegeRepository.GetList<int>(Constant.SqlCount,
+                                                                     Constant.SqlExistsSysPrivilegeWhere, p);
+
+
+                        //chkResult = privilegeRepository.GetList<int>(
+                        //      Constant.SqlCount,
+                        //      string.Format(
+                        //          Constant.SqlExistsSysPrivilegeWhere,
+                        //          (int)master,
+                        //          source.SysId,
+                        //          (int)PrivilegeAccess.Button,
+                        //          sysButton.SysId));
 
                         if (chkResult.FirstOrDefault() == 0)
                         {

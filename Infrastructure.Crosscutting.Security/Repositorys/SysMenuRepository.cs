@@ -3,6 +3,7 @@ using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.SqlImple;
+using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
@@ -50,7 +51,14 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public IEnumerable<SysButton> GetButtons(string menuId)
         {
-            return ButtonRepository.GetList("", string.Format("{0}='{1}'", Constant.ColumnSysButtonMenuId, menuId));
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysButtonMenuId, menuId.Trim());
+            return ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
+                                                              "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,IsVisible,RecordStatus",
+                                                              string.Format("{1}={0}{1}",
+                                                                            Constant.SqlReplaceParameterPrefix,
+                                                                            Constant.ColumnSysButtonMenuId), p);
+           // return ButtonRepository.GetList("", string.Format("{0}='{1}'", Constant.ColumnSysButtonMenuId, menuId));
         }
 
 
@@ -102,11 +110,13 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             }
         }
 
+       
         /// <summary>
         /// 得到有层级关系的菜单集合
         /// </summary>
+        /// <param name="hasButtons">获取菜单是否包含菜单下按钮</param>
         /// <returns></returns>
-        public virtual IEnumerator<SysMenu> GetAllMenusByLoop()
+        public virtual IEnumerator<SysMenu> GetAllMenusByLoop(bool hasButtons)
         { 
             var lstSource = GetList();
 
@@ -118,14 +128,14 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
             foreach (var m in lstParent)
             {
-                var childs = GetChildre(lstSource, m);
+                var childs = GetChildre(lstSource, m,hasButtons);
                 if (childs != null && childs.Any()) m.Children = childs.OrderBy(c => c.MenuOrder);
             }
 
             return (IEnumerator<SysMenu>)lstParent;
         }
 
-        private IEnumerable<SysMenu> GetChildre(IEnumerable<SysMenu> lstSource, SysMenu sysMenu)
+        public IEnumerable<SysMenu> GetChildre(IEnumerable<SysMenu> lstSource, SysMenu sysMenu,bool hasButtons)
         {
             var lstResult = lstSource.Where(m => m.MenuParentId == sysMenu.SysId);
 
@@ -133,10 +143,18 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
             foreach (var menu in lstResult)
             {
-                menu.Children = GetChildre(lstSource, menu);
+                if (hasButtons)
+                {
+                    menu.Buttons = GetButtons(menu.SysId);
+                }
+                menu.Children = GetChildre(lstSource, menu,hasButtons);
+                
             }
 
             return lstResult;
         }
+
+
+
     }
 }

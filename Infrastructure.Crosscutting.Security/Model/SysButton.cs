@@ -52,6 +52,9 @@ namespace Infrastructure.Crosscutting.Security.Model
         [StringLength(200, ErrorMessage = "长度不可超过200")]
         public string RecordStatus { get; set; }
 
+        [DisplayName("状态")]
+        public long? IsVisible { get; set; }
+
 		#endregion Model
 
         public SysMenu Menu { get; set; }

@@ -52,8 +52,8 @@ namespace Infrastructure.Crosscutting.Security.Model
         /// </summary>
         [DisplayName("用户详情")]
         public SysUserInfo UserInfo { get; set; }
-         
-		#endregion Model
+
+        #endregion Model
 
         public IEnumerable<SysRole> Roles { get; set; }
 	}

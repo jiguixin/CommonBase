@@ -88,9 +88,9 @@ namespace Infrastructure.Crosscutting.Security.Services
         public IEnumerable<SysRole> GetRoles(string userId)
         {
             var p = new DynamicParameters();
-            p.Add(Constant.ColumnSysId, userId.Trim());
+            p.Add("UserId", userId.Trim());
 
-            return UserRoleRepository.GetListByTable<SysRole>(Constant.SqlTableUserAndRoleJoin, "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("u.{1}={0}{1}", Constant.SqlReplaceParameterPrefix, Constant.ColumnSysId), p);
+            return UserRoleRepository.GetListByTable<SysRole>(Constant.SqlTableUserAndRoleJoin, "r.SysId,r.RoleDesc,r.RoleName,r.RecordStatus", string.Format("ur.{1}={0}{1}", Constant.SqlReplaceParameterPrefix, "UserId"), p);
 
         }
 

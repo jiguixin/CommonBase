@@ -2,6 +2,7 @@
 using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.SqlImple;
+using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 { 
@@ -23,13 +24,26 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         #endregion
 
         public  int DeleteByUserId(string sysId, System.Data.IDbTransaction trans)
-        { 
-            return base.DeleteByWhere(string.Format("UserId='{0}'",sysId), trans);
+        {
+            var p = new DynamicParameters();
+            p.Add("UserId", sysId.Trim());
+
+            return
+                base.DeleteByWhere(
+                    string.Format("{1}={0}{1}", Constant.SqlReplaceParameterPrefix, "UserId"), p);
+            //return base.DeleteByWhere(string.Format("UserId='{0}'",sysId), trans);
         }
 
         public int DeleteByRoleId(string sysId, System.Data.IDbTransaction trans)
         {
-            return base.DeleteByWhere(string.Format("RoleId='{0}'", sysId), trans);
+            var p = new DynamicParameters();
+            p.Add("RoleId", sysId.Trim());
+
+            return
+                base.DeleteByWhere(
+                    string.Format("{1}={0}{1}", Constant.SqlReplaceParameterPrefix, "RoleId"), p);
+ 
+            //return base.DeleteByWhere(string.Format("RoleId='{0}'", sysId), trans);
         }
     }
 }

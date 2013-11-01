@@ -21,6 +21,7 @@
                 singleSelect: true,//是否为单选
                 nowrap: true,
                 striped: true,
+                fit:true,
                 collapsible: true,
                 remoteSort: false,
                 toolbar: [],
@@ -43,7 +44,7 @@
         var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
 
         //获取按钮值
-        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")', { menuId: iframeid }, function(data) {
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")' + "?" + new Date().getTime(), { menuId: iframeid }, function (data) {
             if (data == null) {
                 return;
             }

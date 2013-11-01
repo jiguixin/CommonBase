@@ -62,6 +62,8 @@ namespace Infrastructure.Crosscutting.Security.Model
         [StringLength(200, ErrorMessage = "长度不可超过200")]
 		public string RecordStatus { get; set; }
 
+        public bool isCheck { get; set; }
+
 
         #endregion Model
 

@@ -38,15 +38,14 @@
             margin-bottom: 5px;
         }
 
-        .fitem label {
-            display: inline-block;
-            width: 80px;
-        }
+            .fitem label {
+                display: inline-block;
+                width: 80px;
+            }
 
-        #IsAddButton { 
+        #IsAddButton {
             vertical-align: middle;
         }
-
     </style>
 }
 
@@ -89,7 +88,7 @@
                             @Html.LabelFor(model => model.MenuOrder)：
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.MenuOrder) 
+                            @Html.EditorFor(model => model.MenuOrder)
                         </td>
 
                         <td>
@@ -135,11 +134,18 @@
                             @Html.ValidationMessageFor(model => model.MenuParentId)
                         </td>
                     </tr>
-                    
+
                     <tr>
-                        <td colspan="4">
-                            @Html.CheckBox("IsAddButton") 添加【新增】【修改】【删除】按钮
+                        <td colspan="4">添加按钮：
+                            @Html.CheckBox("CreatButton") 【新增】
+
+                            @Html.CheckBox("EditButton") 【修改】
+
+                            @Html.CheckBox("DeletButton") 【删除】
                         </td>
+                        @*<td colspan="4">
+                            @Html.CheckBox("IsAddButton") 添加【新增】【修改】【删除】按钮
+                        </td>*@
                     </tr>
 
                     <tr>
@@ -243,7 +249,11 @@
                             @Html.ValidationMessageFor(model => model.MenuParentId)
                         </td>
                     </tr>
-
+                    <tr>
+                        <td colspan="4" id="buttonsTD">
+                            修改按钮：
+                        </td>
+                    </tr>
                     <tr>
                         <td colspan="4" style="text-align: center; padding-top: 5px;">
                             <input type="submit" value="保存" />
@@ -264,12 +274,12 @@
 @section scriptsFooter
 {
     <script type="text/javascript">
-        $('.txtMenuId').click(function () {
+        $('.txtMenuId').click(function() {
             selectMenuDialog();
         });
 
         $("#menuTreeGrid").treegrid({
-            onDblClickRow: function (row) {
+            onDblClickRow: function(row) {
                 if (row != null) {
                     $('.txtMenuId').val(row.text);
                     $(".hiddenMenuId").val(row.id);
@@ -293,22 +303,66 @@
                 { field: 'text', title: '@Html.LabelFor(model => model.MenuName)', width: 150 },
                 { field: 'link', title: '@Html.LabelFor(model => model.MenuLink)', width: 150 },
                 { field: 'order', title: '@Html.LabelFor(model => model.MenuOrder)', width: 150 },
-                { field: 'visible', title: '@Html.LabelFor(model => model.IsVisible)', width: 150 }
+                { field: 'visible', title: '@Html.LabelFor(model => model.IsVisible)', width: 150 },
+                {
+                    field: 'buttons', title: '操作',
+                    formatter: formatOperate
+                }
             ]],
-            onLoadSuccess: function (row, data) {
+            onLoadSuccess: function(row, data) {
                 if (data) {
-                    $.each(data, function (index, item) {
+                    $.each(data, function(index, item) {
 
                     });
                 }
             }
         });
+        function formatOperate(value, rowData, rowIndex) {
+            var oper = "";
+            if (rowData.buttons != null) {
+                $.each(rowData.buttons, function (i, v) {
+                    var content;
+                    if (v.visible != "禁用") {
+                        content = "  <input type='checkbox' checked='checked' class='{0}' id='{1}' disabled='disabled'/> {2}";
+                    } else {
+                        content = "  <input type='checkbox' class='{0}' id='{1}' disabled='disabled'/> {2}";
+                    }
+                    oper += content.format(rowData.id, v.id, v.text);
+                    //console.log(v);
+                    //console.log(rowData);
+                    //console.log(rowIndex);
+                });
+            }
+            return oper;
+        }
+        String.prototype.format = function (args) {
+            var result = this;
+            if (arguments.length > 0) {
+                if (arguments.length == 1 && typeof (args) == "object") {
+                    for (var key in args) {
+                        if (args[key] != undefined) {
+                            var reg = new RegExp("({" + key + "})", "g");
+                            result = result.replace(reg, args[key]);
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < arguments.length; i++) {
+                        if (arguments[i] != undefined) {
+                            //var reg = new RegExp("({[" + i + "]})", "g");//这个在索引大于9时会有问题，谢谢何以笙箫的指出
+                            var reg = new RegExp("({)" + i + "(})", "g");
+                            result = result.replace(reg, arguments[i]);
+                        }
+                    }
+                }
+            }
+            return result;
+        };
 
         //首先获取iframe标签的id值
         var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
 
         //获取按钮值
-        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")', { menuId: iframeid }, function (data) {
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")' + "?" + new Date().getTime(), { menuId: iframeid }, function(data) {
             if (data == null) {
                 return;
             }
@@ -326,30 +380,42 @@
                 $('#dlgEdit').dialog('open').dialog('setTitle', '编辑');
 
                 $('#UpdateForm').form("reset");
+                $("#buttonsTD").empty();
                 var id = row.id;
                 //去读取数据库中的最新数据，防止多人编辑
-                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function (data) {
+                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function(data) {
                     if (data != null) {
+                        $.each(data.Buttons, function (i, item) {
+                            var content;
+                            if (item.IsVisible != 0) {
+                                content = "<input type='checkbox' checked='checked' id='" + item.SysId + "' value='" + item.SysId + "' />" + item.BtnName;
+
+                            } else {
+                                content = "<input type='checkbox' id='" + item.SysId + "' value='" + item.SysId + "' />" + item.BtnName;
+                            }
+                                    
+                            $("#buttonsTD").append(content);
+                        });
                         $('#UpdateForm').form('load', data);
                         //查询父ID，获得Name绑定到文本框中
                         if (data.MenuParentId != null) {
-                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function (pData) {
-                            if (pData != null) {
-                                $(".txtMenuId").val(pData.MenuName);
-                            }
-                        });
+                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function(pData) {
+                                if (pData != null) {
+                                    $(".txtMenuId").val(pData.MenuName);
+                                }
+                            });
+                        }
                     }
-                }
                 });
+            }
         }
-    }
 
-    function DelItem() {
-        var row = $('#fixedGrid').datagrid('getSelected');
-        if (row) {
-            $.messager.confirm('Confirm', '确定删除此记录?', function (r) {
-                if (r) {
-                    $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function (result) {
+        function DelItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('Confirm', '确定删除此记录?', function(r) {
+                    if (r) {
+                        $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function(result) {
                             if (result) {
                                 $('#fixedGrid').treegrid("reload", {}); // 后台必须要跟花括号不然更新不成功
                             } else {
@@ -387,6 +453,25 @@
 
         function onEditSuccess(data) {
             if (data) {
+                var disBtIds = "";
+                var enBtIds = "";
+                $("#dlgEdit input[type='checkbox']").each(function () {
+                    if ($(this).attr("checked") == null) {
+                        if (disBtIds != '')
+                            disBtIds += ',';
+                        disBtIds += $(this).attr('id');
+                    } else {
+                        if (enBtIds != '')
+                            enBtIds += ',';
+                        enBtIds += $(this).attr('id');
+                    }
+                });
+
+                $.getJSON('@Url.Action("EnableMenuButton", "RestApi")' + "?" + new Date().getTime(), { 'enButtonIds': enBtIds, 'disButtonIds': disBtIds },
+                    function (result) {
+                        
+                });
+
                 $('#dlgEdit').dialog('close');
                 $('#fixedGrid').treegrid('reload', {});
             } else {

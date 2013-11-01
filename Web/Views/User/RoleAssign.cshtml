@@ -3,11 +3,11 @@
 }
 <body>
     <div class="easyui-layout" data-options="fit:true">
-        <div data-options="region:'west',split:true" style="width: 250px" title="用户列表">
-            <ul id="userTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
+        <div data-options="region:'west',split:true" style="width: 250px" title="角色列表">
+            <ul id="roleTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
         </div>
-        <div data-options="region:'center'" title="角色列表">
-            <table id="roleTable" class="easyui-treegrid" toolbar="#toolbar"></table>
+        <div data-options="region:'center'" title="用户列表"  fit="true">
+            <table id="userTable" class="easyui-treegrid" toolbar="#toolbar"></table>
         </div>
     </div>
 
@@ -32,17 +32,17 @@
 
 <script type="text/javascript">
     function Save() {
-        var nodes = $('#roleTable').datagrid('getChecked');
+        var nodes = $('#userTable').datagrid('getChecked');
 
-        var roleIds = '';
+        var userIds = '';
         for (var i = 0; i < nodes.length; i++) {
-            if (roleIds != '') roleIds += ',';
+            if (userIds != '') userIds += ',';
             //menuIds += nodeChild[i].id;
-            roleIds += nodes[i].id;
+            userIds += nodes[i].id;
         }
         var postData = {
-            'userId': sltUser.id,
-            'roleId': roleIds
+            'roleId': sltRole.id,
+            'userIds': userIds
         };
         $.post('@Url.Action("UpdateRolesForUser", "RestApi")', postData,
             function (data) {
@@ -54,30 +54,31 @@
             });
     }
 
-    var sltUser;//选择的用户节点
+    var sltRole;//选择的用户节点
 
-    $('#userTree').tree({
-        url: '@Url.Action("GetUsersListTree", "RestApi")' + "?" + new Date().getTime(),
+    $('#roleTree').tree({
+        url: '@Url.Action("GetRolesListTree", "RestApi")' + "?" + new Date().getTime(),
         onClick: function (node) {
-            sltUser = node;
-            $('#roleTable').treegrid({
-                url: '@Url.Action("GetRolesTreeForUser", "RestApi")' + "?id=" + sltUser.id + "?" + new Date().getTime(),
+            sltRole = node;
+            $('#userTable').datagrid('clearSelections').datagrid('clearChecked');
+            $('#userTable').treegrid({
+                url: '@Url.Action("GetUsersTreeForRole", "RestApi")' + "?id=" + sltRole.id + "?" + new Date().getTime(),
                 idField: 'id',
                 treeField: 'text',
                 singleSelect: false,
-                checkOnSelect: false,
+                checkOnSelect: true,
                 selectOnCheck: true,
                 columns: [[
                     { field: 'ck', checkbox: true },
-                    { field: 'text', title: '角色名'},
-                    { field: 'id', title: '角色ID'},
-                    { field: 'recordStatus', title: '角色描述', width: 250 }
+                    { field: 'text', title: '用户名'},
+                    { field: 'id', title: '用户ID'},
+                    { field: 'recordStatus', title: '描述', width: 300 }
                 ]],
                 onLoadSuccess: function (row, data) {
                     if (data) {
                         $.each(data, function (index, item) {
                             if (item.checked) {
-                                $('#roleTable').treegrid('select', item.id);
+                                $('#userTable').treegrid('select', item.id);
                             }
                         });
                     }

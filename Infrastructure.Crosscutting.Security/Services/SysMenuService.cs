@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Services
 {
@@ -36,13 +37,25 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         public IEnumerable<SysPrivilege> GetPrivilege(string menuId)
         {
-            return MenuRepository.GetListByTable<SysPrivilege>(Constant.SqlTableMenuPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and m.SysId = '{1}'", (int)PrivilegeAccess.Menu, menuId));
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysPrivilegePrivilegeAccess, (int)PrivilegeAccess.Menu);
+            p.Add(Constant.ColumnSysId, menuId.Trim());
+
+            return MenuRepository.GetListByTable<SysPrivilege>(Constant.SqlTableMenuPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("u.{1}={0}{1},u.{2}={0}{2}", Constant.SqlReplaceParameterPrefix, Constant.ColumnSysPrivilegePrivilegeAccess, Constant.ColumnSysId), p);
+
+            //return MenuRepository.GetListByTable<SysPrivilege>(Constant.SqlTableMenuPrivilegeJoin, Constant.SqlFieldsPrivilegeJoin, string.Format("p.PrivilegeAccess={0} and m.SysId = '{1}'", (int)PrivilegeAccess.Menu, menuId));
         }
 
         public IEnumerable<SysMenu> GetSysMenuById(string menuId)
         {
-            IEnumerable<SysMenu> sysMenus = MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu, "SysId,MenuParentId,MenuOrder,MenuName,MenuLink,MenuIcon,IsVisible,IsLeaf,RecordStatus", string.Format("SysId='{0}'", menuId));
-            return sysMenus;
+            var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysId, menuId.Trim());
+
+            return MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu,"SysId,MenuParentId,MenuOrder,MenuName,MenuLink,MenuIcon,IsVisible,IsLeaf,RecordStatus",
+                                                                                   string.Format("{1}={0}{1}",Constant.SqlReplaceParameterPrefix,Constant.ColumnSysId),p);
+
+            //IEnumerable<SysMenu> sysMenus = MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu, "SysId,MenuParentId,MenuOrder,MenuName,MenuLink,MenuIcon,IsVisible,IsLeaf,RecordStatus", string.Format("SysId='{0}'", menuId));
+            //return sysMenus;
         }
 
         /// <summary>
@@ -109,6 +122,10 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
 
             var sysUserPrivileges = GetPrivilegesByUserId(userId);
+            if (!sysUserPrivileges.Any())
+            {
+                return new List<SysMenu>();
+            }
 
             var allButtons = ServiceFactory.ButtonService.ButtonRepository.GetList();
              
@@ -120,7 +137,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             {
                 string menuId = sysUserPrivilege.PrivilegeAccessKey;
                 var c = ServiceFactory.MenuService.GetSysMenuById(menuId);
-                if (c.Count() > 0)
+                if (c.Any())
                 {
 
                     List<SysButton> bts = new List<SysButton>();
@@ -132,7 +149,8 @@ namespace Infrastructure.Crosscutting.Security.Services
                     }
 
                     SysMenu sysMenu = c.FirstOrDefault();
-                    sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
+                    sysMenu.isCheck = (sysUserPrivilege.PrivilegeOperation == PrivilegeOperation.Enable);
+                    //sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
                     sysMenu.Buttons = bts;
 
                     sysMenus.Add(sysMenu);
@@ -150,16 +168,17 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns>SysMenu集合</returns>
         public IEnumerable<SysMenu> GetPrivilegedSysMenuByRoleId(string roleId)
         {
-            //todo:此方法有问题
             IEnumerable<SysPrivilege> sysRolePrivileges = ServiceFactory.RoleService.GetPrivilege(roleId);
-
-            //todo:如果sysRolePrivileges 没有查到菜单是不是就直接返回空集合，不用在去查所有菜单数据
+            if (!sysRolePrivileges.Any())
+            {
+                return new List<SysMenu>();
+            }
 
             //获取所有按钮数据
-            IEnumerable<SysButton> allButtons = ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
-                                                                                    "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
-                                                                                    null);
-
+            //IEnumerable<SysButton> allButtons = ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
+            //                                                                        "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
+            //                                                                        null);
+            IEnumerable<SysButton> allButtons = ButtonRepository.GetList();
             //筛选菜单结果
             List<SysMenu> sysMenus = new List<SysMenu>();
 
@@ -167,10 +186,11 @@ namespace Infrastructure.Crosscutting.Security.Services
             {
                 string menuId = sysUserPrivilege.PrivilegeAccessKey;
                 var c = ServiceFactory.MenuService.GetSysMenuById(menuId);
-                if (c.Count() > 0)
+                if (c.Any())
                 {
-                    SysMenu sysMenu = ServiceFactory.MenuService.GetSysMenuById(menuId).ToArray()[0];//todo:前面已经读取了菜单，怎么还要读一次
-                    sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
+                    SysMenu sysMenu = c.FirstOrDefault();
+                    sysMenu.isCheck = (sysUserPrivilege.PrivilegeOperation == PrivilegeOperation.Enable);
+                    //sysMenu.IsVisible = (long)sysUserPrivilege.PrivilegeOperation;
                     sysMenu.Buttons = ServiceFactory.ButtonService.GetButtonsPrivilegeByUserAndMenu(roleId, menuId, PrivilegeMaster.Role, allButtons, sysRolePrivileges);
 
                     sysMenus.Add(sysMenu);
@@ -189,7 +209,8 @@ namespace Infrastructure.Crosscutting.Security.Services
         /// <returns></returns>
         public IEnumerable<SysMenu> GetAllMenu()
         {
-            IEnumerable<SysMenu> sysMenus = MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu, "*", null);
+            IEnumerable<SysMenu> sysMenus = MenuRepository.GetList();
+            //IEnumerable<SysMenu> sysMenus = MenuRepository.GetListByTable<SysMenu>(Constant.TableSysMenu, "*", null);
             return sysMenus.OrderBy(x => x.MenuOrder);
         }
 

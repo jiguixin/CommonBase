@@ -8,12 +8,14 @@
             <ul id="roleTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
         </div>
         <div data-options="region:'center'" >
-            <table id="menuTable" class="easyui-treegrid" toolbar="#toolbar"></table>
+            <table id="menuTable" class="easyui-treegrid" toolbar="#toolbar" fit="true"></table>
         </div>
     </div>
 
     <div id="toolbar">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="Save()">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" plain="true" onclick="CheckAll()">选中所有</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="ClearChecked()">取消选中</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="Save()">保存</a>    
     </div>
 
 
@@ -33,20 +35,34 @@
 </body>
 
 <script type="text/javascript">
+    //选中所有
+    function CheckAll() {
+        $("input[type='checkbox']").each(function () {
+            $(this).attr("checked", true);
+            });
+    }
+    //取消选中
+    function ClearChecked() {
+        $("input[type='checkbox']").each(function() {
+            $(this).attr("checked", false);
+        });
+    }
+
     //保存当前角色菜单
     function Save() {
-        var nodes = $('#menuTable').datagrid('getChecked');
-        
-        var menuIds = '';
-        for (var i = 0; i < nodes.length; i++) {
-            if (menuIds != '') menuIds += ',';
-            menuIds += nodes[i].id;
-        }
+        var datas = '';
+        $("input[type='checkbox']").each(function () {
+            if ($(this).is(":checked")) {
+                if (datas != '')
+                    datas += ',';
+                datas += $(this).attr('id');
+            }
 
+        });
         var postData = {
             'sysId': sltRole.id,
             'privilegeMaster': 11,
-            'menus': menuIds
+            'menus': datas
         };
 
         $.post('@Url.Action("UpdatePrivilege", "RestApi")', postData,
@@ -64,41 +80,129 @@
     $('#roleTree').tree({
         url: '@Url.Action("GetRolesListTree", "RestApi")' + "?" + new Date().getTime(),
         onClick: function (node) {
+            $('#menuTable').datagrid('clearSelections').datagrid('clearChecked');
             sltRole = node;
             $('#menuTable').treegrid({
                 url: '@Url.Action("GetMenusPrivilegeTreeForRole", "RestApi")' + "?id=" + sltRole.id + "?" + new Date().getTime(),
                 idField: 'id',
                 treeField: 'text',
-                singleSelect: false,
-                checkOnSelect: true,
-                selectOnCheck: true,
+                singleSelect: true,
+                checkOnSelect: false,
+                selectOnCheck: false,
                 columns: [[
-                    { field: 'ck', checkbox: true },
-                    { field: 'text', title: '名称', width: 150 },
+                    {
+                        field: 'text', title: '名称', width: 150,
+                        formatter: function (value, rec) {
+                            if (value) {
+                                return '<input id="' + rec.id + '" type="checkbox">' + (value);
+                            }
+                        }
+                    },
                     { field: 'link', title: '链接', width: 150 },
-                    { field: 'id', title: 'ID', width: 200 },
-                    { field: 'recordStatus', title: '操作记录', width: 250 }
+                    {
+                        field: 'buttons', title: '操作',
+                        formatter: formatOperate
+                    }
                 ]],
                 onLoadSuccess: function (row, data) {
+                    //                    if (data) {
+                    //                        $.each(data, function (index, item) {
+                    //                            if (item.checked) {
+                    //                                $.each(item.children, function(i, a) {
+                    //                                    if (a.checked) {
+                    //                                        $.each(a.children, function (j, b) {
+                    //                                            if (b.checked) {
+                    //                                                $('#menuTable').treegrid('select', b.id);
+                    //                                            }
+                    //                                        });
+                    //                                        $('#menuTable').treegrid('select', a.id);
+                    //                                    }
+                    //                                });
+                    //                                $('#menuTable').treegrid('select', item.id);
+                    //                            }
+                    //                        });
+                    //                    }
                     if (data) {
                         $.each(data, function (index, item) {
                             if (item.checked) {
-                                $.each(item.children, function (i, a) {
-                                    if (a.checked) {
-                                        $.each(a.children, function (j, b) {
-                                            if (b.checked) {
-                                                $('#menuTable').treegrid('select', b.id);
-                                            }
-                                        });
-                                        $('#menuTable').treegrid('select', a.id);
-                                    }
-                                });
-                                $('#menuTable').treegrid('select', item.id);
+                                $('#' + item.id).attr("checked", true);
+                                SelectCheckData(item);
                             }
                         });
                     }
+
                 }
             });
         }
     });
+
+    //递归选中初始化加载的checked数据
+    function SelectCheckData(data) {
+        if (data != null) {
+            if (data.children != null) {
+                $.each(data.children, function (i, a) {
+                    if (a != null) {
+                        if (a.checked) {
+                            $('#' + a.id).attr("checked", true);
+                            SelectCheckData(a);
+                        }
+                    }
+                });
+            }
+            if (data.buttons != null) {
+                $.each(data.buttons, function (i, a) {
+                    if (a != null) {
+                        if (a.checked) {
+                            $('#' + a.id).attr("checked", true);
+                            SelectCheckData(a);
+                        }
+                    }
+                });
+            }
+
+        }
+    }
+
+    function formatOperate(value, rowData, rowIndex) {
+        var oper = "";
+        if (rowData.buttons != null) {
+            $.each(rowData.buttons, function(i, v) {
+                var content;
+                if (v.checked) {
+                    content = "  <input type='checkbox' checked='checked' class='{0}' id='{1}'/> {2}";
+                } else {
+                    content = "  <input type='checkbox' class='{0}' id='{1}'/> {2}";
+                }
+                oper += content.format(rowData.id, v.id, v.text);
+                //console.log(v);
+                //console.log(rowData);
+                //console.log(rowIndex);
+            });
+        }
+        return oper;
+    }
+
+    String.prototype.format = function (args) {
+        var result = this;
+        if (arguments.length > 0) {
+            if (arguments.length == 1 && typeof (args) == "object") {
+                for (var key in args) {
+                    if (args[key] != undefined) {
+                        var reg = new RegExp("({" + key + "})", "g");
+                        result = result.replace(reg, args[key]);
+                    }
+                }
+            } else {
+                for (var i = 0; i < arguments.length; i++) {
+                    if (arguments[i] != undefined) {
+                        //var reg = new RegExp("({[" + i + "]})", "g");//这个在索引大于9时会有问题，谢谢何以笙箫的指出
+                        var reg = new RegExp("({)" + i + "(})", "g");
+                        result = result.replace(reg, arguments[i]);
+                    }
+                }
+            }
+        }
+        return result;
+    };
+
 </script>

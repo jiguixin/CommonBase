@@ -63,7 +63,8 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     BtnName = "按钮" + i.ToString(CultureInfo.InvariantCulture),
                     BtnIcon = "图标路径",
                     BtnOrder = i,
-                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt"),
+                    IsVisible = 1
                 };
                 Console.WriteLine(repository.Add(model));
             } 

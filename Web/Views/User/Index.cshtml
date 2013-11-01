@@ -93,7 +93,7 @@
         var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
 
         //获取按钮值
-        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")', { menuId: iframeid }, function (data) {
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")' + "?" + new Date().getTime(), { menuId: iframeid }, function (data) {
             if (data == null) {
                 return;
             }
@@ -489,33 +489,110 @@
 
     </div>
  
+    <div id="dlgRoles" class="easyui-dialog" style="width: 400px; height: 450px; padding:0"
+         closed="true" 
+        data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var nodes = $('#roleTable').datagrid('getChecked');
+                     saveRoles(nodes);
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgRoles').dialog('close');
+                    }
+                }]" > 
+        <table id="roleTable" class="easyui-treegrid" toolbar="#toolbar" ></table>
+    </div>
 }
 
 @section scriptsFooter
 {
-     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript"> 
-        
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        var userId;
+
+        function setRoles() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row != null) {
+                userId = row.SysId;
+                $('#dlgRoles').dialog('open').dialog('setTitle', '设置角色');
+                $('#roleTable').datagrid('clearSelections').datagrid('clearChecked');
+                $('#roleTable').treegrid({
+                    url: '@Url.Action("GetRolesTreeForUser", "RestApi")' + "?id=" + row.SysId + "?" + new Date().getTime(),
+                    idField: 'id',
+                    treeField: 'text',
+                    singleSelect: false,
+                    checkOnSelect: true,
+                    selectOnCheck: true,
+                    fit:true,
+                    columns: [[
+                        { field: 'ck', checkbox: true },
+                        { field: 'text', title: '角色名' },
+                        { field: 'id', title: '角色ID', hidden: true },
+                        { field: 'recordStatus', title: '描述',width:150 }
+                    ]],
+                    onLoadSuccess: function(row, data) {
+                        if (data) {
+                            $.each(data, function(index, item) {
+                                if (item.checked) {
+                                    $('#roleTable').treegrid('select', item.id);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+
+        //保存设定角色结果
+        function saveRoles(roles) {
+            if (roles != null) {
+                var roleIds = "";
+                $.each(roles, function(index, item) {
+                    if (roleIds != '') roleIds += ',';
+                    //menuIds += nodeChild[i].id;
+                    roleIds += item.id;
+                });
+                var postData = {
+                    'userId': userId,
+                    'roleIds': roleIds
+                };
+                $.post('@Url.Action("SetUserRoles", "RestApi")', postData,function (data) {
+                if (data) {
+                    alert("配置成功");
+                    $('#dlgRoles').dialog('close');
+                } else {
+                    alert("配置失败");
+                }
+            });
+            }
+        }
+
+
         function onAddSuccess(data) {
             if (data) {
-               // alert("操作成功");
+                // alert("操作成功");
                 $('#dlgNew').dialog('close');
                 $('#fixedGrid').datagrid('reload');
             } else {
                 alert("操作失败");
             }
         }
-        
+
         function onEditSuccess(data) {
             if (data) {
-               // alert("操作成功");
+                // alert("操作成功");
                 $('#dlgEdit').dialog('close');
                 $('#fixedGrid').datagrid('reload');
             } else {
                 alert("操作失败");
             }
         }
-         
+
     </script> 
-}
-  
+    }

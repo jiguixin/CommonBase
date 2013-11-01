@@ -90,5 +90,11 @@ namespace Web.Models
         /// </summary>
          [DisplayName("地址")]
         public string Address { get; set; }
+
+        /// <summary>
+        /// 角色
+        /// </summary>
+         [DisplayName("角色")]
+         public string Roles { get; set; }
     }
 }

@@ -229,7 +229,7 @@ namespace Infrastructure.Crosscutting.Security.Common
         /// Sql语句:
         /// PrivilegeMaster='{0}' and PrivilegeMasterKey='{1}' and PrivilegeAccess = '{2}' and PrivilegeAccessKey='{3}'
         /// </summary>
-        public static readonly string SqlExistsSysPrivilegeWhere = "PrivilegeMaster='{0}' and PrivilegeMasterKey='{1}' and PrivilegeAccess = '{2}' and PrivilegeAccessKey='{3}'";
+        public static readonly string SqlExistsSysPrivilegeWhere = string.Format("PrivilegeMaster={0}PrivilegeMaster and PrivilegeMasterKey={0}PrivilegeMasterKey and PrivilegeAccess = {0}PrivilegeAccess and PrivilegeAccessKey={0}PrivilegeAccessKey", Constant.SqlReplaceParameterPrefix);
 
         #endregion
     }

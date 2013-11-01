@@ -286,14 +286,5 @@ namespace Infrastructure.Crosscutting.Security.Test
                 Console.WriteLine(SysButton.BtnIcon);
             }
         }
-
-        [Test]
-        public void TestGetButtonByUserAndMenu()
-        {
-            string userId = "cf9d52cc-0500-4829-9611-fd0056961468";
-            string menuId = "09dcd6e0-774e-4735-b38c-dae02f463240";
-
-            var t = ServiceFactory.ButtonService.TT(userId, menuId);
-        }
     }
 }

@@ -31,6 +31,7 @@ namespace Web.Models
 
         public int? order { get; set; }
 
-        public EasyUiTreeResult[] children { get; set; }  
+        public EasyUiTreeResult[] children { get; set; }
+        public EasyUiTreeResult[] buttons { get; set; }  
     }
 }

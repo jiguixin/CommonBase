@@ -35,7 +35,7 @@ function InitLeftMenu() {
 
         $.each(data, function (i, n) {
             //如果是父节点,则添加<ul>标示
-            if (n.MenuParentId == null && n.IsVisible == 2) {
+            if (n.MenuParentId == null && n.isCheck == true) {
                 //如果上一次的父节点名称不为空，表示已经menulist已经有一组菜单需要添加
                 //如果上一次的父节点名称为空，表示是第一次获取到父节点要素，menulist还未生成
                 if (menuListName != null) {
@@ -49,7 +49,7 @@ function InitLeftMenu() {
                 menulist = '<ul>';
                 menuListName = n.MenuName;
 
-            } else if (n.IsVisible == 2) {
+            } else if (n.isCheck == true) {
                 menulist += '<li><div><a ref="' + n.MenuOrder + '" href="#"  rev="' + n.SysId + '"  rel="' + n.MenuLink + '" ><span class="icon ' + n.MenuIcon + '" >&nbsp;</span><span class="nav">' + n.MenuName + '</span></a></div></li> ';
             }
 

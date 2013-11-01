@@ -60,19 +60,19 @@ namespace Web.Controllers
             model.UserPwd = Crypto.Decrypt(model.UserPwd);
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-         
+
         //获取登录用户菜单列表
         public JsonResult GetMenusByLoginUser()
         {
             return Json(menuService.GetPrivilegedSysMenuByUserId(UserData.SysId), JsonRequestBehavior.AllowGet);
         }
-         
+
         //获取某用户可用菜单（tree格式）
         public JsonResult GetMenusPrivilegeTreeForUser()
         {
             int index = Request.Params[0].IndexOf("?");
             string userId = UserData.SysId;
-            if (index!=-1)
+            if (index != -1)
             {
                 userId = Request.Params[0].Substring(0, index);
             }
@@ -83,6 +83,7 @@ namespace Web.Controllers
         public JsonResult GetAllUerInfo()
         {
             var lstUsers = userService.UserRepository.GetList();
+
 
             List<UserDetailsModel> userDetails = (from user in lstUsers
                                                   let userInfo = this.userService.UserInfoRepository.GetModel(user.SysId)
@@ -147,7 +148,7 @@ namespace Web.Controllers
             }
 
             return Json(false);
-        } 
+        }
 
         [HttpPost]
         //删除用户
@@ -163,7 +164,38 @@ namespace Web.Controllers
         #endregion
 
         #region 角色
-         
+
+        //保存用户角色
+        public JsonResult SetUserRoles(string userId, string roleIds)
+        {
+            string[] ids = roleIds.Split(',');
+
+            using (var tran = RepositoryFactory.ConfigRepository.Connection.BeginTransaction())
+            {
+                RepositoryFactory.UserRoleRepository.DeleteByUserId(userId, tran);
+
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(ids[i]))
+                    {
+                        SysUserRole userRole = new SysUserRole()
+                            {
+                                UserId = userId,
+                                RoleId = ids[i]
+                            };
+
+                        if (RepositoryFactory.UserRoleRepository.Add(userRole, tran) == 0)
+                        {
+                            tran.Rollback();
+                            return Json(false);
+                        }
+                    }
+                }
+                tran.Commit();
+            }
+            return Json(true);
+        }
+
         [HttpPost]
         public JsonResult AddRole(SysRole role)
         {
@@ -194,7 +226,7 @@ namespace Web.Controllers
             return Json(false);
         }
 
-        [HttpPost] 
+        [HttpPost]
         public JsonResult DeleteRole(string SysId)
         {
             if (roleService.RoleRepository.Delete(SysId) > 0)
@@ -208,7 +240,7 @@ namespace Web.Controllers
         {
             var model = roleService.RoleRepository.GetModel(id);
 
-            return model == null ? null : this.Json(model, JsonRequestBehavior.AllowGet); 
+            return model == null ? null : this.Json(model, JsonRequestBehavior.AllowGet);
         }
 
         //获取全部角色列表(tree格式)
@@ -230,6 +262,13 @@ namespace Web.Controllers
             return Json(GetUserRoles(userId), JsonRequestBehavior.AllowGet);
         }
 
+        //获取某角色的用户列表(tree格式)
+        public JsonResult GetUsersTreeForRole()
+        {
+            string userId = Request.Params[0].Substring(0, Request.Params[0].IndexOf("?"));
+            return Json(GetRoleUser(userId), JsonRequestBehavior.AllowGet);
+        }
+
         //获取某角色可用菜单（tree格式）
         public JsonResult GetMenusPrivilegeTreeForRole()
         {
@@ -237,20 +276,32 @@ namespace Web.Controllers
             return Json(GetRoleMenusPrivilege(roleId), JsonRequestBehavior.AllowGet);
         }
 
-        //修改某用户的角色
-        public JsonResult UpdateRolesForUser(string userId, string roleId)
+        //修改用户的角色
+        public JsonResult UpdateRolesForUser(string roleId, string userIds)
         {
-            string[] roleIds = roleId.Split(',');
+            string[] userIDs = userIds.Split(',');
             List<SysUserRole> userRoles = new List<SysUserRole>();
-            for (int i = 0; i < roleIds.Length; i++)
+            for (int i = 0; i < userIDs.Length; i++)
             {
-                SysUserRole userRole = new SysUserRole()
+                if (!string.IsNullOrEmpty(userIDs[i]))
                 {
-                    SysId = Util.NewId(),
-                    UserId = userId,
-                    RoleId = roleIds[i]
-                };
-                userRoles.Add(userRole);
+                    SysUserRole userRole = new SysUserRole()
+                        {
+                            SysId = Util.NewId(),
+                            UserId = userIDs[i],
+                            RoleId = roleId
+                        };
+                    userRoles.Add(userRole);
+                }
+            }
+            if (userRoles.Count==0)
+            {
+                userRoles.Add(new SysUserRole()
+                    {
+                        SysId = Util.NewId(),
+                        UserId =null,
+                        RoleId = roleId
+                    });
             }
 
             return Json(roleService.SetUserRole(userRoles), JsonRequestBehavior.AllowGet);
@@ -276,7 +327,7 @@ namespace Web.Controllers
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-          
+
         public JsonResult GetCurrentUserButtonsPrivilege(string menuId)
         {
             var lstSource = buttonService.GetButtonsPrivilegeByUserAndMenu(UserData.SysId, menuId);
@@ -284,7 +335,7 @@ namespace Web.Controllers
             if (lstSource == null) return Json(null);
 
 
-            var lstResult = lstSource.OrderBy(o=>o.BtnOrder).Select(item => new toolbar() { handler = item.BtnFunction, iconCls = item.BtnIcon, text = item.BtnName }).ToList();
+            var lstResult = lstSource.OrderBy(o => o.BtnOrder).Select(item => new toolbar() { handler = item.BtnFunction, iconCls = item.BtnIcon, text = item.BtnName }).ToList();
 
             return Json(lstResult,
                 JsonRequestBehavior.AllowGet);
@@ -295,19 +346,20 @@ namespace Web.Controllers
         #region 菜单
 
         [HttpPost]
-        public JsonResult AddMenu(SysMenu menu, bool IsAddButton)
+        public JsonResult AddMenu(SysMenu menu, bool creatButton, bool editButton, bool deletButton)
         {
             if (!ModelState.IsValid) Json(false);
 
             menu.RecordStatus = CreateRecordMsg;
 
-            if (IsAddButton && !string.IsNullOrEmpty(menu.MenuParentId) && menu.MenuParentId.Trim().Length > 0)
+            if (!string.IsNullOrEmpty(menu.MenuParentId) && menu.MenuParentId.Trim().Length > 0)
             {
                 menu.SysId = Util.NewId();
 
+
                 if (menuService.MenuRepository.AddOrModifyTrans(
                     menu,
-                    buttonService.InitialAddModifyDelBtn(menu.SysId, CreateRecordMsg),
+                    buttonService.InitialAddModifyDelBtn(menu.SysId, CreateRecordMsg, creatButton, editButton, deletButton),
                     menuService.MenuRepository.Add,
                     buttonService.ButtonRepository.Add) > 0)
                 {
@@ -315,15 +367,12 @@ namespace Web.Controllers
                 }
             }
             else
-            { 
+            {
                 if (menuService.MenuRepository.Add(menu) > 0)
                 {
                     return Json(true);
                 }
             }
-
-
-
 
             return Json(false);
         }
@@ -345,6 +394,46 @@ namespace Web.Controllers
             return Json(false);
         }
 
+        public JsonResult EnableMenuButton(string enButtonIds, string disButtonIds)
+        {
+            string[] disBtIds = disButtonIds.Split(',');
+            string[] enBtIds = enButtonIds.Split(',');
+            using (var tran = RepositoryFactory.ConfigRepository.Connection.BeginTransaction())
+            {
+                for (int i = 0; i < disBtIds.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(disBtIds[i]))
+                    {
+                        SysButton button = RepositoryFactory.ButtonRepository.GetModel(disBtIds[i]);
+                        button.IsVisible = (long)PrivilegeOperation.Disable;
+
+                        //SysButton button = RepositoryFactory.ButtonRepository.GetModel(buttonIds);
+                        if (RepositoryFactory.ButtonRepository.Update(button, tran) == 0)
+                        {
+                            tran.Rollback();
+                            return Json(false);
+                        }
+                    }
+                }
+                for (int i = 0; i < enBtIds.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(enBtIds[i]))
+                    {
+                        SysButton button = RepositoryFactory.ButtonRepository.GetModel(enBtIds[i]);
+                        button.IsVisible = (long)PrivilegeOperation.Enable;
+
+                        if (RepositoryFactory.ButtonRepository.Update(button, tran) == 0)
+                        {
+                            tran.Rollback();
+                            return Json(false);
+                        }
+                    }
+                }
+                tran.Commit();
+            }
+            return Json(true);
+        }
+
         [HttpPost]
         public JsonResult DeleteMenu(string SysId)
         {
@@ -358,15 +447,18 @@ namespace Web.Controllers
         public JsonResult GetMenu(string id)
         {
             var model = menuService.MenuRepository.GetModel(id);
-
+            if (model != null)
+            {
+                model.Buttons = RepositoryFactory.ButtonRepository.GetList().Where(x => x.MenuId == id).ToList();
+            }
             return model == null ? null : this.Json(model, JsonRequestBehavior.AllowGet);
         }
-         
+
         public JsonResult GetAllMenusRetTreeGrid()
         {
-            IEnumerable<SysMenu> lstSource = (IEnumerable<SysMenu>)menuService.MenuRepository.GetAllMenusByLoop();
+            IEnumerable<SysMenu> lstSource = (IEnumerable<SysMenu>)menuService.MenuRepository.GetAllMenusByLoop(true);
             if (lstSource == null) return Json(null);
-              
+
             return Json(BuildAllTreeMenu(lstSource),
               JsonRequestBehavior.AllowGet);
         }
@@ -384,6 +476,7 @@ namespace Web.Controllers
                                     order = s.MenuOrder,
                                     text = s.MenuName,
                                     iconCls = s.MenuIcon,
+                                    buttons = BuildAllTreeButton(s.Buttons).ToArray(),
                                     visible = s.IsVisible != null && ((PrivilegeOperation)(s.IsVisible.Value)) == PrivilegeOperation.Enable ? "启用" : "禁用"
                                 };
                 if (s.Children != null && s.Children.Any())
@@ -395,6 +488,29 @@ namespace Web.Controllers
 
             return lstResult;
 
+        }
+        private IEnumerable<EasyUiTreeResult> BuildAllTreeButton(IEnumerable<SysButton> lstSource)
+        {
+            var lstResult = new List<EasyUiTreeResult>();
+            if (lstSource == null)
+            {
+                return lstResult;
+            }
+
+            foreach (var s in lstSource)
+            {
+                var model = new EasyUiTreeResult()
+                {
+                    id = s.SysId,
+                    link = s.BtnFunction,
+                    order = s.BtnOrder,
+                    text = s.BtnName,
+                    iconCls = s.BtnIcon,
+                    visible = s.IsVisible == 1 ? "启用" : "禁用"
+                };
+                lstResult.Add(model);
+            }
+            return lstResult;
         }
 
         #endregion
@@ -467,143 +583,180 @@ namespace Web.Controllers
         /// <returns></returns>
         public List<EasyUiTreeResult> BuildTreeMenu(IEnumerable<SysMenu> userMenus)
         {
-            //todo:如果我新建一个角色，参数userMenus没有值，那么直接就把所有菜单和按钮全新加载出来，不勾选就对了。
-            //todo:此方法有BUG
-
             //获取所有菜单
             IEnumerable<SysMenu> allMenus = menuService.GetAllMenu();
             //获取所有按钮数据
-            IEnumerable<SysButton> allButtons = RepositoryFactory.ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
-                                                                                    "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
-                                                                                    null);//todo：不要用这个方法，因为有提供调用所有的记录的方法。GetList（）
+            //IEnumerable<SysButton> allButtons = RepositoryFactory.ButtonRepository.GetListByTable<SysButton>(Constant.TableSysButton,
+            //                                                                        "SysId,MenuId,BtnName,BtnIcon,BtnOrder,BtnFunction,RecordStatus",
+            //                                                                        null);
 
-            //todo:为什么去掉了又要加进来。
+            IEnumerable<SysButton> allButtons = RepositoryFactory.ButtonRepository.GetList();
 
             //去除掉所有菜单中用户已有权限的菜单
             foreach (SysMenu userMenu in userMenus)
             {
                 allMenus = allMenus.Where(x => x.SysId != userMenu.SysId);
             }
+            //allMenus = allMenus.Where(x => !userMenus.Contains(x)) ;
+
             //将无权限菜单和有权限菜单合并
             allMenus = allMenus.Union(userMenus).OrderBy(x => x.MenuOrder);
+            //将父菜单筛选出来，用作遍历
+            var parentMenus = allMenus.Where(x => x.MenuParentId == null);
 
-            List<EasyUiTreeResult> treeResults = new List<EasyUiTreeResult>();
-            foreach (SysMenu allMenu in allMenus)
+            //构建菜单的层次结构
+            foreach (SysMenu menu in parentMenus)
             {
-                if (allMenu.MenuParentId == null)
+                var childs = RepositoryFactory.MenuRepository.GetChildre(allMenus, menu,false);
+                if (childs != null && childs.Any())
                 {
-                    userMenus = allMenus.Where(x => x.MenuParentId == allMenu.SysId);
+                    menu.Children = childs.OrderBy(c => c.MenuOrder);
+                }
+            }
 
-                    #region 构建一组菜单的tree结构集合
-
-                    List<EasyUiTreeResult> ccs = new List<EasyUiTreeResult>();
-                    foreach (SysMenu userMenu in userMenus)
-                    {
-                        var bts = allButtons.Where(x => x.MenuId == userMenu.SysId);
-
-                        #region 构建button的tree结构集合
-                        List<EasyUiTreeResult> buttons = new List<EasyUiTreeResult>();
-                        if (bts.Count() != 0)
-                        {
-                            #region 如果此菜单下有可用按钮，判断添加按钮可用或者不可用
-
-                            if (userMenu.Buttons != null)
-                            {
-                                foreach (SysButton button in userMenu.Buttons)
-                                {
-                                    EasyUiTreeResult buttonc = new EasyUiTreeResult()
-                                    {
-                                        id = button.SysId,
-                                        text = button.BtnName,
-                                        iconCls = button.BtnIcon,
-                                        @checked = true,
-                                        link = button.BtnFunction,
-                                        order = button.BtnOrder,
-                                        recordStatus = button.RecordStatus
-                                    };
-                                    buttons.Add(buttonc);
-
-                                    bts = bts.Where(x => x.SysId != button.SysId);
-                                }
-
-                                foreach (SysButton button in bts)
-                                {
-
-                                    EasyUiTreeResult buttonc = new EasyUiTreeResult()
-                                        {
-                                            id = button.SysId,
-                                            text = button.BtnName,
-                                            iconCls = button.BtnIcon,
-                                            @checked = false,
-                                            link = button.BtnFunction,
-                                            order = button.BtnOrder,
-                                            recordStatus = button.RecordStatus
-                                        };
-                                    buttons.Add(buttonc);
-
-                                }
-                            }
-                            #endregion
-
-                            #region 如果此菜单无有权限按钮，添加全部按钮
-
-                            else
-                            {
-                                foreach (SysButton button in bts)
-                                {
-                                    EasyUiTreeResult buttonc = new EasyUiTreeResult()
-                                        {
-                                            id = button.SysId,
-                                            text = button.BtnName,
-                                            iconCls = button.BtnIcon,
-                                            @checked = false,
-                                            link = button.BtnFunction,
-                                            order=button.BtnOrder,
-                                            recordStatus = button.RecordStatus
-                                        };
-                                    buttons.Add(buttonc);
-                                }
-                            }
-
-                            #endregion
-                        }
-
-                        #endregion
-
-                        #region 添加一组子菜单的tree结构
-
-                        EasyUiTreeResult cc = new EasyUiTreeResult()
-                        {
-                            id = userMenu.SysId,
-                            text = userMenu.MenuName,
-                            iconCls = userMenu.MenuIcon,
-                            @checked = userMenu.IsVisible == (long)PrivilegeOperation.Enable ? true : false,
-                            link = userMenu.MenuLink,
-                            recordStatus = userMenu.RecordStatus,
-                            children = buttons.OrderBy(x=>x.order).ToArray()
-                        };
-
-                        ccs.Add(cc);
-
-                        #endregion
-                    }
-
-                    //todo:allMenu.IsVisible 这个列主要是说明是否让菜单不可见，跟在tree中勾选没有关系。
-                    EasyUiTreeResult treeResult = new EasyUiTreeResult()
+            //构建菜单层次结构tree格式
+            List<EasyUiTreeResult> treeResults = new List<EasyUiTreeResult>();
+            foreach (SysMenu allMenu in parentMenus)
+            {
+                EasyUiTreeResult result = new EasyUiTreeResult()
                     {
                         id = allMenu.SysId,
                         text = allMenu.MenuName,
-                        iconCls = allMenu.MenuIcon,
-                        @checked = allMenu.IsVisible == (long)PrivilegeOperation.Enable ? true : false,
-                        children = ccs.ToArray()
+                        link = allMenu.MenuLink,
+                        recordStatus = allMenu.RecordStatus,
+                        @checked = allMenu.isCheck,
                     };
-
-                    treeResults.Add(treeResult);
-
-                    #endregion
-                }
+                treeResults.Add(BuildTreeByLoop(allMenu, allButtons, result));
             }
+
+
             return treeResults;
+        }
+
+        /// <summary>
+        /// 递归构建层次结构menu树结构
+        /// </summary>
+        /// <param name="menu"></param>
+        /// <param name="allButtons"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private EasyUiTreeResult BuildTreeByLoop(SysMenu menu, IEnumerable<SysButton> allButtons, EasyUiTreeResult result)
+        {
+            if (menu.Children == null)
+            {
+                return GetButtonsByMenu(allButtons, menu);
+            }
+
+            List<EasyUiTreeResult> ts = new List<EasyUiTreeResult>();
+            foreach (var m in menu.Children)
+            {
+                EasyUiTreeResult t = new EasyUiTreeResult()
+                    {
+                        id = m.SysId,
+                        text = m.MenuName,
+                        link = m.MenuLink,
+                        recordStatus = m.RecordStatus,
+                        @checked = m.isCheck,
+                    };
+                ts.Add(BuildTreeByLoop(m, allButtons, t));
+            }
+            result.children = ts.ToArray();
+
+            return result;
+        }
+
+        /// <summary>
+        /// 根据menu获取menu下所有button
+        /// </summary>
+        /// <param name="allButtons"></param>
+        /// <param name="menu"></param>
+        /// <returns></returns>
+        private EasyUiTreeResult GetButtonsByMenu(IEnumerable<SysButton> allButtons, SysMenu menu)
+        {
+            var bts = allButtons.Where(x => x.MenuId == menu.SysId);
+            bts = bts.Where(x => x.IsVisible == (long)PrivilegeOperation.Enable);
+
+            List<EasyUiTreeResult> buttons = new List<EasyUiTreeResult>();
+            if (bts.Any())
+            {
+                #region 如果此菜单下有可用按钮，判断添加按钮可用或者不可用
+
+                if (menu.Buttons != null)
+                {
+                    foreach (SysButton button in menu.Buttons)
+                    {
+                        if (button.IsVisible == (long)PrivilegeOperation.Enable)
+                        {
+                            EasyUiTreeResult buttonc = new EasyUiTreeResult()
+                            {
+                                id = button.SysId,
+                                text = button.BtnName,
+                                iconCls = button.BtnIcon,
+                                @checked = true,
+                                link = button.BtnFunction,
+                                order = button.BtnOrder,
+                                recordStatus = button.RecordStatus
+                            };
+
+                            buttons.Add(buttonc);
+                        }
+
+                        bts = bts.Where(x => x.SysId != button.SysId);
+                    }
+
+                    foreach (SysButton button in bts)
+                    {
+
+                        EasyUiTreeResult buttonc = new EasyUiTreeResult()
+                        {
+                            id = button.SysId,
+                            text = button.BtnName,
+                            iconCls = button.BtnIcon,
+                            @checked = false,
+                            link = button.BtnFunction,
+                            order = button.BtnOrder,
+                            recordStatus = button.RecordStatus
+                        };
+                        buttons.Add(buttonc);
+
+                    }
+                }
+                #endregion
+
+                #region 如果此菜单无有权限按钮，添加全部按钮
+
+                else
+                {
+                    foreach (SysButton button in bts)
+                    {
+                        EasyUiTreeResult buttonc = new EasyUiTreeResult()
+                        {
+                            id = button.SysId,
+                            text = button.BtnName,
+                            iconCls = button.BtnIcon,
+                            @checked = false,
+                            link = button.BtnFunction,
+                            order = button.BtnOrder,
+                            recordStatus = button.RecordStatus
+                        };
+                        buttons.Add(buttonc);
+                    }
+                }
+
+                #endregion
+            }
+
+            EasyUiTreeResult treeResult = new EasyUiTreeResult()
+            {
+                id = menu.SysId,
+                text = menu.MenuName,
+                iconCls = menu.MenuIcon,
+                @checked = menu.isCheck,
+                children = new EasyUiTreeResult[0],
+                buttons = buttons.ToArray()
+            };
+
+            return treeResult;
         }
 
         /// <summary>
@@ -642,6 +795,45 @@ namespace Web.Controllers
             }
 
             return treeResults.OrderBy(x => x.id).ToList();
+        }
+
+        /// <summary>
+        /// 根据角色构建用户列表
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public List<EasyUiTreeResult> GetRoleUser(string roleId)
+        {
+            IEnumerable<SysUser> allUsers = RepositoryFactory.UserRepository.GetList();
+            IEnumerable<SysUser> roleUsers = roleService.GetUsers(roleId);
+
+            List<EasyUiTreeResult> treeResults = new List<EasyUiTreeResult>();
+
+            foreach (SysUser roleUser in roleUsers)
+            {
+                EasyUiTreeResult treeResult = new EasyUiTreeResult()
+                {
+                    id = roleUser.SysId,
+                    text = roleUser.UserName,
+                    recordStatus = roleUser.RecordStatus,
+                    @checked = true
+                };
+                allUsers = allUsers.Where(x => x.SysId != roleUser.SysId);
+                treeResults.Add(treeResult);
+            }
+            foreach (SysUser allUser in allUsers)
+            {
+                EasyUiTreeResult treeResult = new EasyUiTreeResult()
+                {
+                    id = allUser.SysId,
+                    text = allUser.UserName,
+                    recordStatus = allUser.RecordStatus,
+                    @checked = false
+                };
+                treeResults.Add(treeResult);
+            }
+
+            return treeResults;
         }
 
         #endregion

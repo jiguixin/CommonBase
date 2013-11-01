@@ -59,6 +59,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             return buttons;
         }
 
+
         /// <summary>
         /// 根据用户id和菜单id获取当前菜单可用按钮
         /// </summary>
@@ -90,28 +91,27 @@ namespace Infrastructure.Crosscutting.Security.Services
             return resultButtons;
         }
 
-        //todo:TT 是作什么用的
-        public IEnumerable<SysButton> TT(string userId, string menuId)
-        {
-            var privileges = ServiceFactory.MenuService.GetPrivilegesByUserId(userId);
-            privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
+        //public IEnumerable<SysButton> TT(string userId, string menuId)
+        //{
+        //    var privileges = ServiceFactory.MenuService.GetPrivilegesByUserId(userId);
+        //    privileges = privileges.Where(x => x.PrivilegeAccess == PrivilegeAccess.Button && x.PrivilegeOperation == PrivilegeOperation.Disable);
 
-            var buttons = ButtonRepository.GetList().Where(x => x.MenuId == menuId).ToList();
+        //    var buttons = ButtonRepository.GetList().Where(x => x.MenuId == menuId).ToList();
 
-            List<SysButton> resultBts = new List<SysButton>();
-            foreach (SysPrivilege sysPrivilege in privileges)
-            {
-                var bts = buttons.Where(x => x.SysId == sysPrivilege.PrivilegeAccessKey);
+        //    List<SysButton> resultBts = new List<SysButton>();
+        //    foreach (SysPrivilege sysPrivilege in privileges)
+        //    {
+        //        var bts = buttons.Where(x => x.SysId == sysPrivilege.PrivilegeAccessKey);
 
-                resultBts.AddRange(bts);
-            }
-            foreach (SysButton bt in resultBts)
-            {
-                buttons.Remove(bt);
-            }
+        //        resultBts.AddRange(bts);
+        //    }
+        //    foreach (SysButton bt in resultBts)
+        //    {
+        //        buttons.Remove(bt);
+        //    }
 
-            return buttons;
-        }
+        //    return buttons;
+        //}
 
         public IEnumerable<SysButton> InitialAddModifyDelBtn(string menuId, string recordStatus)
         {
@@ -124,7 +124,8 @@ namespace Infrastructure.Crosscutting.Security.Services
                                                         BtnIcon = "icon-add",
                                                         BtnOrder = 10,
                                                         MenuId = menuId,
-                                                        RecordStatus = recordStatus
+                                                        RecordStatus = recordStatus,
+                                                        IsVisible = 1
                                                     },
                                                 new SysButton
                                                     {
@@ -133,7 +134,8 @@ namespace Infrastructure.Crosscutting.Security.Services
                                                         BtnIcon = "icon-edit",
                                                         BtnOrder = 20,
                                                         MenuId = menuId,
-                                                        RecordStatus = recordStatus
+                                                        RecordStatus = recordStatus,
+                                                        IsVisible = 1
                                                     },
                                                 new SysButton
                                                     {
@@ -142,12 +144,56 @@ namespace Infrastructure.Crosscutting.Security.Services
                                                         BtnIcon = "icon-remove",
                                                         BtnOrder = 30,
                                                         MenuId = menuId,
-                                                        RecordStatus = recordStatus
+                                                        RecordStatus = recordStatus,
+                                                        IsVisible = 1
                                                     }
                                             };
 
             return lstResult;
 
         }
+        public IEnumerable<SysButton> InitialAddModifyDelBtn(string menuId, string recordStatus,bool creatBt,bool modifyBt,bool delBt)
+        {
+            List<SysButton> lstResult = new List<SysButton>();
+            if (creatBt)
+            {
+                lstResult.Add(new SysButton
+                    {
+                        BtnName = "新增",
+                        BtnFunction = "NewItem",
+                        BtnIcon = "icon-add",
+                        BtnOrder = 10,
+                        MenuId = menuId,
+                        RecordStatus = recordStatus
+                    });
+            }
+            if (modifyBt)
+            {
+                lstResult.Add(new SysButton
+                    {
+                        BtnName = "编辑",
+                        BtnFunction = "EditItem",
+                        BtnIcon = "icon-edit",
+                        BtnOrder = 20,
+                        MenuId = menuId,
+                        RecordStatus = recordStatus
+                    });
+            }
+            if (delBt)
+            {
+                lstResult.Add(new SysButton
+                    {
+                        BtnName = "废弃",
+                        BtnFunction = "DelItem",
+                        BtnIcon = "icon-remove",
+                        BtnOrder = 30,
+                        MenuId = menuId,
+                        RecordStatus = recordStatus
+                    });
+            }
+            return lstResult;
+
+        }
+        
     }
 }

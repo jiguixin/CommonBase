@@ -20,7 +20,7 @@ namespace Infrastructure.Crosscutting.Security.Services
     using Infrastructure.Crosscutting.Security.Repositorys;
     using Infrastructure.Data.Ado.Dapper;
 
-    public class SysRoleService:ISysRoleService
+    public class SysRoleService : ISysRoleService
     {
         public SysRoleRepository RoleRepository
         {
@@ -36,7 +36,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
             get { return RepositoryFactory.UserRoleRepository; }
         }
- 
+
         public bool AddUserRole(SysUserRole userRole)
         {
             return this.UserRoleRepository.Add(userRole) != 0;
@@ -46,9 +46,16 @@ namespace Infrastructure.Crosscutting.Security.Services
         {
             using (IDbTransaction tran = RoleRepository.Connection.BeginTransaction())
             {
-                this.UserRoleRepository.DeleteByUserId(userRoles[0].UserId, tran);
+                this.UserRoleRepository.DeleteByRoleId(userRoles[0].RoleId, tran);
 
-                if (userRoles.Select(sysUserRole => this.UserRoleRepository.Add(sysUserRole, tran)).Any(addResult => addResult==0))
+                //如果传来的是一个空userid的实体，意味着没有选中有任何用户，直接清空该角色下所有用户即可
+                if (userRoles.Count == 1 && string.IsNullOrEmpty(userRoles[0].UserId))
+                {
+                    tran.Commit();
+                    return true;
+                }
+
+                if (userRoles.Select(sysUserRole => this.UserRoleRepository.Add(sysUserRole, tran)).Any(addResult => addResult == 0))
                 {
                     tran.Rollback();
                     return false;
@@ -61,13 +68,13 @@ namespace Infrastructure.Crosscutting.Security.Services
         public IEnumerable<SysUser> GetUsers(string roleId)
         {
             var p = new DynamicParameters();
-            p.Add(Constant.ColumnSysId, roleId.Trim());
+            p.Add("RoleId", roleId.Trim());
 
             return UserRepository.GetUserIncludeUserInfo(
                 Constant.SqlTableUserAndRoleIncludeUserInfoJoin, Constant.SqlFieldsUserAndRoleIncludeUserInfoJoin,
-                string.Format("r.{0} ={1}{0}", Constant.ColumnSysId, Constant.SqlReplaceParameterPrefix),p); 
+                string.Format("ur.{0} ={1}{0}", "RoleId", Constant.SqlReplaceParameterPrefix), p);
         }
-         
+
         public IEnumerable<SysPrivilege> GetPrivilege(string roleId)
         {
             var p = new DynamicParameters();
@@ -77,8 +84,8 @@ namespace Infrastructure.Crosscutting.Security.Services
             return RoleRepository.GetListByTable<SysPrivilege>(
                 Constant.SqlTableRolePrivilegeJoin,
                 Constant.SqlFieldsPrivilegeJoin,
-                 string.Format("p.{0} = {2}{0} and r.{1}={2}{1}", Constant.ColumnSysPrivilegePrivilegeMaster, Constant.ColumnSysId, Constant.SqlReplaceParameterPrefix),p); 
-             
+                 string.Format("p.{0} = {2}{0} and r.{1}={2}{1}", Constant.ColumnSysPrivilegePrivilegeMaster, Constant.ColumnSysId, Constant.SqlReplaceParameterPrefix), p);
+
         }
     }
 }

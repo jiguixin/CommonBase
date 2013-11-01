@@ -2,6 +2,7 @@
 using Infrastructure.Crosscutting.Security.Ioc;
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.SqlImple;
+using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
@@ -43,7 +44,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }
 
         public override int Delete(string sysId)
-        {  
+        {
             return PrivilegeRepository.DeletePrivilegeTrans(sysId, (int)PrivilegeMaster.Role, Delete, UserRoleRepository.DeleteByRoleId, PrivilegeRepository.DeleteSysPrivilegeByMaster);
         }
 

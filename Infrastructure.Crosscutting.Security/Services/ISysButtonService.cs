@@ -30,5 +30,8 @@ namespace Infrastructure.Crosscutting.Security.Services
                                                                        IEnumerable<SysPrivilege> privileges);
 
         IEnumerable<SysButton> InitialAddModifyDelBtn(string menuId, string recordStatus);
+
+        IEnumerable<SysButton> InitialAddModifyDelBtn(string menuId, string recordStatus, bool creatBt,
+                                                             bool modifyBt, bool delBt);
     }
 }
