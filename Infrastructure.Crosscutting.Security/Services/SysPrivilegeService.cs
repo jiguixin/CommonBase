@@ -101,10 +101,11 @@ namespace Infrastructure.Crosscutting.Security.Services
                                 PrivilegeAccessKey = userMenu.SysId,
                                 PrivilegeMaster = privilegeMaster,
                                 PrivilegeMasterKey = sysId,
-                                PrivilegeOperation = PrivilegeOperation.Disable
+                                PrivilegeOperation = PrivilegeOperation.Disable,
+                                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now, userName)
                             };
 
-                            int addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, userName, tran);
+                            int addResult = privilegeRepository.Add(sysPrivilege, tran);
 
                             if (addResult == 0)
                             {
@@ -125,10 +126,11 @@ namespace Infrastructure.Crosscutting.Security.Services
                                             PrivilegeAccessKey = button.SysId,
                                             PrivilegeMaster = privilegeMaster,
                                             PrivilegeMasterKey = sysId,
-                                            PrivilegeOperation = PrivilegeOperation.Disable
+                                            PrivilegeOperation = PrivilegeOperation.Disable,
+                                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now, userName)
                                         };
 
-                                        addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilegeBt, userName, tran);
+                                        addResult = privilegeRepository.Add(sysPrivilege, tran);
 
                                         if (addResult == 0)
                                         {
@@ -154,10 +156,11 @@ namespace Infrastructure.Crosscutting.Security.Services
                         PrivilegeAccessKey = menu,
                         PrivilegeMaster = privilegeMaster,
                         PrivilegeMasterKey = sysId,
-                        PrivilegeOperation = PrivilegeOperation.Enable
+                        PrivilegeOperation = PrivilegeOperation.Enable,
+                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now, userName)
                     };
 
-                    int addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, userName, tran);
+                    int addResult = privilegeRepository.Add(sysPrivilege, tran);
 
                     if (addResult == 0)
                     {
@@ -168,10 +171,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                     #region 存储菜单下不可用按钮
 
                     var menuBts = allButtons.Where(x => x.MenuId == menu);
-                    //foreach (string buttonId in buttons)
-                    //{
-                    //    menuBts = menuBts.Where(x => (buttons.Contains(x.SysId)));
-                    //}
+
                     menuBts = menuBts.Where(x => (!buttons.Contains(x.SysId)));
                     foreach (SysButton sysButton in menuBts)
                     {
@@ -181,10 +181,11 @@ namespace Infrastructure.Crosscutting.Security.Services
                             PrivilegeAccessKey = sysButton.SysId,
                             PrivilegeMaster = privilegeMaster,
                             PrivilegeMasterKey = sysId,
-                            PrivilegeOperation = PrivilegeOperation.Disable
+                            PrivilegeOperation = PrivilegeOperation.Disable,
+                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now, userName)
                         };
 
-                        addResult = privilegeRepository.AddSysPrivilegeByAccess(sysPrivilege, userName, tran);
+                        addResult = privilegeRepository.Add(sysPrivilege, tran);
 
                         if (addResult == 0)
                         {
@@ -205,8 +206,7 @@ namespace Infrastructure.Crosscutting.Security.Services
         #region helper
 
         public void InitData<T>(IEnumerable<T> lstSource, PrivilegeMaster master) where T : EntityBase
-        {
-            int num = 1;
+        { 
             //获取现在已有的菜单、按钮数据。在将按钮添加到菜单属性中。
             var lstMenu = this.menuRepository.GetList();
 
@@ -214,7 +214,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             {
                 sysMenu.Buttons = this.menuRepository.GetButtons(sysMenu.SysId);
             }
-
+            
             foreach (var source in lstSource)
             {
                 foreach (var sysMenu in lstMenu)
@@ -226,7 +226,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                         PrivilegeAccess = PrivilegeAccess.Menu,
                         PrivilegeAccessKey = sysMenu.SysId,
                         PrivilegeOperation = PrivilegeOperation.Disable,
-                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
+                        RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "System")
                     };
 
                     #region 检查该条数据是否存在
@@ -238,16 +238,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
                     var chkResult = privilegeRepository.GetList<int>(Constant.SqlCount,
                                                                      Constant.SqlExistsSysPrivilegeWhere, p);
-
-                    //var chkResult = privilegeRepository.GetList<int>(
-                    //    Constant.SqlCount,
-                    //    string.Format(
-                    //        Constant.SqlExistsSysPrivilegeWhere,
-                    //        (int)master,
-                    //        source.SysId,
-                    //        (int)PrivilegeAccess.Menu,
-                    //        sysMenu.SysId));
-
+                     
                     if (chkResult.FirstOrDefault() == 0)
                     {
                         Console.WriteLine(privilegeRepository.Add(model));
@@ -264,7 +255,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                             PrivilegeAccess = PrivilegeAccess.Button,
                             PrivilegeAccessKey = sysButton.SysId,
                             PrivilegeOperation = PrivilegeOperation.Disable,
-                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), num++)
+                            RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "System")
                         };
 
                         #region 检查该条数据是否存在
@@ -276,17 +267,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                         p.Add("PrivilegeAccessKey", sysButton.SysId.Trim());
                         chkResult = privilegeRepository.GetList<int>(Constant.SqlCount,
                                                                      Constant.SqlExistsSysPrivilegeWhere, p);
-
-
-                        //chkResult = privilegeRepository.GetList<int>(
-                        //      Constant.SqlCount,
-                        //      string.Format(
-                        //          Constant.SqlExistsSysPrivilegeWhere,
-                        //          (int)master,
-                        //          source.SysId,
-                        //          (int)PrivilegeAccess.Button,
-                        //          sysButton.SysId));
-
+                          
                         if (chkResult.FirstOrDefault() == 0)
                         {
                             Console.WriteLine(privilegeRepository.Add(model));
