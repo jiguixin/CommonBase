@@ -10,6 +10,7 @@ using Infrastructure.Crosscutting.Security.Ioc;
 
 namespace Web
 {
+    using Infrastructure.Crosscutting.Security.Common;
     using Infrastructure.Crosscutting.Security.Model;
 
     using Web.Utility;
@@ -28,8 +29,17 @@ namespace Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            Logger.InitLogger();
+
+            //Logger.Log.Debug("测试正在启动：Debug");
+            //Logger.Log.Error("测试正在启动：Error");
+            //Logger.Log.Fatal("测试正在启动：Fatal");
+            //Logger.Log.Info("测试正在启动：Info");
+            //Logger.Log.Warn("测试正在启动：Warn");
+             
             InstanceLocator.SetLocator(
          new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
+             
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)
