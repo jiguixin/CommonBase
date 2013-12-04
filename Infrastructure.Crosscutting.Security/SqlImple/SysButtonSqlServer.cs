@@ -16,9 +16,9 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
             get
             {
                 return string.Format(@"INSERT INTO Sys_Button(
-	SysId,MenuId,BtnName,BtnIcon,BtnOrder,RecordStatus,IsVisible
+	SysId,MenuId,BtnName,BtnIcon,BtnOrder,RecordStatus,IsVisible,BtnFunction
 	)VALUES(
-	{0}SysId,{0}MenuId,{0}BtnName,{0}BtnIcon,{0}BtnOrder,{0}RecordStatus,{0}IsVisible
+	{0}SysId,{0}MenuId,{0}BtnName,{0}BtnIcon,{0}BtnOrder,{0}RecordStatus,{0}IsVisible,{0}BtnFunction
 	)", ParameterPrefix);
             }
         }
@@ -28,7 +28,7 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
             get
             {
                 return string.Format(@"UPDATE Sys_Button SET 
-	MenuId = {0}MenuId,BtnName = {0}BtnName,BtnIcon = {0}BtnIcon,BtnOrder = {0}BtnOrder,RecordStatus = {0}RecordStatus,IsVisible = {0}IsVisible
+	MenuId = {0}MenuId,BtnName = {0}BtnName,BtnIcon = {0}BtnIcon,BtnOrder = {0}BtnOrder,RecordStatus = {0}RecordStatus,IsVisible = {0}IsVisible,BtnFunction={0}BtnFunction
 	WHERE SysId={0}SysId", ParameterPrefix);
             }
         }

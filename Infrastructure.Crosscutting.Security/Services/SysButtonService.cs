@@ -56,7 +56,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                 buttons.Remove(bt);
             }
 
-            return buttons;
+            return buttons.Where(x => x.IsVisible == (long)PrivilegeOperation.Enable);
         }
 
 
@@ -87,7 +87,7 @@ namespace Infrastructure.Crosscutting.Security.Services
             //{
             //    resultButtons.Remove(bt);
             //}
-            resultButtons = resultButtons.Where(x => (!disableButtons.Contains(x))).ToList();
+            resultButtons = resultButtons.Where(x => (!disableButtons.Contains(x)) && x.IsVisible == (long)PrivilegeOperation.Enable).ToList();
             return resultButtons;
         }
 
@@ -164,6 +164,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                         BtnIcon = "icon-add",
                         BtnOrder = 10,
                         MenuId = menuId,
+                        IsVisible=(long)PrivilegeOperation.Enable,
                         RecordStatus = recordStatus
                     });
             }
@@ -176,6 +177,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                         BtnIcon = "icon-edit",
                         BtnOrder = 20,
                         MenuId = menuId,
+                        IsVisible = (long)PrivilegeOperation.Enable,
                         RecordStatus = recordStatus
                     });
             }
@@ -188,6 +190,7 @@ namespace Infrastructure.Crosscutting.Security.Services
                         BtnIcon = "icon-remove",
                         BtnOrder = 30,
                         MenuId = menuId,
+                        IsVisible = (long)PrivilegeOperation.Enable,
                         RecordStatus = recordStatus
                     });
             }

@@ -27,7 +27,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 
         public static IDbConnection CreateOracleConnection()
         {
-            const string ConnString = "Data Source=wjdb;User Id=wjgh;Password=wjgh;";
+            //const string ConnString = "Data Source=wjdb;User Id=wjgh;Password=wjgh;";
+            const string ConnString = "Data Source=bmj;User Id=businessuser;Password=123456;";
 
 #pragma warning disable 618
             var conn = new OracleConnection(ConnString);

@@ -130,7 +130,7 @@ namespace Infrastructure.Crosscutting.Security.Test
         public void AddMenu()
         {
             string sysId = Guid.NewGuid().ToString();
-            using (IDbConnection connection = ConnectionFactory.CreateMsSqlConnection())
+            using (IDbConnection connection = ConnectionFactory.CreateOracleConnection())
             {
                 var p = new DynamicParameters();
                 p.Add("@SysId", sysId);

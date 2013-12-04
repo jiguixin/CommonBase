@@ -13,8 +13,8 @@
     </div>
 
     <div id="toolbar">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" plain="true" onclick="CheckAll()">选中所有</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="ClearChecked()">取消选中</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" plain="true" onclick="CheckAll()">全选</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="ClearChecked()">取消选择</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="Save()">保存</a>    
     </div>
      
@@ -98,16 +98,16 @@
                 selectOnCheck: false,
                 columns: [[ 
                     {
-                        field: 'text', title: '名称', width: 150,
+                        field: 'text', title: '名称', width: 200,
                         formatter: function (value, rec) { 
                             if (value) {
                                 return '<input id="' + rec.id + '" type="checkbox">' + (value);
                             } 
                         }
                     },
-                    { field: 'link', title: '链接', width: 150 }, 
+                    { field: 'link', title: '链接', width: 200 }, 
                     {
-                        field: 'buttons', title: '操作',
+                        field: 'buttons', title: '操作',width: 250,
                         formatter: formatOperate
                     }
                 ]],

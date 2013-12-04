@@ -64,7 +64,8 @@ namespace Web.Controllers
         //获取登录用户菜单列表
         public JsonResult GetMenusByLoginUser()
         {
-            return Json(menuService.GetPrivilegedSysMenuByUserId(UserData.SysId), JsonRequestBehavior.AllowGet);
+            //return Json(menuService.GetPrivilegedSysMenuByUserId(UserData.SysId), JsonRequestBehavior.AllowGet);
+            return Json(GetUserMenusPrivilege(UserData.SysId));
         }
 
         //获取某用户可用菜单（tree格式）
@@ -625,6 +626,7 @@ namespace Web.Controllers
                         link = allMenu.MenuLink,
                         recordStatus = allMenu.RecordStatus,
                         @checked = allMenu.isCheck,
+                        visible = allMenu.IsVisible != null && ((PrivilegeOperation)(allMenu.IsVisible.Value)) == PrivilegeOperation.Enable ? "启用" : "禁用"
                     };
                 treeResults.Add(BuildTreeByLoop(allMenu, allButtons, result));
             }
@@ -657,6 +659,8 @@ namespace Web.Controllers
                         link = m.MenuLink,
                         recordStatus = m.RecordStatus,
                         @checked = m.isCheck,
+                        visible = m.IsVisible != null && ((PrivilegeOperation)(m.IsVisible.Value)) == PrivilegeOperation.Enable ? "启用" : "禁用"
+
                     };
                 ts.Add(BuildTreeByLoop(m, allButtons, t));
             }
@@ -695,7 +699,7 @@ namespace Web.Controllers
                                 @checked = true,
                                 link = button.BtnFunction,
                                 order = button.BtnOrder,
-                                recordStatus = button.RecordStatus
+                                recordStatus = button.RecordStatus,
                             };
 
                             buttons.Add(buttonc);
@@ -715,7 +719,7 @@ namespace Web.Controllers
                             @checked = false,
                             link = button.BtnFunction,
                             order = button.BtnOrder,
-                            recordStatus = button.RecordStatus
+                            recordStatus = button.RecordStatus,
                         };
                         buttons.Add(buttonc);
 
@@ -750,9 +754,11 @@ namespace Web.Controllers
             {
                 id = menu.SysId,
                 text = menu.MenuName,
+                link=menu.MenuLink,
                 iconCls = menu.MenuIcon,
                 @checked = menu.isCheck,
                 children = new EasyUiTreeResult[0],
+                visible = menu.IsVisible != null && ((PrivilegeOperation)(menu.IsVisible.Value)) == PrivilegeOperation.Enable ? "启用" : "禁用",
                 buttons = buttons.ToArray()
             };
 

@@ -39,6 +39,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                            BtnName = item.BtnName,
                            BtnIcon = item.BtnIcon,
                            BtnOrder = item.BtnOrder,
+                           BtnFunction=item.BtnFunction,
                            RecordStatus = item.RecordStatus,
                            IsVisible = item.IsVisible
                        };
@@ -49,7 +50,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
             var p = new DynamicParameters();
             p.Add(Constant.ColumnSysButtonMenuId, menuId.Trim());
 
-            return base.DeleteByWhere(string.Format("u.{1}={0}{1}", Constant.SqlReplaceParameterPrefix, Constant.ColumnSysButtonMenuId),trans, p);
+            return base.DeleteByWhere(string.Format("{1}={0}{1}", Constant.SqlReplaceParameterPrefix, Constant.ColumnSysButtonMenuId),trans, p);
             //return base.DeleteByWhere(string.Format("{0}='{1}'",Constant.ColumnSysButtonMenuId, menuId), trans);
         }
 

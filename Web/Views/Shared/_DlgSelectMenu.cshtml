@@ -26,7 +26,7 @@
      >
      <table id="menuTreeGrid" class="easyui-treegrid" 
             data-options="
-                url: '@Url.Action("GetAllMenusRetTreeGrid", "RestApi")',
+                url: '@Url.Action("GetAllMenusRetTreeGrid", "RestApi",new { t = DateTime.Now.Ticks })',
                 method: 'get',
                 rownumbers: true,
                 idField: 'id',

@@ -29,7 +29,7 @@ namespace Infrastructure.Crosscutting.Security.Test
             const string ConnString = "Data Source=wjdb;User Id=wjgh;Password=wjgh;";
 
 #pragma warning disable 618
-            var conn = new OracleConnection();
+            var conn = new OracleConnection(ConnString);
 #pragma warning restore 618
             conn.Open();
             return conn;
