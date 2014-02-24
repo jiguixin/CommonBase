@@ -35,7 +35,7 @@ function InitLeftMenu() {
             if (menu.checked && menu.visible == '启用') {
                 menulist = '<ul>';
                 $.each(menu.children, function (n, child) {
-                    if (menu.checked && child.visible == '启用') {
+                    if (child.checked && child.visible == '启用') {
                         menulist += '<li><div><a ref="' + child.order + '" href="#"  rev="' + child.id + '"  rel="' + child.link + '" ><span class="icon ' + child.iconCls + '" >&nbsp;</span><span class="nav">' + child.text + '</span></a></div></li> ';
                     }
                 });
@@ -107,7 +107,8 @@ function InitLeftMenu() {
 
      
     $.getJSON(getCurrentUserInfoUrl + "?" + new Date().getTime(), function (data) {
-        $("#userName")[0].innerText = data.UserInfo.RealName;
+        $("#userName")[0].textContent = data.UserInfo.RealName;
+        //$("#userName")[0].innerHtml在火狐下不能修改内容
     });
     
 

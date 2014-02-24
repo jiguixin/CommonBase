@@ -46,12 +46,20 @@
             return false;
         }
 
-        $.post('/ajax/editpassword.ashx?newpass=' + $newpass.val(), function(msg) {
-            msgShow('系统提示', '恭喜，密码修改成功！<br>您的新密码为：' + msg, 'info');
-            $newpass.val('');
-            $rePass.val('');
-            close();
-        });
+        var postData = {
+            'password': $rePass.val()
+        };
+        //获取按钮值
+        $.getJSON('@Url.Action("ModifyPassword", "RestApi")', postData, function (data) {
+                    if (data == true) {
+                        msgShow('系统提示', '恭喜，密码修改成功！<br>您的新密码为：' + $rePass.val(), 'info');
+                        $newpass.val('');
+                        $rePass.val('');
+                        close();
+                    } else {
+                        msgShow('系统提示', '抱歉，密码修改失败');
+                    }
+                });
     }
      
     $(function () {
@@ -106,25 +114,27 @@
         <div class="footer">By jim</div>
     </div>
      
-    <!--修改密码窗口-->
+      <!--修改密码窗口-->
     <div id="w" class="easyui-window" title="修改密码" collapsible="false" minimizable="false"
-         maximizable="false" icon="icon-save"  style="background: #fafafa; height: 150px; padding: 5px; width: 300px;">
+        maximizable="false" icon="icon-save" style="background: #fafafa; height: 300px; padding: 5px; width: 300px;">
         <div class="easyui-layout" fit="true">
-            <div region="center" border="false" style="background: #fff; border: 1px solid #ccc; padding: 10px;">
-                <table cellpadding=3>
+            <div region="center" border="false" style="background: #fff; padding: 5px;">
+                <table cellpadding="3" style="border: none">
                     <tr>
                         <td>新密码：</td>
-                        <td><input id="txtNewPass" type="Password" class="txt01" /></td>
+                        <td>
+                            <input id="txtNewPass" type="Password" class="txt01" /></td>
                     </tr>
                     <tr>
                         <td>确认密码：</td>
-                        <td><input id="txtRePass" type="Password" class="txt01" /></td>
+                        <td>
+                            <input id="txtRePass" type="Password" class="txt01" /></td>
                     </tr>
                 </table>
             </div>
-            <div region="south" border="false" style="height: 30px; line-height: 30px; text-align: right;">
-                <a id="btnEp" class="easyui-linkbutton" icon="icon-ok" href="javascript:void(0)" >
-                    确定</a> <a id="btnCancel" class="easyui-linkbutton" icon="icon-cancel" href="javascript:void(0)">取消</a>
+            <div region="south" border="false" style="height: 30px; text-align: center;">
+                <a id="btnEp" class="easyui-linkbutton" icon="icon-ok" href="javascript:void(0)">确定</a>
+                <a id="btnCancel" class="easyui-linkbutton" icon="icon-cancel" href="javascript:void(0)">取消</a>
             </div>
         </div>
     </div>

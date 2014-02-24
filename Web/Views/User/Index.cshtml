@@ -85,21 +85,13 @@
                             sorter: sort 
                         }
                     ]
-                ]
+                ],
+                onLoadSuccess: function (row, data) {
+                    addToolBar();
+                }
             });
         });
 
-        //首先获取iframe标签的id值
-        var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
-
-        //获取按钮值
-        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")' + "?" + new Date().getTime(), { menuId: iframeid }, function (data) {
-            if (data == null) {
-                return;
-            }
-            $('#fixedGrid').datagrid("addToolbarItem", data);
-
-        });
 
         function NewItem() {
             $('#dlgNew').dialog('open').dialog('setTitle', '新增用户');

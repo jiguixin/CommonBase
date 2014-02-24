@@ -114,7 +114,8 @@
                             @Html.LabelFor(model => model.MenuIcon)：
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.MenuIcon)
+                            @Html.HiddenFor(model => model.MenuIcon,new { @class = "ico" })
+                            @Html.TextBox("ico", null, new { @class = "text-box single-line txtIco" })
                         </td>
 
                         <td>
@@ -229,7 +230,8 @@
                             @Html.LabelFor(model => model.MenuIcon)：
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.MenuIcon)
+                            @Html.HiddenFor(model => model.MenuIcon,new { @class = "ico" })
+                            @Html.TextBox("ico", null, new { @class = "text-box single-line txtIco" })
                         </td>
 
                         <td>
@@ -269,17 +271,28 @@
     </div>
 
     @Html.Partial("_DlgSelectMenu")
+    @Html.Partial("_DlgSelectIco")
 }
 
 @section scriptsFooter
 {
     <script type="text/javascript">
-        $('.txtMenuId').click(function() {
+        $('.txtMenuId').click(function () {
             selectMenuDialog();
         });
+        $('.txtIco').click(function () {
+            selectIcoDialog();
+        });
+        function GetSelectedIco(row) {
+            if (row) {
+                $('.txtIco').val(row.text);
+                $('.ico').val(row.text);
+                $('#dlgSelectIco').dialog('close');
+            }
+        }
 
         $("#menuTreeGrid").treegrid({
-            onDblClickRow: function(row) {
+            onDblClickRow: function (row) {
                 if (row != null) {
                     $('.txtMenuId').val(row.text);
                     $(".hiddenMenuId").val(row.id);
@@ -305,15 +318,14 @@
                 { field: 'order', title: '@Html.LabelFor(model => model.MenuOrder)', width: 150 },
                 { field: 'visible', title: '@Html.LabelFor(model => model.IsVisible)', width: 150 },
                 {
-                    field: 'buttons', title: '操作',width: 250,
+                    field: 'buttons', title: '操作', fixed: true,
                     formatter: formatOperate
                 }
             ]],
-            onLoadSuccess: function(row, data) {
+            onLoadSuccess: function (row, data) {
+                addToolBar();
                 if (data) {
-                    $.each(data, function(index, item) {
-
-                    });
+                   
                 }
             }
         });
@@ -358,17 +370,7 @@
             return result;
         };
 
-        //首先获取iframe标签的id值
-        var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
-
-        //获取按钮值
-        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")' + "?" + new Date().getTime(), { menuId: iframeid }, function(data) {
-            if (data == null) {
-                return;
-            }
-            $('#fixedGrid').datagrid("addToolbarItem", data);
-        });
-
+        
         function NewItem() {
             $('#dlgNew').dialog('open').dialog('setTitle', '新增');
             $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
@@ -383,7 +385,7 @@
                 $("#buttonsTD").empty();
                 var id = row.id;
                 //去读取数据库中的最新数据，防止多人编辑
-                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function(data) {
+                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function (data) {
                     if (data != null) {
                         $.each(data.Buttons, function (i, item) {
                             var content;
@@ -393,29 +395,32 @@
                             } else {
                                 content = "<input type='checkbox' id='" + item.SysId + "' value='" + item.SysId + "' />" + item.BtnName;
                             }
-                                    
+
                             $("#buttonsTD").append(content);
                         });
+                        $('.txtIco').val(data.MenuIcon);
+                        $('.ico').val(data.MenuIcon);
+
                         $('#UpdateForm').form('load', data);
                         //查询父ID，获得Name绑定到文本框中
                         if (data.MenuParentId != null) {
-                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function(pData) {
-                                if (pData != null) {
-                                    $(".txtMenuId").val(pData.MenuName);
-                                }
-                            });
-                        }
+                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function (pData) {
+                            if (pData != null) {
+                                $(".txtMenuId").val(pData.MenuName);
+                            }
+                        });
                     }
+                }
                 });
-            }
         }
+    }
 
-        function DelItem() {
-            var row = $('#fixedGrid').datagrid('getSelected');
-            if (row) {
-                $.messager.confirm('Confirm', '确定删除此记录?', function(r) {
-                    if (r) {
-                        $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function(result) {
+    function DelItem() {
+        var row = $('#fixedGrid').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('Confirm', '确定删除此记录?', function (r) {
+                if (r) {
+                    $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function (result) {
                             if (result) {
                                 $('#fixedGrid').treegrid("reload", {}); // 后台必须要跟花括号不然更新不成功
                             } else {
@@ -469,8 +474,8 @@
 
                 $.getJSON('@Url.Action("EnableMenuButton", "RestApi")' + "?" + new Date().getTime(), { 'enButtonIds': enBtIds, 'disButtonIds': disBtIds },
                     function (result) {
-                        
-                });
+
+                    });
 
                 $('#dlgEdit').dialog('close');
                 $('#fixedGrid').treegrid('reload', {});

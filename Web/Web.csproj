@@ -2284,6 +2284,7 @@
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\eayuiExtend\datagridExtend.js" />
     <Content Include="Scripts\eayuiExtend\formExtend.js" />
+    <Content Include="Scripts\eayuiExtend\utill.js" />
     <Content Include="Scripts\Home\index.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
@@ -2322,6 +2323,7 @@
     <Content Include="Views\Shared\IndexTemp.cshtml" />
     <Content Include="Views\Menu\Index.cshtml" />
     <Content Include="Views\Shared\_DlgSelectMenu.cshtml" />
+    <Content Include="Views\Shared\_DlgSelectIco.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

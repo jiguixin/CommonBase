@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -46,6 +47,23 @@ namespace Web.Controllers
             //获取用户消息信息
             return Json(userService.UserRepository.GetModel(UserData.SysId
                             ), JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public JsonResult ModifyPassword(string password)
+        {
+            SysUser user = userService.UserRepository.GetModel(UserData.SysId);
+            user.UserPwd = password.Trim();
+
+            if (userService.UpdateUser(user) == 2)
+            {
+                return Json(true); ;
+            }
+            return Json(false); ;
         }
 
         /// <summary>
@@ -340,6 +358,38 @@ namespace Web.Controllers
 
             return Json(lstResult,
                 JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region 图标
+
+        public JsonResult GetIcos()
+        {
+            List<EasyUiTreeResult> results = new List<EasyUiTreeResult>();
+            string filePath = Server.MapPath(@".\..\Content\easyui\themes\icon.css");
+            StreamReader objReader = new StreamReader(filePath);
+            while (!objReader.EndOfStream)
+            {
+                string str = objReader.ReadLine();
+                if (!string.IsNullOrEmpty(str.Trim()))
+                {
+                    if (str.Substring(0, 1) == ".")
+                    {
+                        string ico = str.Substring(1, str.Length - 2);
+                        EasyUiTreeResult result = new EasyUiTreeResult()
+                        {
+                            id = Guid.NewGuid().ToString(),
+                            text = ico,
+                            iconCls = ico
+                        };
+
+                        results.Add(result);
+                    }
+                }
+            }
+
+            return Json(results);
         }
 
         #endregion

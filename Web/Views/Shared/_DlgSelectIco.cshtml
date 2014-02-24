@@ -1,0 +1,43 @@
+﻿<div id="dlgSelectIco" class="easyui-dialog" style="width: 300px; height: 400px;"
+      closed="true" 
+      data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var row = $('#icoTreegridGrid').datagrid('getSelected');
+                      if (row) 
+                       {
+                            GetSelectedIco(row);
+                       }
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgSelectIco').dialog('close');
+                    }
+                }]" 
+     >
+     <table id="icoTreegridGrid" class="easyui-treegrid" 
+            data-options="
+                url: '@Url.Action("GetIcos", "RestApi",new { t = DateTime.Now.Ticks })',
+                method: 'get',
+                rownumbers: true,
+                idField: 'id',
+                treeField: 'text',
+                fitColumns:'true',
+                fit:true 
+            ">
+         <thead>
+             <tr> 
+                 <th data-options="field:'text'" width="250">图标</th>
+             </tr>
+         </thead>
+     </table>
+ </div>
+
+<script>
+    function selectIcoDialog() {
+        $('#dlgSelectIco').dialog('open').dialog('setTitle', '选择图标');
+    }
+</script>
