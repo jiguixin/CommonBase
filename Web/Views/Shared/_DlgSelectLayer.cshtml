@@ -1,0 +1,51 @@
+﻿@model Infrastructure.Crosscutting.Security.Model.GISLayer
+
+
+<div id="dlgSelectLayer" class="easyui-dialog" style="width: 300px; height: 400px;"
+    closed="true"
+    data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var row = $('#layerTreeGrid').datagrid('getSelected');
+                      if (row) 
+                       {
+                            GetSelectedLayer(row);
+                       }
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgSelectLayer').dialog('close');
+                    }
+                }]">
+    <table id="layerTreeGrid" class="easyui-datagrid" 
+           data-options="
+                url: '@Url.Action("GetLayersForJson", "RestApi", new { t = DateTime.Now.Ticks })',
+                method: 'get',
+                idField:'id',
+                rownumbers: true,
+                rownumbers: true, //是否显示行号 
+                singleSelect: true,//是否为单选
+                nowrap: true,
+                striped: true,
+                collapsible: true,
+                remoteSort: false,
+         onDblClickRow:function(rowIndex, rowData){
+         GetSelectedLayer(rowData);
+         }
+            ">
+        <thead>
+            <tr>
+                <th data-options="field:'text'" width="250">@Html.LabelFor(model => model.LayerName)</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<script>
+    function selectLayerDialog() {
+        $('#dlgSelectLayer').dialog('open').dialog('setTitle', '选择图层');
+    }
+</script>

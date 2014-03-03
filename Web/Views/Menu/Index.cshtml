@@ -4,11 +4,6 @@
     this.Layout = "~/Views/Shared/IndexTemp.cshtml";
 }
 
-@section scriptsHeader
- {
-    <script src="~/Scripts/eayuiExtend/formExtend.js"></script>
-    <script src="~/Scripts/eayuiExtend/datagridExtend.js"></script>
-}
 
 @section stylesHeader
 {
@@ -277,7 +272,9 @@
 @section scriptsFooter
 {
     <script type="text/javascript">
-        $('.txtMenuId').click(function () {
+       
+        
+        $('.txtMenuId').click(function() {
             selectMenuDialog();
         });
         $('.txtIco').click(function () {
@@ -290,9 +287,9 @@
                 $('#dlgSelectIco').dialog('close');
             }
         }
-
+        
         $("#menuTreeGrid").treegrid({
-            onDblClickRow: function (row) {
+            onDblClickRow: function(row) {
                 if (row != null) {
                     $('.txtMenuId').val(row.text);
                     $(".hiddenMenuId").val(row.id);
@@ -318,17 +315,15 @@
                 { field: 'order', title: '@Html.LabelFor(model => model.MenuOrder)', width: 150 },
                 { field: 'visible', title: '@Html.LabelFor(model => model.IsVisible)', width: 150 },
                 {
-                    field: 'buttons', title: '操作', fixed: true,
+                    field: 'buttons', title: '操作',fixed:true,
                     formatter: formatOperate
                 }
             ]],
-            onLoadSuccess: function (row, data) {
+            onLoadSuccess: function(row, data) {
                 addToolBar();
-                if (data) {
-                   
-                }
             }
         });
+        
         function formatOperate(value, rowData, rowIndex) {
             var oper = "";
             if (rowData.buttons != null) {
@@ -347,30 +342,31 @@
             }
             return oper;
         }
-        String.prototype.format = function (args) {
-            var result = this;
-            if (arguments.length > 0) {
-                if (arguments.length == 1 && typeof (args) == "object") {
-                    for (var key in args) {
-                        if (args[key] != undefined) {
-                            var reg = new RegExp("({" + key + "})", "g");
-                            result = result.replace(reg, args[key]);
-                        }
-                    }
-                } else {
-                    for (var i = 0; i < arguments.length; i++) {
-                        if (arguments[i] != undefined) {
-                            //var reg = new RegExp("({[" + i + "]})", "g");//这个在索引大于9时会有问题，谢谢何以笙箫的指出
-                            var reg = new RegExp("({)" + i + "(})", "g");
-                            result = result.replace(reg, arguments[i]);
-                        }
-                    }
-                }
-            }
-            return result;
-        };
+        //String.prototype.format = function (args) {
+        //    var result = this;
+        //    if (arguments.length > 0) {
+        //        if (arguments.length == 1 && typeof (args) == "object") {
+        //            for (var key in args) {
+        //                if (args[key] != undefined) {
+        //                    var reg = new RegExp("({" + key + "})", "g");
+        //                    result = result.replace(reg, args[key]);
+        //                }
+        //            }
+        //        } else {
+        //            for (var i = 0; i < arguments.length; i++) {
+        //                if (arguments[i] != undefined) {
+        //                    //var reg = new RegExp("({[" + i + "]})", "g");//这个在索引大于9时会有问题
+        //                    var reg = new RegExp("({)" + i + "(})", "g");
+        //                    result = result.replace(reg, arguments[i]);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return result;
+        //};
 
-        
+
+
         function NewItem() {
             $('#dlgNew').dialog('open').dialog('setTitle', '新增');
             $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
@@ -385,7 +381,7 @@
                 $("#buttonsTD").empty();
                 var id = row.id;
                 //去读取数据库中的最新数据，防止多人编辑
-                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function (data) {
+                $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + id + '?' + new Date().getTime(), function(data) {
                     if (data != null) {
                         $.each(data.Buttons, function (i, item) {
                             var content;
@@ -395,32 +391,32 @@
                             } else {
                                 content = "<input type='checkbox' id='" + item.SysId + "' value='" + item.SysId + "' />" + item.BtnName;
                             }
-
+                                    
                             $("#buttonsTD").append(content);
                         });
                         $('.txtIco').val(data.MenuIcon);
                         $('.ico').val(data.MenuIcon);
-
+                        
                         $('#UpdateForm').form('load', data);
                         //查询父ID，获得Name绑定到文本框中
                         if (data.MenuParentId != null) {
-                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function (pData) {
-                            if (pData != null) {
-                                $(".txtMenuId").val(pData.MenuName);
-                            }
-                        });
+                            $.getJSON('@Url.Action("GetMenu", "RestApi")' + '/' + data.MenuParentId + '?' + new Date().getTime(), function(pData) {
+                                if (pData != null) {
+                                    $(".txtMenuId").val(pData.MenuName);
+                                }
+                            });
+                        }
                     }
-                }
                 });
+            }
         }
-    }
 
-    function DelItem() {
-        var row = $('#fixedGrid').datagrid('getSelected');
-        if (row) {
-            $.messager.confirm('Confirm', '确定删除此记录?', function (r) {
-                if (r) {
-                    $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function (result) {
+        function DelItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('提醒', '确定删除此菜单?', function(r) {
+                    if (r) {
+                        $.post('@Url.Action("DeleteMenu", "RestApi")', { SysId: row.id }, function(result) {
                             if (result) {
                                 $('#fixedGrid').treegrid("reload", {}); // 后台必须要跟花括号不然更新不成功
                             } else {
@@ -474,7 +470,7 @@
 
                 $.getJSON('@Url.Action("EnableMenuButton", "RestApi")' + "?" + new Date().getTime(), { 'enButtonIds': enBtIds, 'disButtonIds': disBtIds },
                     function (result) {
-
+                        
                     });
 
                 $('#dlgEdit').dialog('close');

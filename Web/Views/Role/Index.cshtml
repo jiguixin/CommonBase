@@ -21,7 +21,6 @@
                 singleSelect: true,//是否为单选
                 nowrap: true,
                 striped: true,
-                fit:true,
                 collapsible: true,
                 remoteSort: false,
                 toolbar: [],
@@ -42,8 +41,8 @@
                 }
             });
         });
-
-
+        
+        
         function NewItem() {
             $('#dlgNew').dialog('open').dialog('setTitle', '新增角色');
             $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
@@ -66,7 +65,7 @@
         function DelItem() {
             var row = $('#fixedGrid').datagrid('getSelected');
             if (row) {
-                $.messager.confirm('Confirm', '确定删除此角色?', function (r) {
+                $.messager.confirm('提醒', '确定删除此角色?', function(r) {
                     if (r) {
                         $.post('@Url.Action("DeleteRole", "RestApi")', { SysId: row.SysId }, function(result) {
                             if (result) {

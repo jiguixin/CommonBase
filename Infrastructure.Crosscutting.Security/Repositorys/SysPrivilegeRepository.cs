@@ -8,13 +8,16 @@ using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysPrivilegeRepository:Repository<SysPrivilege>
     {
         #region 属性
-
-        public SysPrivilegeRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysPrivilegeSql"))
+         
+        public SysPrivilegeRepository(ISql sql)
+            : base(sql)
         {
+
         }
 
         public override string TableName

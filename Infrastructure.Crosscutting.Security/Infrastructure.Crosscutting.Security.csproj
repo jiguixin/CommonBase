@@ -55,6 +55,9 @@
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Common\Util.cs" />
+    <Compile Include="Core\IAppContext.cs" />
+    <Compile Include="Core\IConnectionFactory.cs" />
+    <Compile Include="Core\SqlBase.cs" />
     <Compile Include="Cryptography\Crypto.cs" />
     <Compile Include="Cryptography\CryptoConfig.cs" />
     <Compile Include="Cryptography\CryptogSym.cs" />
@@ -101,27 +104,18 @@
     <Compile Include="Services\SysPrivilegeService.cs" />
     <Compile Include="Services\SysRoleService.cs" />
     <Compile Include="Services\SysUserService.cs" />
-    <Compile Include="SqlImple\ISql.cs" />
+    <Compile Include="Core\ISql.cs" />
     <Compile Include="SqlImple\Oracle.cs" />
     <Compile Include="SqlImple\SqlServer.cs" />
-    <Compile Include="SqlImple\SysButtonSqlServer.cs" />
-    <Compile Include="SqlImple\SysConfigSqlServer.cs" />
-    <Compile Include="SqlImple\SysDataPrivilegeSqlServer.cs" />
-    <Compile Include="SqlImple\SysMenuSqlServer.cs" />
-    <Compile Include="SqlImple\SysPrivilegeSqlServer.cs" />
-    <Compile Include="SqlImple\SysRoleSqlServer.cs" />
-    <Compile Include="SqlImple\SysUserInfoSqlServer.cs" />
-    <Compile Include="SqlImple\SysUserRoleSqlServer.cs" />
-    <Compile Include="SqlImple\SysUserSqlServer.cs" />
-    <Compile Include="SqlImple\SysButtonOracle.cs" />
-    <Compile Include="SqlImple\SysConfigOracle.cs" />
-    <Compile Include="SqlImple\SysDataPrivilegeOracle.cs" />
-    <Compile Include="SqlImple\SysMenuOracle.cs" />
-    <Compile Include="SqlImple\SysPrivilegeOracle.cs" />
-    <Compile Include="SqlImple\SysRoleOracle.cs" />
-    <Compile Include="SqlImple\SysUserInfoOracle.cs" />
-    <Compile Include="SqlImple\SysUserRoleOracle.cs" />
-    <Compile Include="SqlImple\SysUserOracle.cs" />
+    <Compile Include="SqlImple\SysButtonBase.cs" />
+    <Compile Include="SqlImple\SysConfigBase.cs" />
+    <Compile Include="SqlImple\SysDataPrivilegeBase.cs" />
+    <Compile Include="SqlImple\SysMenuBase.cs" />
+    <Compile Include="SqlImple\SysPrivilegeBase.cs" />
+    <Compile Include="SqlImple\SysRoleBase.cs" />
+    <Compile Include="SqlImple\SysUserBase.cs" />
+    <Compile Include="SqlImple\SysUserInfoBase.cs" />
+    <Compile Include="SqlImple\SysUserRoleBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.Data.Ado\Infrastructure.Data.Ado.csproj">

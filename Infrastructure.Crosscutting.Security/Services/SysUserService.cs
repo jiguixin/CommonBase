@@ -31,10 +31,10 @@ namespace Infrastructure.Crosscutting.Security.Services
             get { return RepositoryFactory.UserRoleRepository; }
         }
 
-        public SysRoleRepository RoleRepository
-        {
-            get { return RepositoryFactory.RoleRepository; }
-        }
+        /* public SysRoleRepository RoleRepository
+         {
+             get { return RepositoryFactory.RoleRepository; }
+         }*/
 
         public SysUserInfoRepository UserInfoRepository
         {

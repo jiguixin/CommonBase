@@ -5,12 +5,13 @@ using Infrastructure.Crosscutting.Security.SqlImple;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysDataPrivilegeRepository:Repository<SysDataPrivilege>
-    {
-        public SysDataPrivilegeRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysDataPrivilegeSql"))
+    { 
+        public SysDataPrivilegeRepository(ISql sql)
+            : base(sql)
         {
-            
         }
         #region 属性
            

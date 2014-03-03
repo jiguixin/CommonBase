@@ -5,18 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Web;
 using System.Web.Http;
 using System.Web.UI.WebControls;
 using Infrastructure.Crosscutting.Security.Common;
 using Infrastructure.Crosscutting.Security.Cryptography;
 using Infrastructure.Crosscutting.Security.Model;
 using Infrastructure.Crosscutting.Security.Repositorys;
+using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
+    using System.Web.Helpers;
     using System.Web.Mvc;
 
     using Infrastructure.Crosscutting.Security.Services;
+    using Infrastructure.Data.Ado.Dapper;
 
     using Web.Models;
     using Web.Models.EasyUi;
@@ -26,10 +31,11 @@ namespace Web.Controllers
     {
         private ISysRoleService roleService = ServiceFactory.RoleService;
         private ISysMenuService menuService = ServiceFactory.MenuService;
+        private ISysButtonService buttonService = ServiceFactory.ButtonService;
         private ISysUserService userService = ServiceFactory.UserService;
         private ISysPrivilegeService privilegeService = ServiceFactory.PrivilegeService;
-
-        private ISysButtonService buttonService = ServiceFactory.ButtonService;
+        
+        //private SysFileService fileService = ServiceFactory.FileService; 
 
         #region Json
 
@@ -148,9 +154,23 @@ namespace Web.Controllers
 
             if (userService.AddUser(user) > 0)
             {
+                //Logger.LogMsg(
+                //    LogLevel.Info,
+                //    string.Format("创建用户:{0} 成功", user.UserName),
+                //    UserData.SysId,
+                //    UserData.UserName,
+                //    "RestApi->AddUser", suggest: Util.DumpProperties(user));
                 return Json(true);
             }
-
+            //Logger.LogMsg(
+            //    LogLevel.Error,
+            //    string.Format("创建用户:{0} 失败", user.UserName),
+            //    UserData.SysId,
+            //    UserData.UserName,
+            //    "RestApi->AddUser",
+            //    "RestApi",
+            //    "如果不报错是数据问题", suggest: Util.DumpProperties(user)
+            //    );
             return Json(false);
         }
 
@@ -163,8 +183,23 @@ namespace Web.Controllers
 
             if (userService.UpdateUser(user) > 0)
             {
+//                Logger.LogMsg(
+//                   LogLevel.Info,
+//                   string.Format("修改用户:{0} 成功", user.UserName),
+//                   UserData.SysId,
+//                   UserData.UserName,
+//                   "RestApi->UpdateUser", suggest: Util.DumpProperties(user));
                 return Json(true);
             }
+            /*Logger.LogMsg(
+                LogLevel.Error,
+                string.Format("修改用户:{0} 失败", user.UserName),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->UpdateUser",
+                "RestApi",
+                "如果不报错是数据问题",
+                suggest: Util.DumpProperties(user));*/
 
             return Json(false);
         }
@@ -175,8 +210,23 @@ namespace Web.Controllers
         {
             if (userService.UserRepository.Delete(SysId) > 0)
             {
+               /* Logger.LogMsg(
+                   LogLevel.Info,
+                   string.Format("删除用户:{0} 成功", SysId),
+                   UserData.SysId,
+                   UserData.UserName,
+                   "RestApi->DeleteUser");*/
                 return Json(true);
             }
+            /*Logger.LogMsg(
+               LogLevel.Error,
+               string.Format("删除用户:{0} 失败", SysId),
+               UserData.SysId,
+               UserData.UserName,
+               "RestApi->DeleteUser",
+               "RestApi",
+               "如果不报错是数据问题"
+               );*/
             return Json(false);
         }
 
@@ -224,9 +274,23 @@ namespace Web.Controllers
 
             if (roleService.RoleRepository.Add(role) > 0)
             {
+                /*Logger.LogMsg(
+                   LogLevel.Info,
+                   string.Format("创建角色:{0} 成功", role.RoleName),
+                   UserData.SysId,
+                   UserData.UserName,
+                   "RestApi->AddRole", suggest: Util.DumpProperties(role));*/
                 return Json(true);
             }
-
+           /* Logger.LogMsg(
+                LogLevel.Error,
+                string.Format("创建角色:{0} 失败", role.RoleName),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->AddRole",
+                "RestApi",
+                "如果不报错是数据问题", suggest: Util.DumpProperties(role)
+                );*/
             return Json(false);
         }
 
@@ -239,9 +303,23 @@ namespace Web.Controllers
 
             if (roleService.RoleRepository.Update(role) > 0)
             {
+               /* Logger.LogMsg(
+                  LogLevel.Info,
+                  string.Format("修改角色:{0} 成功", role.RoleName),
+                  UserData.SysId,
+                  UserData.UserName,
+                  "RestApi->UpdateRole", suggest: Util.DumpProperties(role));*/
                 return Json(true);
             }
-
+            /*Logger.LogMsg(
+                LogLevel.Error,
+                string.Format("修改角色:{0} 失败", role.RoleName),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->UpdateRole",
+                "RestApi",
+                "如果不报错是数据问题", suggest: Util.DumpProperties(role)
+                );*/
             return Json(false);
         }
 
@@ -250,8 +328,24 @@ namespace Web.Controllers
         {
             if (roleService.RoleRepository.Delete(SysId) > 0)
             {
+               /* Logger.LogMsg(
+                 LogLevel.Info,
+                 string.Format("删除角色:{0} 成功", SysId),
+                 UserData.SysId,
+                 UserData.UserName,
+                 "RestApi->DeleteRole");*/
                 return Json(true);
             }
+
+           /* Logger.LogMsg(
+              LogLevel.Error,
+              string.Format("删除角色:{0} 失败", SysId),
+              UserData.SysId,
+              UserData.UserName,
+              "RestApi->DeleteRole",
+              "RestApi",
+              "如果不报错是数据问题"
+              );*/
             return Json(false);
         }
 
@@ -313,15 +407,22 @@ namespace Web.Controllers
                     userRoles.Add(userRole);
                 }
             }
-            if (userRoles.Count==0)
+            if (userRoles.Count == 0)
             {
                 userRoles.Add(new SysUserRole()
                     {
                         SysId = Util.NewId(),
-                        UserId =null,
+                        UserId = null,
                         RoleId = roleId
                     });
             }
+
+           /* Logger.LogMsg(
+                LogLevel.Info,
+                string.Format("修改用户的角色,roleId:{0},userIds:{1} 成功", roleId, userIds),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->UpdateRolesForUser");*/
 
             return Json(roleService.SetUserRole(userRoles), JsonRequestBehavior.AllowGet);
         }
@@ -344,9 +445,51 @@ namespace Web.Controllers
             string userName = userService.UserRepository.GetModel(UserData.SysId).UserInfo.RealName;
             bool result = privilegeService.SetMenuPrivilege(sysId, privilegeMaster, menuIds, userName);
 
-            return Json(result, JsonRequestBehavior.AllowGet);
+            if (result)
+            {
+                /*Logger.LogMsg(
+                    LogLevel.Info,
+                    string.Format(
+                        "根据用户或者角色SysId重新配置权限,sysId:{0},privilegeMaster:{1},menus:{2} 成功",
+                        sysId,
+                        privilegeMaster,
+                        menus),
+                    UserData.SysId,
+                    UserData.UserName,
+                    "RestApi->UpdatePrivilege");*/
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+          /*  Logger.LogMsg(
+                  LogLevel.Error,
+                  string.Format(
+                      "根据用户或者角色SysId重新配置权限,sysId:{0},privilegeMaster:{1},menus:{2} 失败",
+                      sysId,
+                      privilegeMaster,
+                      menus),
+                  UserData.SysId,
+                  UserData.UserName,
+                  "RestApi->UpdatePrivilege");*/
+
+            return Json(false, JsonRequestBehavior.AllowGet);
         }
 
+        //获取该用户在该菜单下的权限数据
+        [HttpPost]
+        public JsonResult GetCurrentUserButtonsPrivilegeByMenuName(string menuName)
+        {
+             var p = new DynamicParameters();
+            p.Add(Constant.ColumnSysMenuMenuName, menuName);
+            var result = menuService.MenuRepository.GetList(Constant.ColumnSysId, string.Format("{0}={1}{0}",Constant.ColumnSysMenuMenuName,Constant.SqlReplaceParameterPrefix),p);
+
+            if (result == null)
+            {
+                return Json(null);
+            }
+
+            return GetCurrentUserButtonsPrivilege(result.FirstOrDefault().SysId);
+        }
+
+        [HttpPost]
         public JsonResult GetCurrentUserButtonsPrivilege(string menuId)
         {
             var lstSource = buttonService.GetButtonsPrivilegeByUserAndMenu(UserData.SysId, menuId);
@@ -358,38 +501,6 @@ namespace Web.Controllers
 
             return Json(lstResult,
                 JsonRequestBehavior.AllowGet);
-        }
-
-        #endregion
-
-        #region 图标
-
-        public JsonResult GetIcos()
-        {
-            List<EasyUiTreeResult> results = new List<EasyUiTreeResult>();
-            string filePath = Server.MapPath(@".\..\Content\easyui\themes\icon.css");
-            StreamReader objReader = new StreamReader(filePath);
-            while (!objReader.EndOfStream)
-            {
-                string str = objReader.ReadLine();
-                if (!string.IsNullOrEmpty(str.Trim()))
-                {
-                    if (str.Substring(0, 1) == ".")
-                    {
-                        string ico = str.Substring(1, str.Length - 2);
-                        EasyUiTreeResult result = new EasyUiTreeResult()
-                        {
-                            id = Guid.NewGuid().ToString(),
-                            text = ico,
-                            iconCls = ico
-                        };
-
-                        results.Add(result);
-                    }
-                }
-            }
-
-            return Json(results);
         }
 
         #endregion
@@ -407,13 +518,30 @@ namespace Web.Controllers
             {
                 menu.SysId = Util.NewId();
 
-
                 if (menuService.MenuRepository.AddOrModifyTrans(
                     menu,
-                    buttonService.InitialAddModifyDelBtn(menu.SysId, CreateRecordMsg, creatButton, editButton, deletButton),
+                    buttonService.InitialAddModifyDelBtn(
+                        menu.SysId,
+                        CreateRecordMsg,
+                        creatButton,
+                        editButton,
+                        deletButton),
                     menuService.MenuRepository.Add,
                     buttonService.ButtonRepository.Add) > 0)
                 {
+                   /* Logger.LogMsg(
+                        LogLevel.Info,
+                        string.Format(
+                            "添加菜单:{0},creatButton:{1},editButton:{2},deletButton:{3} 成功",
+                            menu.MenuName,
+                            creatButton,
+                            editButton,
+                            deletButton),
+                        UserData.SysId,
+                        UserData.UserName,
+                        "RestApi->AddMenu",
+                        suggest: Util.DumpProperties(menu));*/
+
                     return Json(true);
                 }
             }
@@ -421,9 +549,29 @@ namespace Web.Controllers
             {
                 if (menuService.MenuRepository.Add(menu) > 0)
                 {
+                    /*Logger.LogMsg(
+                        LogLevel.Info,
+                        string.Format("添加菜单:{0} 成功", menu.MenuName),
+                        UserData.SysId,
+                        UserData.UserName,
+                        "RestApi->AddMenu",
+                        suggest: Util.DumpProperties(menu));*/
                     return Json(true);
                 }
             }
+
+           /* Logger.LogMsg(
+                LogLevel.Error,
+                string.Format(
+                    "添加菜单:{0},creatButton:{1},editButton:{2},deletButton:{3} 失败",
+                    menu.MenuName,
+                    creatButton,
+                    editButton,
+                    deletButton),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->AddMenu",
+                suggest: Util.DumpProperties(menu));*/
 
             return Json(false);
         }
@@ -439,8 +587,24 @@ namespace Web.Controllers
 
             if (menuService.MenuRepository.Update(menu) > 0)
             {
+              /*  Logger.LogMsg(
+                  LogLevel.Info,
+                  string.Format("修改菜单:{0} 成功", menu.MenuName),
+                  UserData.SysId,
+                  UserData.UserName,
+                  "RestApi->UpdateMenu", suggest: Util.DumpProperties(menu));*/
                 return Json(true);
             }
+
+           /* Logger.LogMsg(
+                LogLevel.Error,
+                string.Format("修改菜单:{0} 失败", menu.MenuName),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->UpdateMenu",
+                "RestApi",
+                "如果不报错是数据问题",
+                suggest: Util.DumpProperties(menu));*/
 
             return Json(false);
         }
@@ -482,6 +646,12 @@ namespace Web.Controllers
                 }
                 tran.Commit();
             }
+            /*Logger.LogMsg(
+                LogLevel.Info,
+                string.Format("禁用菜单按钮,enButtonIds:{0},disButtonIds:{1} 成功", enButtonIds, disButtonIds),
+                UserData.SysId,
+                UserData.UserName,
+                "RestApi->EnableMenuButton");*/
             return Json(true);
         }
 
@@ -490,8 +660,23 @@ namespace Web.Controllers
         {
             if (menuService.MenuRepository.Delete(SysId) > 0)
             {
+                /*Logger.LogMsg(
+                  LogLevel.Info,
+                  string.Format("删除菜单:{0} 成功", SysId),
+                  UserData.SysId,
+                  UserData.UserName,
+                  "RestApi->DeleteMenu");*/
                 return Json(true);
             }
+            /*Logger.LogMsg(
+               LogLevel.Error,
+               string.Format("删除菜单:{0} 失败", SysId),
+               UserData.SysId,
+               UserData.UserName,
+               "RestApi->DeleteMenu",
+               "RestApi",
+               "如果不报错是数据问题"
+               );*/
             return Json(false);
         }
 
@@ -566,12 +751,50 @@ namespace Web.Controllers
 
         #endregion
 
+        
+        #region 图标
+
+        public JsonResult GetIcos()
+        {
+            List<EasyUiTreeResult> results = new List<EasyUiTreeResult>();
+            string filePath = Server.MapPath(@".\..\Content\easyui\themes\icon.css");
+            StreamReader objReader = new StreamReader(filePath);
+            while (!objReader.EndOfStream)
+            {
+                string str = objReader.ReadLine();
+                if (!string.IsNullOrEmpty(str.Trim()))
+                {
+                    if (str.Substring(0, 1) == ".")
+                    {
+                        string ico = str.Substring(1, str.Length - 2);
+
+                        //含有icon-标示的是easyui系统图标
+                        if (ico.IndexOf("icon-")==-1)
+                        {
+                            EasyUiTreeResult result = new EasyUiTreeResult()
+                            {
+                                id = Guid.NewGuid().ToString(),
+                                text = ico,
+                                iconCls = ico
+                            };
+
+                            results.Add(result);
+                        }
+                    }
+                }
+            }
+
+            return Json(results);
+        }
+
+        #endregion
+         
         #endregion
 
         #region Json格式构造
 
         #region tree格式构造
-
+         
         //获取用于tree显示的所有角色列表
         public List<EasyUiTreeResult> GetRolesListForJson()
         {
@@ -653,12 +876,12 @@ namespace Web.Controllers
             //将无权限菜单和有权限菜单合并
             allMenus = allMenus.Union(userMenus).OrderBy(x => x.MenuOrder);
             //将父菜单筛选出来，用作遍历
-            var parentMenus = allMenus.Where(x => x.MenuParentId == null);
+            var parentMenus = allMenus.Where(x => string.IsNullOrWhiteSpace(x.MenuParentId));
 
             //构建菜单的层次结构
             foreach (SysMenu menu in parentMenus)
             {
-                var childs = RepositoryFactory.MenuRepository.GetChildre(allMenus, menu,false);
+                var childs = RepositoryFactory.MenuRepository.GetChildre(allMenus, menu, false);
                 if (childs != null && childs.Any())
                 {
                     menu.Children = childs.OrderBy(c => c.MenuOrder);
@@ -804,7 +1027,7 @@ namespace Web.Controllers
             {
                 id = menu.SysId,
                 text = menu.MenuName,
-                link=menu.MenuLink,
+                link = menu.MenuLink,
                 iconCls = menu.MenuIcon,
                 @checked = menu.isCheck,
                 children = new EasyUiTreeResult[0],
@@ -896,6 +1119,32 @@ namespace Web.Controllers
 
         #endregion
 
+        #region 公共
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public void ExportToExcel()
+        {
+
+            Response.Clear();
+            Response.Buffer = true;
+            Response.Charset = "utf-8";
+            Response.ContentEncoding = System.Text.Encoding.UTF8;
+            Response.AppendHeader("content-disposition", "attachment;filename=\"" + HttpUtility.HtmlEncode(Request["txtName"] ?? DateTime.Now.ToString("yyyyMMdd")) + ".xls\"");
+            Response.ContentType = "Application/ms-excel";
+            Response.Write("<html>\n<head>\n");
+            Response.Write("<style type=\"text/css\">\n.pb{font-size:13px;border-collapse:collapse;} " +
+                           "\n.pb th{font-weight:bold;text-align:center;border:0.5pt solid windowtext;padding:2px;} " +
+                           "\n.pb td{border:0.5pt solid windowtext;padding:2px;}\n</style>\n</head>\n");
+            //Response.Write("<body>\n" + Request["txtContent"] + "\n</body>\n</html>");
+            Response.Write("<body>\n" + Request.Unvalidated("txtContent") + "\n</body>\n</html>");
+
+            Response.Flush();
+            Response.End();
+        }
+          
+
+        #endregion
     }
 }
 

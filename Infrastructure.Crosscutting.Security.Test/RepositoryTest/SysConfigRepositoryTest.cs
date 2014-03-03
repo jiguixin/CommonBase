@@ -16,8 +16,10 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
 {
     using System.Globalization;
 
+    using Infrastructure.Crosscutting.Security.Core;
     using Infrastructure.Crosscutting.Security.Model;
     using Infrastructure.Crosscutting.Security.Repositorys;
+    using Infrastructure.Crosscutting.Security.SqlImple;
 
     [TestFixture]
     public class SysConfigRepositoryTest
@@ -28,14 +30,18 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
            new NinjectContainer().WireDependenciesInAssemblies(typeof(AppModule).Assembly.FullName).Locator);
         }
         private IRepository<SysConfig> repository;
-            /// <summary>
+
+        /// <summary>
         /// 为整个TestFixture初始化资源
         /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
-            { 
-                repository =RepositoryFactory.ConfigRepository;
-            }
+        {
+            repository = RepositoryFactory.ConfigRepository;
+            /*repository =
+                new SysConfigRepository(InstanceLocator.Current.GetInstance<ISql>("SysConfigImple"));*/
+        }
+
 
         /// <summary>
         /// 为整个TestFixture释放资源
@@ -98,7 +104,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
             model.SysKey = "abd";
             model.SysValue = "23223";
             model.RecordStatus = "aaa";
-            model.SysParentId = "1000048";
+           // model.SysParentId = "1000048";
 
             Console.WriteLine(repository.Update(model));
         }
@@ -113,7 +119,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         public void GetPagedTest()
         {
             int total = 0;
-            var lstResult = repository.GetPaged("Sys_Config", "", "SysId='1000048'", "", 1, 20, 0, out total);
+            var lstResult = repository.GetPaged("Sys_Config", "", "", "", 1, 20, 0, out total);
 
             if (lstResult != null && lstResult.Any())
             {

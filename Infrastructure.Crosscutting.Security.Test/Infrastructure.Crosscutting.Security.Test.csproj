@@ -47,9 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppOracleContext.cs" />
     <Compile Include="AppModule.cs" />
+    <Compile Include="AppSqlServerContext.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="ConnectionFactory.cs" />
+    <Compile Include="OracleConnectionFactory.cs" />
     <Compile Include="OracleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryTest\SysButtonRepositoryTest.cs" />
@@ -68,6 +71,7 @@
     <Compile Include="ServiceTest\SysButtonServiceTest.cs" />
     <Compile Include="ServiceTest\SysPrivilegeServiceTest.cs" />
     <Compile Include="ServiceTest\UserServiceTest.cs" />
+    <Compile Include="SqlServerConnectionFactory.cs" />
     <Compile Include="TestClass1.cs" />
   </ItemGroup>
   <ItemGroup>

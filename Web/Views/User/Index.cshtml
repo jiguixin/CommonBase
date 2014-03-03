@@ -24,7 +24,7 @@
                 striped: true,
                 collapsible: true,
                 remoteSort: false,
-                toolbar: [], 
+                toolbar: [],
                 columns: [[
                         { field: 'SysId', title: '@Html.LabelFor(model => model.SysId)', hidden: true },
                         { field: 'UserName', title: '@Html.LabelFor(model => model.UserName)', width: 80, sortable: true, rowspan: 2 },
@@ -40,49 +40,49 @@
                             title: '@Html.LabelFor(model => model.UserInfo.Sex)',
                             width: 50,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         },
                         {
                             field: 'Title',
                             title: '@Html.LabelFor(model => model.UserInfo.Title)',
                             width: 150,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         },
                         {
                             field: 'Phone',
                             title: '@Html.LabelFor(model => model.UserInfo.Phone)',
                             width: 100,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         },
                         {
                             field: 'Fax',
                             title: '@Html.LabelFor(model => model.UserInfo.Fax)',
                             width: 100,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         },
                         {
                             field: 'Email',
                             title: '@Html.LabelFor(model => model.UserInfo.Email)',
                             width: 100,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         },
                         {
                             field: 'QQ',
                             title: '@Html.LabelFor(model => model.UserInfo.QQ)',
                             width: 100,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         },
                         {
                             field: 'Address',
                             title: '@Html.LabelFor(model => model.UserInfo.Address)',
                             width: 250,
                             sortable: true,
-                            sorter: sort 
+                            sorter: sort
                         }
                     ]
                 ],
@@ -91,8 +91,7 @@
                 }
             });
         });
-
-
+       
         function NewItem() {
             $('#dlgNew').dialog('open').dialog('setTitle', '新增用户');
             $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
@@ -115,7 +114,7 @@
         function DelItem() {
             var row = $('#fixedGrid').datagrid('getSelected');
             if (row) {
-                $.messager.confirm('Confirm', '确定删除此用户?', function(r) {
+                $.messager.confirm('提醒', '确定删除此用户?', function(r) {
                     if (r) {
                         $.post('@Url.Action("DeleteUser", "RestApi")', { SysId: row.SysId }, function(result) {
                             if (result) {
@@ -535,6 +534,7 @@
                                 }
                             });
                         }
+                        addToolBar();
                     }
                 });
             }

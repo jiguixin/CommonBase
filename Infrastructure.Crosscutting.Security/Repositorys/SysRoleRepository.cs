@@ -6,13 +6,16 @@ using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysRoleRepository:Repository<SysRole>
     {
-        public SysRoleRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysRoleSql"))
-        { 
-        }
+        public SysRoleRepository(ISql sql)
+            : base(sql)
+        {
 
+        }
+          
         public SysPrivilegeRepository PrivilegeRepository
         {
             get { return RepositoryFactory.PrivilegeRepository; }

@@ -16,32 +16,32 @@ namespace Infrastructure.Crosscutting.Security.Common
     {
         #region Static Fields 储存过程名
 
-       // public static readonly string ProcGetPaged = "proc_DataPagination";
-       // public static readonly string ProcGetList = "proc_GetList";
+        // public static readonly string ProcGetPaged = "proc_DataPagination";
+        // public static readonly string ProcGetList = "proc_GetList";
 
         //根据条件删除指定表的数据
         //public static readonly string ProcDeleteByWhere = "proc_Delete_By_Where";
-          
+
         #region Sys_Button
-         
+
         public static readonly string SqlSysButtonAdd = "Sys_Button_ADD";
-            
+
         public static readonly string SqlSysButtonUpdate = "Sys_Button_Update";
-         
+
         #endregion
 
         #region Sys_Config
 
         public static readonly string SqlSysConfigAdd = "Sys_Config_ADD";
-           
+
         public static readonly string SqlSysConfigUpdate = "Sys_Config_Update";
 
         #endregion
 
         #region Sys_DataPrivilege
-         
+
         public static readonly string SqlSysDataPrivilegeAdd = "Sys_DataPrivilege_ADD";
-          
+
         public static readonly string SqlSysDataPrivilegeUpdate = "Sys_DataPrivilege_Update";
 
         #endregion
@@ -49,7 +49,7 @@ namespace Infrastructure.Crosscutting.Security.Common
         #region Sys_Menu
 
         public static readonly string SqlSysMenuAdd = "Sys_Menu_ADD";
-          
+
         public static readonly string SqlSysMenuUpdate = "Sys_Menu_Update";
 
         #endregion
@@ -57,15 +57,15 @@ namespace Infrastructure.Crosscutting.Security.Common
         #region Sys_Privilege
 
         public static readonly string SqlSysPrivilegeAdd = "Sys_Privilege_ADD";
-          
+
         public static readonly string SqlSysPrivilegeUpdate = "Sys_Privilege_Update";
-          
+
         #endregion
 
         #region Sys_Role
 
         public static readonly string SqlSysRoleAdd = "Sys_Role_ADD";
-          
+
         public static readonly string SqlSysRoleUpdate = "Sys_Role_Update";
 
         #endregion
@@ -73,7 +73,7 @@ namespace Infrastructure.Crosscutting.Security.Common
         #region Sys_UserInfo
 
         public static readonly string SqlSysUserInfoAdd = "Sys_UserInfo_ADD";
-          
+
         public static readonly string SqlSysUserInfoUpdate = "Sys_UserInfo_Update";
 
         #endregion
@@ -81,7 +81,7 @@ namespace Infrastructure.Crosscutting.Security.Common
         #region Sys_UserRole
 
         public static readonly string SqlSysUserRoleAdd = "Sys_UserRole_ADD";
-          
+
         public static readonly string SqlSysUserRoleUpdate = "Sys_UserRole_Update";
 
         #endregion
@@ -89,8 +89,16 @@ namespace Infrastructure.Crosscutting.Security.Common
         #region Sys_User
 
         public static readonly string SqlSysUserAdd = "Sys_User_ADD";
-          
+
         public static readonly string SqlSysUserUpdate = "Sys_User_Update";
+
+        #endregion
+
+        #region Sys_File
+
+        public static readonly string SqlSysFileAdd = "Sys_File_ADD";
+
+        public static readonly string SqlSysFileUpdate = "Sys_File_Update";
 
         #endregion
 
@@ -122,25 +130,38 @@ namespace Infrastructure.Crosscutting.Security.Common
         public static readonly string TableSysRole = "Sys_Role";
         public static readonly string TableSysUserInfo = "Sys_UserInfo";
         public static readonly string TableSysUserRole = "Sys_UserRole";
-        public static readonly string TableSysUser = "Sys_User"; 
+        public static readonly string TableSysUser = "Sys_User";
+        public static readonly string TableSysFile = "Sys_File";
+        public static readonly string TableGISLayer = "GIS_Layer";
+        public static readonly string TableProject = "Project";
+        public static readonly string TableCase = "Case";
+        public static readonly string TableLog = "Log";
 
         #endregion
 
         #region 列名
 
         public static string ColumnSysId = "SysId";
-         
+
         #region Sys_User
-        
+
         public static readonly string ColumnSysUserUserName = "UserName";
         public static readonly string ColumnSysUserUserPwd = "UserPwd";
 
         #endregion
 
+
+        #region Sys_Menu
+
+        public static readonly string ColumnSysMenuMenuName = "MenuName";
+
+        #endregion
+
+
         #region Sys_Button
 
         public static readonly string ColumnSysButtonMenuId = "MenuId";
-         
+
         #endregion
 
         #region Sys_Privilege
@@ -150,9 +171,41 @@ namespace Infrastructure.Crosscutting.Security.Common
 
         public static readonly string ColumnSysPrivilegePrivilegeAccess = "PrivilegeAccess";
         public static readonly string ColumnSysPrivilegePrivilegeAccessKey = "PrivilegeAccessKey";
-         
+
         #endregion
 
+        #region Sys_File
+
+        public static readonly string ColumnRelId = "RelId";
+        public static readonly string ColumnFileName = "FileName";
+
+
+        #endregion
+
+        #region Project
+
+        public static readonly string ColumnProjectCreateDate = "CREATEDT";
+        public static readonly string ColumnProjectEndDate = "ENDDT";
+        public static readonly string ColumnProjectType = "TYPE";
+        public static readonly string ColumnProjectProjectType = "PROJECTTYPE";
+
+        #endregion
+
+        #region Case
+
+        public static readonly string ColumnProjectId = "ProjectId";
+
+        public static readonly string ColumnCaseNo = "CaseNo";
+
+        #endregion
+
+        #region Log
+
+        public static readonly string ColumnLogDateTime = "DateTime";
+        public static readonly string ColumnLogLogLevel = "Log_Level";
+        public static readonly string ColumnLogErrorInfo = "ErrorInfo";
+
+        #endregion
 
         #endregion
 
@@ -168,7 +221,7 @@ namespace Infrastructure.Crosscutting.Security.Common
         /// Sql语句：
         /// Sys_User u inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId
         /// </summary>
-        public static readonly string  SqlTableUserAndRoleJoin =
+        public static readonly string SqlTableUserAndRoleJoin =
                 "Sys_User u inner join Sys_UserRole ur on u.SysId=ur.UserId inner join Sys_Role r on ur.RoleId = r.SysId";
 
         /// <summary>
@@ -192,21 +245,21 @@ namespace Infrastructure.Crosscutting.Security.Common
         /// Sql语句:
         /// Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey
         /// </summary>
-       public static readonly string SqlTableRolePrivilegeJoin = "Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey";
+        public static readonly string SqlTableRolePrivilegeJoin = "Sys_Role r inner join Sys_Privilege p on r.SysId=p.PrivilegeMasterKey";
 
-       /// <summary>
-       /// 用于，用户关联权限 的join查询
-       /// Sql语句:
-       /// Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey
-       /// </summary>
-       public static readonly string SqlTableUserPrivilegeJoin = "Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey";
+        /// <summary>
+        /// 用于，用户关联权限 的join查询
+        /// Sql语句:
+        /// Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey
+        /// </summary>
+        public static readonly string SqlTableUserPrivilegeJoin = "Sys_User u inner join Sys_Privilege p on u.SysId=p.PrivilegeMasterKey";
 
         /// <summary>
         /// 用于，角色关联权限，用户关联权限，查询具体的权限数据列
         /// Sql语句:
         /// p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey, p.PrivilegeOperation,p.RecordStatus
         /// </summary>
-        public static readonly string SqlFieldsPrivilegeJoin ="p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,p.PrivilegeOperation,p.RecordStatus";
+        public static readonly string SqlFieldsPrivilegeJoin = "p.SysId,p.PrivilegeAccess,p.PrivilegeAccessKey,p.PrivilegeMaster,p.PrivilegeMasterKey,p.PrivilegeOperation,p.RecordStatus";
 
         /// <summary>
         /// 用于，菜单关联权限 的join查询

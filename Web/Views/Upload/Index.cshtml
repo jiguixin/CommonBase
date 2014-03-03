@@ -1,0 +1,265 @@
+﻿@model Infrastructure.Crosscutting.Security.Model.SysFile
+@{
+    ViewBag.Title = "文件上传";
+    this.Layout = "~/Views/Shared/IndexTemp.cshtml";
+}
+
+@section scriptsHeader
+{
+    <script src="~/Scripts/eayuiExtend/formExtend.js"></script>
+    <script src="~/Scripts/eayuiExtend/datagridExtend.js"></script>
+
+    <link href="~/Scripts/uploadify/uploadify.css" rel="stylesheet" />
+    <script src="~/Scripts/uploadify/jquery.uploadify.js"></script>
+
+    <script type="text/javascript">
+        var editId;
+        //设置全局的修改sysId
+        $(function () {
+            $('#fixedGrid').datagrid({
+                title: '附件列表', //列表的标题
+                fit: true, //列表自动适应宽度 有Bug
+                url: '@Url.Action("GetFiles", "Upload")', //获取数据的url
+                pagination: true, //是否显示分页控件
+                rownumbers: true, //是否显示行号 
+                singleSelect: true,//是否为单选
+                nowrap: true,
+                striped: true,
+                collapsible: true,
+                remoteSort: false,
+                toolbar: [],
+                columns: [[
+                        { field: 'SysId', title: '@Html.LabelFor(model => model.SysId)', hidden: true },
+                        { field: 'RelID', title: '@Html.LabelFor(model => model.RelID)', width: 80, sortable: true, rowspan: 2 },
+                        {
+                            field: 'FileName',
+                            title: '@Html.LabelFor(model => model.FileName)',
+                            width: 200,
+                            sortable: true,
+                            sorter: sort
+                        },
+                        {
+                            field: 'FileSize',
+                            title: '@Html.LabelFor(model => model.FileSize)' + '(MB)',
+                            width: 80,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: doubleConvert
+                        },
+                        {
+                            field: 'CreateDT',
+                            title: '@Html.LabelFor(model => model.CreateDT)',
+                            width: 150,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: dateConvert
+                        },
+                        {
+                            field: 'ModifyDT',
+                            title: '@Html.LabelFor(model => model.ModifyDT)',
+                            width: 150,
+                            sortable: true,
+                            sorter: sort,
+                            formatter: dateConvert
+                        }
+                ]
+                ],
+                onDblClickRow: function (index, rowData) {
+                    var sysId = rowData.SysId;
+                    msgShow("附件下载", "<a href='/Upload/DownloadFile?sysId=" + sysId + "'>下载</a>");
+                    @*$.post('@Url.Action("DownloadFile","Upload")', { sysId: sysId }, function (data) {
+                        msgShow('文件下载', '<a href='+data+'>下载</a>');
+                    });*@
+                }
+            });
+            
+
+            //上传附件
+            var uploadMsg = "";
+            $('#file_upload').uploadify({
+                'successTimeout': 600,//上传等待最长时间
+                'fileSizeLimit': '1024MB',//上传大小限制
+                'swf': '/Scripts/uploadify/uploadify.swf',  //FLash文件路径
+                'cancelImg': 'Scripts/uploadify/uploadify-cancel.png',
+                'auto':false,//自动上传
+                'buttonText': '浏  览',                                 //按钮文本
+                'uploader': '/Upload/UploadFile',                       //处理文件上传Action
+                'onUploadStart': function (file) {
+                    $("#file_upload").uploadify("settings", "formData", { 'sysId': editId });
+                },
+                'onUploadSuccess': function (file, data, response) {
+                    uploadMsg += file.name + ',' + data + "<br/>";
+                },
+                'onUploadError': function (file, errorCode, errorMsg, errorString) {
+                    uploadMsg = errorString;
+                },
+                'onQueueComplete': function (queueData) {
+                    msgShow('提示', uploadMsg);
+                    $('#fixedGrid').datagrid("reload", {}); // 后台必须要跟花括号不然更新不成功
+                    $('#dlgNew').dialog('close');
+                    close();
+                    uploadMsg = "";
+                }
+                
+            });
+            //修改上传附件
+            $('#file_ModifyUpload').uploadify({
+                'successTimeout': 600,//上传等待最长时间
+                'fileSizeLimit': '1024MB',//上传大小限制
+                'swf': '/Scripts/uploadify/uploadify.swf',  //FLash文件路径
+                'buttonText': '浏  览',                                 //按钮文本
+                'uploader': '/Upload/ModifyFile',                       //处理文件上传Action
+                'formData': { 'sysId': '' },
+                'onUploadStart': function (file) {
+                    $("#file_ModifyUpload").uploadify("settings", "formData", { 'sysId': editId });
+                },
+                'onUploadSuccess': function (file, data, response) {
+                    uploadMsg += file.name + ',' + data + "<br/>";
+                },
+                'onUploadError': function (file, errorCode, errorMsg, errorString) {
+                    uploadMsg = errorString;
+                },
+                'onQueueComplete': function (queueData) {
+                    msgShow('提示', uploadMsg);
+                    $('#fixedGrid').datagrid("reload", {}); // 后台必须要跟花括号不然更新不成功
+                    $('#dlgEdit').dialog('close');
+                    close();
+                    uploadMsg = "";
+                }
+            });
+        });
+
+
+        //首先获取iframe标签的id值
+        var iframeid = window.parent.$('#tabs').tabs('getSelected').find('iframe').attr("id");
+
+        //获取按钮权限
+        $.getJSON('@Url.Action("GetCurrentUserButtonsPrivilege", "RestApi")' + "?" + new Date().getTime(), { menuId: iframeid }, function (data) {
+            if (data == null) {
+                return;
+            }
+            $('#fixedGrid').datagrid("addToolbarItem", data);
+
+        });
+
+        //JSON日期和js日期间转换
+        function dateConvert(data, rec, index) {
+            if (data == undefined) {
+                return "";
+            }
+
+            var da = eval('new ' + data.replace('/', '', 'g').replace('/', '', 'g'));
+            var month = da.getMonth() + 1;
+            return da.getFullYear() + "年" + month + "月" + da.getDate() + "日" + da.getHours() + ":" + da.getMinutes() + ":" + da.getSeconds();
+        }
+
+        //保留附件大小为2位小数
+        function doubleConvert(data, rec, index) {
+            if (data == undefined) {
+                return "";
+            }
+            return data.toFixed(2);
+        }
+
+
+        function NewItem() {
+            $('#dlgNew').dialog('open').dialog('setTitle', '新增附件');
+            $('#CreateForm').form("reset"); //要reset 一下，不然form会保存相应的值
+        }
+
+        function EditItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $('#dlgEdit').dialog('open').dialog('setTitle', '编辑附件');
+                editId = row.SysId;
+            }
+        }
+
+        function DelItem() {
+            var row = $('#fixedGrid').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('提醒', '确定删除此附件?', function (r) {
+                    if (r) {
+                        $.post('@Url.Action("DeleteFile", "Upload")', { SysId: row.SysId }, function (result) {
+                            if (result) {
+                                $('#fixedGrid').datagrid("reload", {}); // 后台必须要跟花括号不然更新不成功
+                            } else {
+                                $.messager.show({
+                                    // show error message
+                                    title: 'Error',
+                                    msg: result.errorMsg
+                                });
+                            }
+                        }, 'json');
+                    }
+                });
+            }
+        }
+
+        function sort(a, b) {
+            a = a.split('/');
+            b = b.split('/');
+            if (a[2] == b[2]) {
+                if (a[0] == b[0]) {
+                    return (a[1] > b[1] ? 1 : -1);
+                } else {
+                    return (a[0] > b[0] ? 1 : -1);
+                }
+            } else {
+                return (a[2] > b[2] ? 1 : -1);
+            }
+        }
+
+
+        //弹出信息窗口 title:标题 msgString:提示信息 msgType:信息类型 [error,info,question,warning]
+        function msgShow(title, msgString, msgType) {
+            $.messager.alert(title, msgString, msgType);
+        }
+
+    </script>
+}
+
+@section mainContent
+{
+    <div id="dlgNew" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+        closed="true">
+        <div>
+            <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID" />
+            <input id="file_upload" name="file_upload" type="file" multiple="multiple" />
+            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnUpload" data-options="plain:true,iconCls:'icon-save'"
+                onclick="javascript: $('#file_upload').uploadify('upload', '*')">上传</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnCancelUpload" data-options="plain:true,iconCls:'icon-cancel'"
+                onclick="javascript: $('#file_upload').uploadify('cancel', '*')">取消</a>
+
+            <div id="fileQueue" class="fileQueue"></div>
+            <div id="div_files"></div>
+            <br />
+        </div>
+    </div>
+
+
+    <div id="dlgEdit" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px"
+         closed="true">
+        <div>
+            <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID" />
+            <input id="file_ModifyUpload" name="file_ModifyUpload" type="file" multiple="multiple" />
+            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnUpload" data-options="plain:true,iconCls:'icon-save'"
+                onclick="javascript: $('#file_ModifyUpload').uploadify('upload', '*')">修改</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnCancelUpload" data-options="plain:true,iconCls:'icon-cancel'"
+                onclick="javascript: $('#file_ModifyUpload').uploadify('cancel', '*')">取消</a>
+
+            <div id="fileQueue" class="fileQueue"></div>
+            <div id="div_files"></div>
+            <br />
+        </div>
+@*        <input id="modifyUploadFile" type="file" />
+        <br />
+        <br />
+        <input type="button" value="修改" onclick="modifyFile()" />*@
+    </div>
+
+}
+
+
+
+

@@ -1,91 +1,78 @@
 ﻿@{
     ViewBag.Title = "角色分配";
+    this.Layout ="~/Views/Shared/IndexTemp.cshtml";
 }
-<body>
-    <div class="easyui-layout" data-options="fit:true">
-        <div data-options="region:'west',split:true" style="width: 250px" title="角色列表">
-            <ul id="roleTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
-        </div>
-        <div data-options="region:'center'" title="用户列表"  fit="true">
-            <table id="userTable" class="easyui-treegrid" toolbar="#toolbar"></table>
-        </div>
+
+
+@section OperationContent{
+    <div data-options="region:'west',split:true" style="width: 250px" title="角色列表">
+        <ul id="roleTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
     </div>
 
-    <div id="toolbar">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="Save()">保存</a>
-    </div>
+}
+    
+@section scriptsFooter{
+    <script type="text/javascript">
+        function Save() {
+            var nodes = $('#fixedGrid').datagrid('getChecked');
 
-    @*    <div class="easyui-layout" style="width: 100%; height: 500px;">
-        <div data-options="region:'center',iconCls:'icon-ok'" title="用户角色分配">
-            <a href="#" class="easyui-linkbutton" onclick="getChecked()" style="float: right; margin: 10px">保存配置</a>
-            <div class="easyui-layout" data-options="fit:true">
-                <div data-options="region:'west',split:true,border:false" style="width: 250px">
-                    <ul id="userTree" class="easyui-tree" data-options="method:'get',animate:true"></ul>
-                </div>
-                <div data-options="region:'center',split:true,border:false">
-                    <ul id="roleTree" class="easyui-tree" data-options="checkbox:true,method:'get',animate:true"></ul>
-                </div>
-            </div>
-        </div>
-    </div>*@
-</body>
-
-<script type="text/javascript">
-    function Save() {
-        var nodes = $('#userTable').datagrid('getChecked');
-
-        var userIds = '';
-        for (var i = 0; i < nodes.length; i++) {
-            if (userIds != '') userIds += ',';
-            //menuIds += nodeChild[i].id;
-            userIds += nodes[i].id;
-        }
-        var postData = {
-            'roleId': sltRole.id,
-            'userIds': userIds
-        };
-        $.post('@Url.Action("UpdateRolesForUser", "RestApi")', postData,
-            function (data) {
-                if (data) {
-                    alert("配置成功");
-                } else {
-                    alert("配置失败");
-                }
-            });
-    }
-
-    var sltRole;//选择的用户节点
-
-    $('#roleTree').tree({
-        url: '@Url.Action("GetRolesListTree", "RestApi")' + "?" + new Date().getTime(),
-        onClick: function (node) {
-            sltRole = node;
-            $('#userTable').datagrid('clearSelections').datagrid('clearChecked');
-            $('#userTable').treegrid({
-                url: '@Url.Action("GetUsersTreeForRole", "RestApi")' + "?id=" + sltRole.id + "?" + new Date().getTime(),
-                idField: 'id',
-                treeField: 'text',
-                singleSelect: false,
-                checkOnSelect: true,
-                selectOnCheck: true,
-                columns: [[
-                    { field: 'ck', checkbox: true },
-                    { field: 'text', title: '用户名'},
-                    { field: 'id', title: '用户ID'},
-                    { field: 'recordStatus', title: '描述', width: 300 }
-                ]],
-                onLoadSuccess: function (row, data) {
+            var userIds = '';
+            for (var i = 0; i < nodes.length; i++) {
+                if (userIds != '') userIds += ',';
+                //menuIds += nodeChild[i].id;
+                userIds += nodes[i].id;
+            }
+            var postData = {
+                'roleId': sltRole.id,
+                'userIds': userIds
+            };
+            $.post('@Url.Action("UpdateRolesForUser", "RestApi")', postData,
+                function(data) {
                     if (data) {
-                        $.each(data, function (index, item) {
-                            if (item.checked) {
-                                $('#userTable').treegrid('select', item.id);
-                            }
-                        });
+                        alert("配置成功");
+                    } else {
+                        alert("配置失败");
                     }
-                    
-                    addToolBar();
-                }
-            });
+                });
         }
-    });
-</script>
+
+        var sltRole;
+//选择的用户节点
+
+        $('#roleTree').tree({
+            url: '@Url.Action("GetRolesListTree", "RestApi")' + "?" + new Date().getTime(),
+            onClick: function(node) {
+                sltRole = node;
+                //$('#fixedGrid').datagrid('clearSelections').datagrid('clearChecked');
+                $('#fixedGrid').treegrid({
+                    url: '@Url.Action("GetUsersTreeForRole", "RestApi")' + "?id=" + sltRole.id + "?" + new Date().getTime(),
+                    idField: 'id',
+                    treeField: 'text',
+                    singleSelect: false,
+                    checkOnSelect: true,
+                    selectOnCheck: true,
+                    columns: [[
+                        { field: 'ck', checkbox: true },
+                        { field: 'text', title: '用户名' },
+                        { field: 'id', title: '用户ID' },
+                        { field: 'recordStatus', title: '描述', width: 300 }
+                    ]],
+                    onLoadSuccess: function (row, data) {
+                        addToolBar();
+                        
+                        if (data) {
+                            $.each(data, function(index, item) {
+                                if (item.checked) {
+                                    $('#fixedGrid').treegrid('select', item.id);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        
+
+      
+    </script>
+}

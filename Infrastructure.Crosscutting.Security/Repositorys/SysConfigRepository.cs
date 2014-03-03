@@ -13,17 +13,19 @@ using Infrastructure.Crosscutting.Security.SqlImple;
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Core;
     using Infrastructure.Crosscutting.Security.Model;
 
     public class SysConfigRepository:Repository<SysConfig>
     {
         #region 属性
 
-        public SysConfigRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysConfigSql"))
+        public SysConfigRepository(ISql sql)
+            : base(sql)
         {
-        }
 
+        }
+         
         public override string TableName
         {
             get { return Constant.TableSysConfig; }

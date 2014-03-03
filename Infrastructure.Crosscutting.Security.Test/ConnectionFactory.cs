@@ -21,12 +21,16 @@ namespace Infrastructure.Crosscutting.Security.Test
         {
             const string ConnString = "Data Source=192.168.1.30;Initial Catalog=BaseDB;User Id = sa;Password=123456;";
             //const string ConnString = @"Data Source=THINKPADHOME\SQLEXPRESS;Initial Catalog=BaseDB;Integrated Security=true;";
-            return new SqlConnection(ConnString);
+
+            var conn = new SqlConnection(ConnString);
+            conn.Open();
+            return conn;
         }
 
         public static IDbConnection CreateOracleConnection()
         {
-            const string ConnString = "Data Source=wjdb;User Id=wjgh;Password=wjgh;";
+            //const string ConnString = "Data Source=wjdb;User Id=wjgh;Password=wjgh;";
+            const string ConnString = "Data Source=oracle;User Id=businessuser;Password=123456;";
 
 #pragma warning disable 618
             var conn = new OracleConnection(ConnString);

@@ -1,0 +1,57 @@
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013123014002739979839', '2013121011454258766624', 1, '图层配置', '/GIS/Layer', 'icon-layers', 1, null, '修改时间：2014/1/22 17:38:20,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2014011315185971471309', '', 0, '业务管理', '..', 'User', 1, null, '修改时间：2014/2/15 10:58:07,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2014012113405216636617', '2014011315185971471309', 4, '项目统计', '/Project/StatisticProject', 'icon-print', 1, null, '创建时间：2014/1/21 13:40:52,创建人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013121011454258766624', '', 2, 'GIS管理', '00', '', 1, null, '修改时间：2014/1/22 17:38:01,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2014011315195646662984', '2014011315185971471309', 0, '项目管理', '/Project/Index?state=all', 'Warning_2', 0, null, '修改时间：2014/1/22 17:37:24,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('4300916d-b838-4126-9bf3-abcc6615d908', '', 100, '权限配置', '', 'ico-nav', 1, 0, '28-11月-13');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('bf63df23-bc5b-4295-81d2-c9e8231597ss', '4300916d-b838-4126-9bf3-abcc6615d908', 101, '菜单管理', '/Menu/Index', 'icon-print', 1, 0, '修改时间：2013/11/28 15:17:51,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('140122135926908', '2014011315185971471309', 6, 'GIS管理测试', '/Project/ProjectForGIS', 'icon-save', 0, null, '修改时间：2014/2/10 17:28:42,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013112814191177167110', '4300916d-b838-4126-9bf3-abcc6615d908', 106, '角色分配', '/User/RoleAssign', 'icon-reload', 1, null, '修改时间：2014/1/22 10:21:44,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013122515070961835469', '2013121011454258766624', 2, '附件管理', '/Upload/Index', '', 1, null, '修改时间：2014/1/22 17:38:16,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('140210150604188', '4300916d-b838-4126-9bf3-abcc6615d908', 107, '日志管理', '/Log/Index', 'alizarin', 1, null, '创建时间：2014/2/10 15:06:04,创建人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013112811471575249713', '4300916d-b838-4126-9bf3-abcc6615d908', 102, '用户菜单权限管理', '/Menu/UserMenu', 'icon-undo', 1, null, '修改时间：2014/1/22 10:21:32,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013112814001242275015', '4300916d-b838-4126-9bf3-abcc6615d908', 104, '用户管理', '/User/Index', 'icon-tip', 1, null, '创建时间：2013/11/28 14:00:12,创建人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013112814172130786764', '4300916d-b838-4126-9bf3-abcc6615d908', 103, '角色菜单权限管理', '/Menu/RoleMenu', 'icon-no', 1, null, '修改时间：2014/1/22 10:21:39,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2013112814182921720143', '4300916d-b838-4126-9bf3-abcc6615d908', 105, '角色管理', '/Role/Index', 'icon-search', 1, null, '修改时间：2013/11/28 16:06:58,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2014012017084244962901', '2014011315185971471309', 3, '已结项目', '/Project/Index?state=finish', 'icon-search', 1, null, '修改时间：2014/2/15 11:14:15,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2014012017075007841398', '2014011315185971471309', 1, '未办项目', '/Project/Index?state=notWork', 'icon-cancel', 1, null, '修改时间：2014/1/21 13:43:04,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('2014012017081451259846', '2014011315185971471309', 2, '在办项目', '/Project/Index?state=working ', 'icon-ok', 1, null, '修改时间：2014/1/21 13:43:10,修改人：admin1');
+
+insert into sys_menu (SYSID, MENUPARENTID, MENUORDER, MENUNAME, MENULINK, MENUICON, ISVISIBLE, ISLEAF, RECORDSTATUS)
+values ('140215105426395', '2014011315185971471309', 3, '首页', '/Home/Index', 'icon-blank', 0, null, '修改时间：2014/2/24 15:59:56,修改人：admin1');
+

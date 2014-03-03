@@ -1,0 +1,76 @@
+﻿@model Infrastructure.Crosscutting.Security.Model.SysUser
+@{
+    ViewBag.Title = "UserInfo";
+    this.Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    table tr td {
+        padding: 3px 10px;
+    }
+
+    .errMsg {
+        text-align: center;
+    }
+
+    #fm {
+        margin: 0;
+        padding: 10px 30px;
+    }
+
+    .ftitle {
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 0;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .fitem {
+        margin-bottom: 5px;
+    }
+
+        .fitem label {
+            display: inline-block;
+            width: 80px;
+        }
+</style>
+
+
+<div style="margin: 0px; height: 110px; background-color: #FFF">
+        <table >
+            <tr>
+                <span id="sysId" hidden="true" ></span>
+                <td>
+                    欢迎： <span id="userName" style="color:#8E44AD; font-weight:bolder"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    您的真实姓名是： <span id="realName" style="color:#2980B9; font-weight:bolder"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    职位是： <span id="role" style="color:#2980B9; font-weight:bolder"></span>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-top:solid 1px #808080">
+                    <span style="color:red;">如果以上信息有误，请及时联系系统管理员进行修改...</span>
+                </td>
+            </tr>
+            
+        </table>
+</div>
+
+<script>
+    $(function () {
+        $.post('@Url.Action("GetCurrentUserInfo", "RestApi")', function (data) {
+            $("#sysId").text(data.UserInfo.SysId);
+            $("#userName").text(data.UserName);
+            $("#realName").text(data.UserInfo.RealName);
+            $("#role").text(data.UserInfo.Title);
+        });
+    });
+</script>

@@ -15,16 +15,17 @@
 }
 
 #header {
-    background: url(../../Images/layout-browser-hd-bg.gif) #7f99be repeat-x center 50%;
+    /*background: url(../../Images/layout-browser-hd-bg.gif) #7f99be repeat-x center 50%;*/
+    background-color:#016ba9;
     color: #fff;
     font-family: Verdana, 微软雅黑, 黑体;
-    height: 30px;
+    height: 88px;
     line-height: 20px;
     overflow: hidden;
 } 
 
 #header #welcome {
-    float: right; padding-right: 20px;
+    float: right; padding-right: 20px;padding-top: 50px;
 }
 
 #header #appName {
@@ -41,5 +42,5 @@
 
 
 #footerPanel {
-    background: #D2E0F2; height: 30px;
+    background: #016ba9; height: 30px;
 }

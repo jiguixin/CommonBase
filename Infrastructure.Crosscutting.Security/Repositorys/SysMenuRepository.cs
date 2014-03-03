@@ -10,6 +10,8 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     using System.Data;
     using System.Linq;
 
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysMenuRepository:Repository<SysMenu>
     {
         public SysPrivilegeRepository PrivilegeRepository { get
@@ -18,10 +20,11 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
         }}
 
         public SysButtonRepository ButtonRepository { get { return RepositoryFactory.ButtonRepository; } }
+         
+        public SysMenuRepository(ISql sql)
+            : base(sql)
+        {
 
-        public SysMenuRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysMenuSql"))
-        {  
         }
 
         #region 属性

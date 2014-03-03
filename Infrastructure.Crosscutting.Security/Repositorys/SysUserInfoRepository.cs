@@ -5,13 +5,17 @@ using Infrastructure.Crosscutting.Security.SqlImple;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
 {
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysUserInfoRepository:Repository<SysUserInfo>
     {
-        public SysUserInfoRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysUserInfoSql"))
+        
+        public SysUserInfoRepository(ISql sql)
+            : base(sql)
         {
-            
+
         }
+
         #region 属性
           
         public override string TableName

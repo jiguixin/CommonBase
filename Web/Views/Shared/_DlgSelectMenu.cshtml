@@ -48,6 +48,7 @@
 
 <script>
     function selectMenuDialog() {
-        $('#dlgSelectMenu').dialog('open').dialog('setTitle', '选择菜单');
+        $('#dlgSelectMenu').dialog('open').dialog('setTitle', '选择菜单'); 
+        $('#menuTreeGrid').treegrid("reload", {});
     }
 </script>

@@ -1,44 +1,57 @@
 ﻿@{
     ViewBag.Title = "登录";
-    //this.Layout = "~/Views/Shared/IndexTemp.cshtml";
+                //this.Layout = "~/Views/Shared/IndexTemp.cshtml";
 }
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 @*@section mainContent
 {*@
-    <div id="win" class="easyui-window" data-options="modal:true,closable:false,minimizable:false,maximizable:false,collapsible:false,draggable:false,resizable:false" title="登录" style="width: 350px; height: 200px;">
-        <form style="padding: 10px 20px 10px 40px;">
-            <p>用户名: <input type="text" id="name" value="admin1"></p>
-            <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd" value="123456"></p>
-            <label id="showInfo" style="color: Red"></label>
-            <div style="padding: 5px; text-align: center;"> 
-                <a href="#" id="btnOk" class="easyui-linkbutton" icon="icon-ok" onclick=" Login(); ">确定</a>
-                <a href="#" class="easyui-linkbutton" icon="icon-cancel">取消</a>
+@*<div id="win" class="easyui-window" data-options="modal:true,closable:false,minimizable:false,maximizable:false,collapsible:false,draggable:false,resizable:false" title="登录" style="width: 350px; height: 200px;">
+    <form style="padding: 10px 20px 10px 40px;">
+        <p>用户名: <input type="text" id="name" value="admin1"></p>
+        <p>密&nbsp;&nbsp;&nbsp;&nbsp;码: <input type="password" id="pwd" value="123456"></p>
+        <label id="showInfo" style="color: Red"></label>
+        <div style="padding: 5px; text-align: center;"> 
+            <a href="#" id="btnOk" class="easyui-linkbutton" icon="icon-ok" onclick=" Login(); ">确定</a>
+            <a href="#" class="easyui-linkbutton" icon="icon-cancel">取消</a>
+        </div>
+    </form>
+</div>*@
+<body style="background: #016ba9" onkeydown="if(event.keyCode==13){$('#btnOk').focus().click();}">
+    <div style="margin: 100px auto; width: 1002px; height: 600px; background-image: url(/Images/login_bg.jpg)">
+        <form style="padding-top: 270px; padding-left: 450px; width: 250px; color: white">
+            <p>用户名:
+                <input type="text" id="name" value="admin1"></p>
+            <p>密&nbsp;&nbsp;&nbsp;码:
+                <input type="password" id="pwd" value="123456"></p>
+            <div style="padding: 5px; text-align: center;">
+                <input id="btnOk" type="button" value="确定" style="background-image: url(/Images/login_bt.jpg); border: none; color: white; width: 49px; height: 18px; font-size: 11px" onclick=" Login(); " />
+                <input type="button" value="取消" style="background-image: url(/Images/login_bt.jpg); border: none; color: white; width: 49px; height: 18px; font-size: 11px" onclick=" Login_Cancle();" />
+                <label id="showInfo" style="color: Red"></label>
             </div>
+            
         </form>
     </div>
-    <script>
-        $(function() {
-            $('#pwd').keydown(function(e) {
-                if (e.keyCode == 13) {
-                    $("#btnOk").focus().click();
-                    return false;
-                }
-                return true;
-            });
-        });
+</body>
 
-        function Login() {
-            var name = $('#name').val();
-            var pwd = $('#pwd').val();
-            //做一层验证
-            if (name == '' || pwd == '') {
-                alert('用户名和密码不能为空!');
-            } else {
-                var postData = {
-                    userName: $("#name").val(),
-                    password: $("#pwd").val()
-                };
-                $.post('@Url.Action("CheckUser", "Login")', postData,
-                    function(data) {
+<script>
+
+    function Login_Cancle() {
+        $('#name')[0].innerText = "";
+        $('#pwd')[0].innerText = "";
+    }
+    function Login() {
+        var name = $('#name').val();
+        var pwd = $('#pwd').val();
+        //做一层验证
+        if (name == '' || pwd == '') {
+            alert('用户名和密码不能为空!');
+        } else {
+            var postData = {
+                userName: $("#name").val(),
+                password: $("#pwd").val()
+            };
+            $.post('@Url.Action("CheckUser", "Login")', postData,
+                    function (data) {
                         if (data.Result == true) {
                             $('#showInfo').html("登录成功!");
                             //todo:思路：
@@ -54,7 +67,7 @@
                         }*@
                             var ajaxLogin = '@ViewBag.AJAX_Login';
                             if (ajaxLogin == 1) {
-                                parent.LoginSuccessCallBack(); 
+                                parent.LoginSuccessCallBack();
                             } else {
                                 window.location.href = "/Home/index";
                             }
@@ -63,8 +76,8 @@
                             $('#showInfo').html(data.ResultInfo);
                         }
                     });
+                }
             }
-        }
 
-    </script>
+</script>
 @*}*@

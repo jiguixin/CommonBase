@@ -11,12 +11,14 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     using System;
     using System.Collections.Generic;
 
-    public class SysUserRepository : Repository<SysUser>
-    {
+    using Infrastructure.Crosscutting.Security.Core;
 
-        public SysUserRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysUserSql"))
-        {   
+    public class SysUserRepository : Repository<SysUser>
+    { 
+        public SysUserRepository(ISql sql)
+            : base(sql)
+        {
+
         }
 
         #region 属性
@@ -53,17 +55,17 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
                     RecordStatus = item.RecordStatus, 
                 };
         }
-         
+
         public override int Add(SysUser item)
         {
-            item.SysId = item.UserInfo.SysId = Util.NewId();
-              
+            if (string.IsNullOrEmpty(item.SysId)) item.SysId = item.UserInfo.SysId = Util.NewId();
+
             return AddOrModifyTrans(item, item.UserInfo, Add, UserInfoRepository.Add);
         }
-         
+
         public override int Update(SysUser item)
         {
-            item.UserInfo.SysId = item.SysId;
+             item.UserInfo.SysId = item.SysId;
              
             return AddOrModifyTrans(item, item.UserInfo, Update, UserInfoRepository.Update);
         }

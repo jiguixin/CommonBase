@@ -1,14 +1,169 @@
 ﻿@{
-    this.ViewBag.Title = "Index";
+    this.ViewBag.Title = "XX单位地理信息系统";
 }
 <link href="~/Content/css/home/index.css" rel="stylesheet" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <style>
     body {
         margin: 0 !important;
+        SCROLLBAR-FACE-COLOR: #BDC3C7;
+        SCROLLBAR-HIGHLIGHT-COLOR: #BDC3C7;
+        SCROLLBAR-SHADOW-COLOR: #BDC3C7;
+        SCROLLBAR-3DLIGHT-COLOR: #BDC3C7;
+        SCROLLBAR-TRACK-COLOR: #BDC3C7;
+        SCROLLBAR-ARROW-COLOR: white;
+        SCROLLBAR-TRACK-COLOR: white;
+    }
+    /*圆角样式*/
+    .rounded {
+        border: 2px solid #3498db;
+        -moz-border-radius: 10px; /* Gecko browsers */
+        -webkit-border-radius: 10px; /* Webkit browsers */
+        border-radius: 10px;
+    }
+    /*涉密资源类型图标列表样式*/
+    .secretSymbolGroup {
+        float: left;
+    }
+
+    .secretSymbol {
+        width: 55px;
+        height: 55px;
+        text-align: center;
+        font-size: 12px;
+        float: left;
+        padding: 2px;
+        border: solid 1px #FFF;
+        border-radius: 10px;
+    }
+
+        .secretSymbol img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .secretSymbol a:link {
+            color: #625d5d;
+            text-decoration: none;
+        }
+
+        .secretSymbol a:hover {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .secretSymbol a:visited {
+            color: #444;
+            text-decoration: none;
+        }
+
+    .transparent {
+        filter: alpha(opacity=60);
+        -moz-opacity: 0.6;
+        -khtml-opacity: 0.6;
+        opacity: 0.6;
+    }
+
+    .menuButton {
+        width: 40px;
+        height: 40px;
+        padding: 5px;
+        float: left;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .toolBar {
+        background: url(/Images/transparency_bg_white.png);
+        height: 50px;
+        position: absolute;
+        bottom: 50px;
+        left: 20%;
+    }
+
+    .userMenuClass {
+        /*5199c3*/
+        border: solid 1px #016ba9;
+        padding: 3px;
+        width: 22px;
+        height: 22px;
     }
 </style>
+ 
+
+<!--easyui引用的js和css-->
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/easyui/themes/bootstrap/easyui.css" rel="stylesheet" />
+<link href="~/Content/easyui/themes/icon.css" rel="stylesheet" />
+
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script src="~/Content/easyui/jquery-easyui-min.js"></script>
+<script src="~/Content/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script src="~/Content/easyui/easyloader.js"></script>
+<script src="~/Scripts/eayuiExtend/formExtend.js"></script>
+<script src="~/Scripts/eayuiExtend/datagridExtend.js"></script>
+<script src="~/Scripts/eayuiExtend/utill.js"></script>
+
+<!--界面插件引用js/css-->
+<script src="~/Scripts/chart/highcharts.js"></script>
+<script src="~/Scripts/QQSpace/js/jquery.prompt.js"></script>
+<link href="~/Scripts/QQSpace/css/jquery.prompt.css" rel="stylesheet" />
+<script src="~/Scripts/artDialog4.1.7/artDialog.js"></script>
+<link href="~/Scripts/artDialog4.1.7/skins/idialog.css" rel="stylesheet" />
+
+
+  
 <script type="text/javascript">
-     
+      
+    $(document).ready(function () {
+        $(".userMenuClass").mouseover(function () { $(this).css("border-color", "#5199c3") }).mouseout(function () { $(this).css("border-color", "#016ba9") });
+
+        $("#goHome").tooltip({ content: "返回首页" });
+        $("#showUserInfo").tooltip({
+            content: $('<div></div>'),
+            onShow: function (e) {
+                var t = $(this);
+                t.tooltip('tip').unbind().bind('mouseenter', function(){
+                    t.tooltip('show');
+                }).bind('mouseleave', function(){
+                    t.tooltip('hide');
+                }).css('left', $(this).offset().left-100);
+            },
+            onUpdate: function(content) {
+                content.panel({
+                    width: 200,
+                    height:'auto',
+                    border: false,
+                    href: '/User/UserInfo'
+                });
+            }
+        });
+        $("#editpass").tooltip({ content: "修改密码" });
+        $("#loginOut").tooltip({ content: "退出登录" });
+
+
+        openPwd();
+
+        $('#editpass').click(function () {
+            $('#w').window('open');
+        });
+
+        $('#btnEp').click(function () {
+            serverLogin();
+        });
+        $('#btnCancel').click(function () { closePwd(); });
+
+        $('#loginOut').click(function () {
+            $.messager.confirm('系统提示', '您确定要退出本次登录吗?', function (r) {
+                if (r) {
+                    location.href = '/Login/LogOff';
+                }
+            });
+        });
+        
+    });
+
     //设置登录窗口
     function openPwd() {
         $('#w').window({
@@ -27,6 +182,7 @@
         $('#w').window('close');
     }
      
+
     //修改密码 
     function serverLogin() {
         var $newpass = $('#txtNewPass');
@@ -40,81 +196,97 @@
             msgShow('系统提示', '请在一次输入密码！', 'warning');
             return false;
         }
-        
+
         if ($newpass.val() != $rePass.val()) {
             msgShow('系统提示', '两次密码不一至！请重新输入', 'warning');
             return false;
         }
-
         var postData = {
             'password': $rePass.val()
         };
         //获取按钮值
         $.getJSON('@Url.Action("ModifyPassword", "RestApi")', postData, function (data) {
-                    if (data == true) {
-                        msgShow('系统提示', '恭喜，密码修改成功！<br>您的新密码为：' + $rePass.val(), 'info');
-                        $newpass.val('');
-                        $rePass.val('');
-                        close();
-                    } else {
-                        msgShow('系统提示', '抱歉，密码修改失败');
-                    }
-                });
+            if (data == true) {
+                msgShow('系统提示', '恭喜，密码修改成功！<br>您的新密码为：' + $rePass.val(), 'info');
+                $newpass.val('');
+                $rePass.val('');
+                close();
+            } else {
+                msgShow('系统提示', '抱歉，密码修改失败');
+            }
+        });
+        return false;
     }
-     
-    $(function () {
-          
-        openPwd();
-
-        $('#editpass').click(function() {
-            $('#w').window('open');
-        });
-
-        $('#btnEp').click(function() {
-            serverLogin();
-        });
-        $('#btnCancel').click(function() { closePwd(); });
-
-        $('#loginOut').click(function() {
-            $.messager.confirm('系统提示', '您确定要退出本次登录吗?', function(r) { 
-                if (r) {
-                    location.href = '/Login/LogOff';
-                }
-            });
-        });
-    });
-
 </script>
-<body class="easyui-layout" scroll="no">
+
+<body id="mainBody" class="easyui-layout" scroll="no">
     <noscript>
         <div id="noscript">
             <img src="~/Content/Images/noscript.gif" alt='抱歉，请开启脚本支持！' />
-        </div></noscript>
+        </div>
+    </noscript>
     <div id="header" region="north" split="true" border="false">
-        <span id="welcome" class="head"><span id="userName">欢迎</span> <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut">安全退出</a></span>
-        <span id="appName"><img src="~/Content/Images/blocks.gif" width="20" height="20" align="absmiddle" /> 权限管理系统</span>
+        <span id="welcome" class="head">
+            <img src="~/Images/homeIndex.png" class="userMenuClass" id="goHome" onclick="window.location.href='/Home/Index'"/>
+            <img src="~/Images/userInfo.png" id="showUserInfo" class="userMenuClass" />
+            <img src="~/Images/key.png" id="editpass" class="userMenuClass" />
+            <img src="~/Images/exit.png" id="loginOut" class="userMenuClass" />
+        </span>
+        @*<span id="welcome" class="head">欢迎：<span id="userName"></span> <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut">安全退出</a></span>*@
+        <span id="appName">
+           @* <img src="~/Images/logoXX.png" align="absmiddle" style="margin-left:-30px" />*@</span>
     </div>
-    
-    <div region="west" hide="true" split="true" title="导航菜单" id="west">
+
+      <div region="west" hide="true" split="true" title="导航菜单" id="west">
         <div id="nav" class="easyui-accordion" fit="true" border="false">
             <!--  导航内容 --> 
 
-        </div>
-
+        </div> 
     </div>
-    <div id="mainPanel" region="center">
-        <div id="tabs" class="easyui-tabs"  fit="true" border="false" >
-            <div title="首页" style="color: red; overflow: hidden;" >
-                <h1 style="font-size: 24px;">首页</h1> 
+
+
+    <div region="center">
+        <div id="tabs" class="easyui-tabs" fit="true" border="false">
+            <div title="首页" style="color: red; overflow: hidden;">
+                @*<div id="mainPanel" class="easyui-layout" fit="true">
+                    <!--查询结果-->
+                    <div data-options="region:'east',split:true,onResize:function(width,height){$('#searchTextBox').searchbox('resize',width-10)},onExpand:function(){app.map.resize(); app.map.reposition();}" title="查询结果" id="east" style="width: 220px;">
+                        <div>
+                            <div id="searchLayerSltDiv"></div>
+                            <input id="searchTextBox" class="easyui-searchbox" data-options="prompt:'请输入需要查询地块的关键字',searcher:doSearch,fit:true" />
+                        </div>
+                        <div id="searchResult" style="padding-top: 20px"></div>
+                    </div>
+                    <!--地图-->
+                    <div data-options="region:'center'" style="height: 100%">
+                        <div id="map" style="width: 100%; height: 100%; margin-bottom: 0px"></div>
+                    </div>
+                </div>
+
+                <!--工具栏-->
+                <div id="toolBarContainer" class="toolBar rounded">
+                    <img id="loadingImg" src="/Images/loading2.gif" style="position: fixed; top: 50%; left: 50%; z-index: 100" />
+                </div>*@
+
             </div>
         </div>
     </div>
-    
+
     <div id="footerPanel" region="south" split="true">
-        <div class="footer">By jim</div>
+        <div class="footer">基础系统</div>
     </div>
-     
-      <!--修改密码窗口-->
+
+    <!--feature查询结果显示div-->
+    <div id="queryResultFrm" class="rounded" style="width: 300px; height: 200px; padding: 5px; font-size: 12px; background-color: white; position: absolute; display: none">
+        <div id="moveArea" style="width: 100%; height: 20px; float: left;">
+            <span style="width: 20px; height: 20px; float: right;">
+                <img id="close" src="/Images/close.png" />
+            </span>
+        </div>
+        <span id="content" style="width: 280px; height: 160px; float: left; padding: 5px; overflow: auto;"></span>
+    </div>
+
+    <!--修改密码窗口-->
     <div id="w" class="easyui-window" title="修改密码" collapsible="false" minimizable="false"
         maximizable="false" icon="icon-save" style="background: #fafafa; height: 300px; padding: 5px; width: 300px;">
         <div class="easyui-layout" fit="true">
@@ -154,8 +326,14 @@
 </body>
 <script>
     //用于获取当前登录用户信息的REST URL 地址
-    var getCurrentUserInfoUrl = '@Url.Action("GetCurrentUserInfo","RestApi")';
-    var getCurrentUserMenu = '@Url.Action("GetMenusByLoginUser","RestApi")';
+    var getCurrentUserInfoUrl = '@Url.Action("GetCurrentUserInfo", "RestApi")';
+    var getCurrentUserMenu = '@Url.Action("GetMenusByLoginUser", "RestApi")';
+</script>
+
+<script>
+    //$("#queryResultFrm").easydrag();
+    //$("#queryResultFrm").setHandler("moveArea");
+      
 </script>
 
 <script src="~/Scripts/Home/index.js"> </script>

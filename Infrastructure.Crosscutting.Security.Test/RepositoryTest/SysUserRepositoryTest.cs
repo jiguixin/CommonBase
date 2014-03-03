@@ -75,8 +75,8 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     UserPwd = "123456",
                     CreateTime = DateTime.Now,
                     LastLogin = DateTime.Now,
-                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt"),
-                    UserInfo = new SysUserInfo(){ SysId= "cf9d52cc-0500-4829-9611-fd0056961468", Address="武科东4路", Email="zwt@qq.com", Fax="028-34332234", Phone="13550235489", QQ="241542368", RealName="张文涛", Sex=true, Title="开发工程师"}
+                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim"),
+                    UserInfo = new SysUserInfo(){ SysId= "cf9d52cc-0500-4829-9611-fd0056961468", Address="武科东4路", Email="jim@qq.com", Fax="028-34332234", Phone="13550235489", QQ="241542368", RealName="张文涛", Sex=true, Title="开发工程师"}
                 };
              Console.WriteLine(service.AddUser(model));
 
@@ -87,7 +87,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                 UserPwd = "123456",
                 CreateTime = DateTime.Now,
                 LastLogin = DateTime.Now,
-                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt"),
+                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim"),
                 UserInfo = new SysUserInfo() { SysId = "cf9d52cc-0500-4829-9611-fd0056961469", Address = "武科东4路2", Email = "zwt2@qq.com", Fax = "028-34332234", Phone = "13550235489", QQ = "241542368", RealName = "张文涛2", Sex = true, Title = "开发工程师2" }
             };
             Console.WriteLine(service.AddUser(model));
@@ -116,7 +116,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                 return;
 
             model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                                               "zwt");
+                                               "jim");
 
             model.UserInfo.RealName = "张问";
 

@@ -3,12 +3,21 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" />
     <title>@ViewBag.Title</title>
-    @Styles.Render("~/Content/css")
+    @*    @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/easyui/css")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/easyui")
+    @Scripts.Render("~/bundles/easyui")*@
+    
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/Content/easyui/themes/icon.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Content/easyui/jquery-easyui-min.js"></script>
+    <script src="~/Content/easyui/easyloader.js"></script>
 </head>
 <body>
     @RenderBody()

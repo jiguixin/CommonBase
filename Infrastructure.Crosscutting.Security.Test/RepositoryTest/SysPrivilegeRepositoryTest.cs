@@ -69,7 +69,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     PrivilegeAccess = PrivilegeAccess.Menu,
                     PrivilegeAccessKey = "cf9d52cc-0500-4829-9611-fd0056961234",
                     PrivilegeOperation = PrivilegeOperation.Enable,
-                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim")
                 };
             Console.WriteLine(repository.Add(model));
 
@@ -81,7 +81,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                 PrivilegeAccess = PrivilegeAccess.Menu,
                 PrivilegeAccessKey = "cf9d52cc-0500-4829-9611-fd0056961234",
                 PrivilegeOperation = PrivilegeOperation.Enable,
-                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim")
             };
             Console.WriteLine(repository.Add(model));
 
@@ -93,7 +93,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                 PrivilegeAccess = PrivilegeAccess.Button,
                 PrivilegeAccessKey = "cf9d52cc-0500-4829-9611-fd0056961921",
                 PrivilegeOperation = PrivilegeOperation.Enable,
-                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim")
             };
            Console.WriteLine(repository.Add(model));
         }
@@ -118,7 +118,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         {
             var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961123");
             model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                                               "zwt");
+                                               "jim");
             Console.WriteLine(repository.Update(model));
         }
 

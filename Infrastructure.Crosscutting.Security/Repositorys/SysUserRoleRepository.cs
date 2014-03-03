@@ -5,13 +5,15 @@ using Infrastructure.Crosscutting.Security.SqlImple;
 using Infrastructure.Data.Ado.Dapper;
 
 namespace Infrastructure.Crosscutting.Security.Repositorys
-{ 
+{
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysUserRoleRepository:Repository<SysUserRole>
-    {
-        public SysUserRoleRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysUserRoleSql"))
+    { 
+        public SysUserRoleRepository(ISql sql)
+            : base(sql)
         {
-            
+
         }
 
         #region 属性

@@ -14,7 +14,7 @@ namespace Infrastructure.Crosscutting.Security.Services
 
         SysUserRoleRepository UserRoleRepository { get; }
 
-        SysRoleRepository RoleRepository { get; }
+        /* SysRoleRepository RoleRepository { get; }*/
 
         SysUserInfoRepository UserInfoRepository { get; }
 

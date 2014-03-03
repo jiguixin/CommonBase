@@ -1,4 +1,4 @@
-.icon-blank{
+﻿.icon-blank{
 	background:url('icons/blank.gif') no-repeat center center;
 }
 .icon-add{
@@ -52,6 +52,36 @@
 .icon-tip{
 	background:url('icons/tip.png') no-repeat center center;
 }
+.icon-circle{
+	background:url('icons/circle.png') no-repeat center center;
+}
+.icon-curve{
+	background:url('icons/curve.png') no-repeat center center;
+}
+.icon-home{
+	background:url('icons/Home.png') no-repeat center center;
+}
+.icon-identify{
+	background:url('icons/identify.png') no-repeat center center;
+}
+.icon-location{
+	background:url('icons/location.png') no-repeat center center;
+}
+.icon-polygon{
+	background:url('icons/polygon.png') no-repeat center center;
+}
+.icon-polyline{
+	background:url('icons/polyline.png') no-repeat center center;
+}
+.icon-set{
+	background:url('icons/set.png') no-repeat center center;
+}
+.icon-buffer{
+	background:url('icons/buffer.png') no-repeat center center;
+}
+.icon-globe {
+    background:url('icons/globe.png') no-repeat center center;
+}
 
 .icon-mini-add{
 	background:url('icons/mini_add.png') no-repeat center center;
@@ -62,6 +92,108 @@
 .icon-mini-refresh{
 	background:url('icons/mini_refresh.png') no-repeat center center;
 }
+.icon-layers{
+    background:url('icons/layers.png') no-repeat center center;
+}
 
-/*------------------------�Զ���icon--------------------------*/
+.icon-chart-pie{
+    background:url('icons/chart-pie.png') no-repeat center center;
+    background-size: 16px 16px;
+}
 
+
+/*以下为GIS图层渲染symbol使用图片*/
+
+
+
+.airport{
+	background:url('../../../Images/symbol/airport.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.bank{
+	background:url('../../../Images/symbol/bank.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.busstation{
+	background:url('../../../Images/symbol/busstation.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.hospital{
+	background:url('../../../Images/symbol/hospital.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.hotel{
+	background:url('../../../Images/symbol/hotel.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.officebuilding{
+	background:url('../../../Images/symbol/officebuilding.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.park{
+	background:url('../../../Images/symbol/park.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.railway{
+	background:url('../../../Images/symbol/railway.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.restaurant{
+	background:url('../../../Images/symbol/restaurant.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.school{
+	background:url('../../../Images/symbol/school.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.shopping{
+	background:url('../../../Images/symbol/shopping.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.showplace{
+	background:url('../../../Images/symbol/showplace.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.stop{
+	background:url('../../../Images/symbol/stop.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.supermarket{
+	background:url('../../../Images/symbol/supermarket.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.gasstation{
+    background:url('../../../Images/symbol/gasstation.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+
+
+
+.User{
+	background:url('../../../Images/symbol/User.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.Warning{
+	background:url('../../../Images/symbol/Warning.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.location_2{
+	background:url('../../../Images/symbol/location_2.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.red_star{
+	background:url('../../../Images/symbol/red_star.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.Warning_2{
+	background:url('../../../Images/symbol/Warning_2.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.Home2{
+	background:url('../../../Images/symbol/Home2.png') no-repeat center center;
+    background-size: 16px 16px;
+}
+.Home{
+	background:url('../../../Images/symbol/Home.png') no-repeat center center;
+    background-size: 16px 16px;
+}

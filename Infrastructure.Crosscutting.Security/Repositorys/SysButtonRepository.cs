@@ -8,12 +8,15 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
 {
     using System.Data;
 
+    using Infrastructure.Crosscutting.Security.Core;
+
     public class SysButtonRepository:Repository<SysButton>
-    {
-        public SysButtonRepository()
-            : base(InstanceLocator.Current.GetInstance<ISql>("SysButtonSql"))
-        { 
+    { 
+        public SysButtonRepository(ISql sql)
+            : base(sql)
+        {
         }
+
         #region 属性
   
 

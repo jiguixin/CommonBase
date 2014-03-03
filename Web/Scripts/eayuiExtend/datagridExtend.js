@@ -64,7 +64,7 @@
                     value = value.toString();
                     tableString += value;
                 }
-
+                
             } else {
                 var value1 = rows[i][nameList[j].field];
                 if (value1 != null) {
@@ -75,9 +75,9 @@
                     tableString += value1;
 
                 }
-
+               
             }
-
+           
             tableString += '</td>';
         }
         tableString += '\n</tr>';
@@ -85,7 +85,7 @@
     tableString += '\n</table>';
     return tableString;
 }
-function exportToExcel(jq, strXlsName) {
+function exportToExcel(jq,strXlsName) {
     var f = $('<form action="/RestApi/ExportToExcel" method="post" id="fm1"></form>');
     var i = $('<input type="hidden" id="txtContent" name="txtContent" />');
     var l = $('<input type="hidden" id="txtName" name="txtName" />');
@@ -137,8 +137,8 @@ $.extend($.fn.datagrid.methods, {
             }
         });
     },
-    removeAllToolbar: function (jq) {
-        return jq.each(function () {
+    removeAllToolbar: function(jq) {
+        return jq.each(function() {
             var dpanel = $(this).datagrid('getPanel');
             var toolbar = dpanel.children("div.datagrid-toolbar");
             var tr = toolbar.find("tr");
@@ -162,7 +162,7 @@ $.extend($.fn.datagrid.defaults, {
         //datagrid头部 table 的第一个tr 的td们，即columns的集合
         var headerTds = panel.find(".datagrid-view2 .datagrid-header .datagrid-header-inner table tr:first-child").children();
         //重新设置列表头的对齐方式
-        headerTds.each(function (i, obj) {
+        headerTds.each(function(i, obj) {
             var col = target.datagrid('getColumnOption', fields[i]);
             if (!col.hidden && !col.checkbox) {
                 var headalign = col.headalign || col.align || 'left';

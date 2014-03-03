@@ -16,6 +16,7 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
     using System.Linq;
 
     using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Core;
     using Infrastructure.Crosscutting.Security.Repositorys;
     using Infrastructure.Data.Ado.Dapper;
 

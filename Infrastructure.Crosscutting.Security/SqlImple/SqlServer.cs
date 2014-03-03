@@ -18,6 +18,7 @@ namespace Infrastructure.Crosscutting.Security.SqlImple
     using System.Data;
 
     using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Core;
 
     public abstract class SqlServer : ISql
     {

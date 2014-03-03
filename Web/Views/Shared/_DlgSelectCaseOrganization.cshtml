@@ -1,0 +1,54 @@
+﻿@model Infrastructure.Crosscutting.Security.Model.CaseOrganization
+
+
+
+
+<div id="dlgSelectOrganization" class="easyui-dialog" style="width: 300px; height: 400px;"
+    closed="true"
+    data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var row = $('#OrganizationTreeGrid').datagrid('getSelected');
+                      if (row) 
+                       {
+                            GetSelectedOrganization(row);
+    $('#dlgSelectOrganization').dialog('close');
+                       }
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgSelectOrganization').dialog('close');
+                    }
+                }]">
+    <table id="OrganizationTreeGrid" class="easyui-datagrid" 
+           data-options="
+                url: '@Url.Action("GetCaseOragnizations", "RestApi", new { t = DateTime.Now.Ticks })',
+                method: 'get',
+                rownumbers: true,
+                rownumbers: true, //是否显示行号 
+                singleSelect: true,//是否为单选
+                nowrap: true,
+                striped: true,
+                collapsible: true,
+                remoteSort: false,
+         onDblClickRow:function(rowIndex, rowData){
+            GetSelectedOrganization(rowData);
+            $('#dlgSelectOrganization').dialog('close');
+         }
+            ">
+        <thead>
+            <tr>
+                <th data-options="field:'Name'" width="250">@Html.LabelFor(model => model.Name)</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<script>
+    function selectOrganizationDialog() {
+        $('#dlgSelectOrganization').dialog('open').dialog('setTitle', '选择机构名称');
+    }
+</script>

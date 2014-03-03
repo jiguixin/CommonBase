@@ -1,0 +1,48 @@
+﻿@model Infrastructure.Crosscutting.Security.Model.GISLayer
+
+<div id="dlgSelectProjectType" class="easyui-dialog" style="width: 300px; height: 400px;"
+    closed="true"
+    data-options="buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    var row = $('#projectTypeTreeGrid').datagrid('getSelected');
+                      if (row) 
+                       {
+                            GetSelectedProjectType(row);
+                            $('#dlgSelectProjectType').dialog('close');
+                       }
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#dlgSelectProjectType').dialog('close');
+                    }
+                }]">
+    <table id="projectTypeTreeGrid" class="easyui-treegrid"></table>
+</div>
+
+<script>
+    function selectProjectTypeDialog() {
+        $('#dlgSelectProjectType').dialog('open').dialog('setTitle', '选择项目类别');
+
+        //绑定图层数据
+        $('#projectTypeTreeGrid').treegrid({
+            url: '@Url.Action("GetLayersForJson", "RestApi", new { t = DateTime.Now.Ticks })',
+            idField: 'id',
+            treeField: 'text',
+            singleSelect: true,
+            rownumbers: false,
+            fit: true,
+            onDblClickRow:function(rowData){
+                GetSelectedProjectType(rowData);
+                $('#dlgSelectProjectType').dialog('close');
+            },
+            columns: [[
+                    { field: 'id', title: 'sysid', hidden: true },
+                    { field: 'text', title: '名称', width: 250 }
+            ]]
+        });
+    }
+</script>

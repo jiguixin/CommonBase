@@ -19,6 +19,7 @@ namespace Infrastructure.Crosscutting.Security.Repositorys
     using System.Linq;
       
     using Infrastructure.Crosscutting.Security.Common;
+    using Infrastructure.Crosscutting.Security.Core;
     using Infrastructure.Crosscutting.Security.Model;
 
     public abstract class  Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase

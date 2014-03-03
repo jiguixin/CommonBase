@@ -61,7 +61,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                     SysId = "cf9d52cc-0500-4829-9611-fd0056961488",
                     RoleName = "管理员",
                     RoleDesc = "管理系统的用户",
-                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                    RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim")
                 };
             Console.WriteLine(repository.Add(model));
 
@@ -70,7 +70,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
                 SysId = "cf9d52cc-0500-4829-9611-fd0056961489",
                 RoleName = "管理员1",
                 RoleDesc = "管理系统的用户1",
-                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "zwt")
+                RecordStatus = string.Format("创建时间：{0},创建人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture), "jim")
             };
             Console.WriteLine(repository.Add(model));
         }
@@ -95,7 +95,7 @@ namespace Infrastructure.Crosscutting.Security.Test.RepositoryTest
         {
             var model = repository.GetModel("cf9d52cc-0500-4829-9611-fd0056961488");
             model.RecordStatus = string.Format("修改时间：{0},修改人：{1}", DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                                               "zwt");
+                                               "jim");
             Console.WriteLine(repository.Update(model));
         }
 

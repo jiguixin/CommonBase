@@ -14,8 +14,7 @@ namespace Web
             bundles.Add(new ScriptBundle("~/bundles/easyui").Include(
                         "~/Content/easyui/jquery-easyui-min.js",
                         "~/Content/easyui/locale/easyui-lang-zh_CN.js", 
-                        "~/Content/easyui/easyloader.js",
-                        "~/Scripts/eayuiExtend/utill.js"
+                        "~/Content/easyui/easyloader.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

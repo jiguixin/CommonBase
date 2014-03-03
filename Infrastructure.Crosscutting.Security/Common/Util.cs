@@ -8,7 +8,7 @@
     using System.Globalization;
     using System.Reflection;
 
-    public static class Util
+    public static partial class Util
     {
         /// <summary>
         ///     将一个对象转换为指定类型
